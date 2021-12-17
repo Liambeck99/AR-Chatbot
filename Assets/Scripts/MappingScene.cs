@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MenuScene : MonoBehaviour
+public class MappingScene : MonoBehaviour
 {
     private CanvasGroup fadeGroup;
     private float fadeInSpeed = 0.33f; // multiplied by time.time if (10 seconds 0.1)
@@ -32,16 +32,16 @@ public class MenuScene : MonoBehaviour
     public void OnARClick()
     {
         SceneManager.LoadScene("AR");
+        
+    }
+    public void OnMenuClick()
+    {
+        SceneManager.LoadScene("Menu");
     }
 
     public void OnInfoClick()
     {
         SceneManager.LoadScene("Info");
-    }
-
-    public void OnMappingClick()
-    {
-        SceneManager.LoadScene("Mapping");
     }
 
 }
