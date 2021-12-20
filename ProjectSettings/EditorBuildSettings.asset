@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Mapping.unity
     guid: ead755cc36c274f4690aedd20526938d
+  - enabled: 1
+    path: Assets/Scenes/UI.unity
+    guid: cda602f58080c8a4ebb52e2c9a76d722
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}

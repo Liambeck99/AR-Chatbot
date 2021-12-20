@@ -44,4 +44,9 @@ public class MenuScene : MonoBehaviour
         SceneManager.LoadScene("Mapping");
     }
 
+    public void OnUIClick()
+    {
+        SceneManager.LoadScene("UI");
+    }
+
 }
