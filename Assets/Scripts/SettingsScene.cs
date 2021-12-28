@@ -17,4 +17,24 @@ public class SettingsScene : BaseUIScene
         UpdateFade();
     }
 
+    public void UpdateAutomaticallyUseAvatarSetting(bool toggle)
+    {
+
+    }
+
+    public void UpdateAutomaticallyUseARSetting(bool toggle)
+    {
+
+    }
+
+    public void UpdateAutomaticallyUseTTS(bool toggle)
+    {
+
+    }
+
+    public void UpdateSaveConversations(bool toggle)
+    {
+
+    }
+
 }
