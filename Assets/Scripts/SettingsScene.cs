@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class ARScene : BaseUIScene
+public class SettingsScene : BaseUIScene
 {
     private void Start()
     {
@@ -18,4 +18,3 @@ public class ARScene : BaseUIScene
     }
 
 }
-
