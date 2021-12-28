@@ -40,12 +40,23 @@ public class BaseUIScene : MonoBehaviour
         UpdateFade();
     }
 
-    // Buttons
+    public void OnAskQuestionClick()
+    {
+        SettingsHandler currentSettings = new SettingsHandler();
+        if(currentSettings.ReturnFieldValue("autoUseAR"))
+            SceneManager.LoadScene("AR");
+        else if(currentSettings.ReturnFieldValue("autoUseAvatar"))
+            SceneManager.LoadScene("Avatar");
+        else
+            SceneManager.LoadScene("Chatbot");
+    }
+
+
     public void OnARClick()
     {
         SceneManager.LoadScene("AR");
-
     }
+
     public void OnMenuClick()
     {
         SceneManager.LoadScene("Menu");

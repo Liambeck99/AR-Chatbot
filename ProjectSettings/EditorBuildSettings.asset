@@ -26,6 +26,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Settings.unity
     guid: 402735b0af91caf43b510bccca9cc786
+  - enabled: 1
+    path: Assets/Scenes/Avatar.unity
+    guid: 9b171bca01373224fa534125fadc8d5f
+  - enabled: 1
+    path: Assets/Scenes/Chatbot.unity
+    guid: a249a5f4e7ce8264db9933d1640388d4
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}

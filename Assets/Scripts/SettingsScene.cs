@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class SettingsScene : BaseUIScene
 {
+
+    // Contains object for handling current settings saved as a JSON file
     private SettingsHandler currentSettings;
 
     private void Start()
@@ -68,15 +70,15 @@ public class SettingsScene : BaseUIScene
         UpdateFade();
     }
 
-    public void UpdateAutomaticallyUseAvatarSetting(Toggle toggle)
-    {
-        currentSettings.UpdateField("autoUseAvatar", toggle.isOn);
-        currentSettings.WriteJson();
-    }
-
     public void UpdateAutomaticallyUseARSetting(Toggle toggle)
     {
         currentSettings.UpdateField("autoUseAR", toggle.isOn);
+        currentSettings.WriteJson();
+    }
+
+    public void UpdateAutomaticallyUseAvatarSetting(Toggle toggle)
+    {
+        currentSettings.UpdateField("autoUseAvatar", toggle.isOn);
         currentSettings.WriteJson();
     }
 

@@ -138,7 +138,7 @@ GameObject:
   - component: {fileID: 20221916}
   - component: {fileID: 20221917}
   m_Layer: 5
-  m_Name: ToggleContainer
+  m_Name: ToggleContainer (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -158,11 +158,11 @@ RectTransform:
   - {fileID: 1237348109}
   - {fileID: 1004722250}
   m_Father: {fileID: 1100733805}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000015258789, y: -57}
+  m_AnchoredPosition: {x: 0.000015258789, y: -280}
   m_SizeDelta: {x: 1100, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &20221917
@@ -1972,8 +1972,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0000134, y: 1.0000134, z: 1.0000134}
   m_Children:
-  - {fileID: 20221916}
   - {fileID: 1246555248}
+  - {fileID: 20221916}
   - {fileID: 174158314}
   - {fileID: 1269941784}
   m_Father: {fileID: 1071529020}
@@ -2284,7 +2284,7 @@ GameObject:
   - component: {fileID: 1246555248}
   - component: {fileID: 1246555249}
   m_Layer: 5
-  m_Name: ToggleContainer (1)
+  m_Name: ToggleContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2304,11 +2304,11 @@ RectTransform:
   - {fileID: 1031074735}
   - {fileID: 869242052}
   m_Father: {fileID: 1100733805}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -277}
+  m_AnchoredPosition: {x: 0, y: -92}
   m_SizeDelta: {x: 1100, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1246555249
