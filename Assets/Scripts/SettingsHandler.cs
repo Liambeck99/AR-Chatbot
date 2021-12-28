@@ -5,6 +5,7 @@ using UnityEngine;
 public class SettingsHandler
 {
 
+    // Object that contains the format of the Settings JSON file
     public class SettingsJSON
     {
         public bool autoUseAvatar;
@@ -13,7 +14,10 @@ public class SettingsHandler
         public bool saveConversations;
     }
 
+    // JSON format object
     private SettingsJSON newSettingsFile;
+
+    // File name to store JSON
     private string fileName = "Assets/Data/ApplicationSettings.json";
 
     public SettingsHandler()
@@ -21,18 +25,21 @@ public class SettingsHandler
         ReadJson();
     }
 
+    // Writes the current JSON object into the specified file at file location
     public void WriteJson()
     {
         string jsonString = JsonUtility.ToJson(newSettingsFile);
         File.WriteAllText(fileName, jsonString);
     }
 
+    // Reads JSON from file location into current JSON object
     public void ReadJson()
     {
         string jsonString = File.ReadAllText(fileName);
         newSettingsFile = JsonUtility.FromJson<SettingsJSON>(jsonString);
     }
-
+       
+    // Updates a field in the JSON object depending on the field name argument
     public void UpdateField(string fieldName, bool newValue)
     {
         switch (fieldName)
@@ -55,6 +62,7 @@ public class SettingsHandler
         }
     }
 
+    // Returns field value in JSON object dependong on the field name argument
     public bool ReturnFieldValue(string fieldName)
     {
         bool valueToReturn = false;

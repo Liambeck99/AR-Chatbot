@@ -19,13 +19,20 @@ public class SettingsScene : BaseUIScene
 
     private void ConfigureToggles()
     {
+
+        // Finds all toggle objects in the scene
         Toggle[] allToggles = FindObjectsOfType<Toggle>();
 
+        // Iterates through each toggle
         for (int i = 0; i < allToggles.Length; i++)
         {
             Toggle currentToggle = allToggles[i];
+
+            // Updates wether the toggle is active (on/off) depending on its value (specified by the tag) stored in the settings file
             currentToggle.isOn = currentSettings.ReturnFieldValue(currentToggle.tag);
 
+            // Sets a listener depending on the current toggle tag
+            // (e.g. "autoUseTTS" tag will activate the UpdateAutomaticallyUseTTS method when the value of the toggle is changed)
             switch (currentToggle.tag)
             {
                 case "autoUseAR":
