@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 830200312}
   m_Layer: 5
   m_Name: Toggle
-  m_TagString: Untagged
+  m_TagString: autoUseTTS
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1130,18 +1130,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 335931494}
-        m_MethodName: UpdateAutomaticallyUseTTS
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!1 &843730407
 GameObject:
@@ -1274,7 +1263,7 @@ GameObject:
   - component: {fileID: 869242053}
   m_Layer: 5
   m_Name: Toggle
-  m_TagString: Untagged
+  m_TagString: autoUseAR
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1344,18 +1333,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 335931494}
-        m_MethodName: UpdateAutomaticallyUseARSetting
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!1 &916657865
 GameObject:
@@ -1369,7 +1347,7 @@ GameObject:
   - component: {fileID: 916657867}
   m_Layer: 5
   m_Name: Toggle
-  m_TagString: Untagged
+  m_TagString: saveConversations
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1439,18 +1417,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 335931494}
-        m_MethodName: UpdateSaveConversations
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!1 &988410213
 GameObject:
@@ -1613,7 +1580,7 @@ GameObject:
   - component: {fileID: 1004722251}
   m_Layer: 5
   m_Name: Toggle
-  m_TagString: Untagged
+  m_TagString: autoUseAvatar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1683,18 +1650,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 335931494}
-        m_MethodName: UpdateAutomaticallyUseAvatarSetting
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!1 &1031074734
 GameObject:
@@ -3357,7 +3313,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Automatically use Text-To-Speech:'
+  m_Text: Save Conversations
 --- !u!222 &1898032647
 CanvasRenderer:
   m_ObjectHideFlags: 0

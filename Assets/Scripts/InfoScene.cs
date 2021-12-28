@@ -9,7 +9,7 @@ public class InfoScene : BaseUIScene
     private void Start()
     {
         SetFade();
-        SetFadeInSpeed(0.33f);
+        SetFadeInSpeed(0.66f);
     }
 
     private void Update()

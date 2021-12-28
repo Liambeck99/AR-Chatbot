@@ -8,13 +8,12 @@ public class ARScene : BaseUIScene
 {
     private void Start()
     {
-        SetFade();
-        SetFadeInSpeed(0.33f);
+
     }
 
     private void Update()
     {
-        UpdateFade();
+
     }
 
 }
