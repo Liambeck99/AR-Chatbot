@@ -79,6 +79,11 @@ public class BaseUIScene : MonoBehaviour
             SceneManager.LoadScene("Chatbot");
     }
 
+    public void OnARClick()
+    {
+        SceneManager.LoadScene("AR");
+    }
+
     public void OnAvatarClick()
     {
         SceneManager.LoadScene("Avatar");
@@ -87,11 +92,6 @@ public class BaseUIScene : MonoBehaviour
     public void OnChatbotClick()
     {
         SceneManager.LoadScene("Chatbot");
-    }
-
-    public void OnARClick()
-    {
-        SceneManager.LoadScene("AR");
     }
 
     public void OnMenuClick()
@@ -104,14 +104,13 @@ public class BaseUIScene : MonoBehaviour
         SceneManager.LoadScene("Info");
     }
 
-    public void OnUIClick()
-    {
-        SceneManager.LoadScene("UI");
-    }
-
-
     public void OnSettingsClick()
     {
         SceneManager.LoadScene("Settings");
+    }
+
+    public void ExitApplication()
+    {
+        Application.Quit();
     }
 }
