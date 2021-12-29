@@ -17,7 +17,7 @@ public class ChatbotScene : BaseUIScene
 
     private void Start()
     {
-        UpdateColoursIfColourBlindMode();
+        //UpdateColoursIfColourBlindMode();
 
         currentConversation = new ConversationHandler();
 
