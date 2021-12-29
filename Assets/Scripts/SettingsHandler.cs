@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SettingsHandler
 {
-
     // Object that contains the format of the Settings JSON file
     public class SettingsJSON
     {
@@ -12,6 +11,7 @@ public class SettingsHandler
         public bool autoUseAR;
         public bool autoUseTTS;
         public bool saveConversations;
+        public bool useColorBlind;
     }
 
     // JSON format object
@@ -59,6 +59,10 @@ public class SettingsHandler
             case "saveConversations":
                 newSettingsFile.saveConversations = newValue;
                 break;
+
+            case "useColourBlind":
+                newSettingsFile.useColorBlind = newValue;
+                break;
         }
     }
 
@@ -83,6 +87,10 @@ public class SettingsHandler
 
             case "saveConversations":
                 valueToReturn = newSettingsFile.saveConversations;
+                break;
+
+            case "useColourBlind":
+                valueToReturn = newSettingsFile.useColorBlind;
                 break;
         }
 

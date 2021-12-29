@@ -8,6 +8,8 @@ TagManager:
   - autoUseAvatar
   - autoUseTTS
   - saveConversations
+  - SpeechBubble
+  - useColourBlind
   layers:
   - Default
   - TransparentFX
