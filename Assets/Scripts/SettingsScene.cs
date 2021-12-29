@@ -7,14 +7,11 @@ using UnityEngine.SceneManagement;
 public class SettingsScene : BaseUIScene
 {
 
-    // Contains object for handling current settings saved as a JSON file
-    private SettingsHandler currentSettings;
-
     private void Start()
     {
         SetFade();
         SetFadeInSpeed(0.66f);
-        currentSettings = new SettingsHandler();
+        UpdateColoursIfColourBlindMode();
 
         ConfigureToggles();
     }
@@ -60,9 +57,42 @@ public class SettingsScene : BaseUIScene
                         UpdateSaveConversations(currentToggle);
                     });
                     break;
+
+                case "useColourBlind":
+                    currentToggle.onValueChanged.AddListener(delegate {
+                        UpdateColourBlindMode(currentToggle);
+                    });
+                    break;
             }
         }
 
+    }
+
+    public void ReverseColourBlindMode()
+    {
+        Button[] buttons = FindObjectsOfType<Button>();
+
+        Color redLeedsColor = new Color(0.8f, 0.1f, 0.2f, 1.0f);
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            var colors = buttons[i].colors;
+            colors.normalColor = redLeedsColor;
+            colors.highlightedColor = redLeedsColor;
+            colors.pressedColor = redLeedsColor;
+            buttons[i].colors = colors;
+        }
+
+        Text[] allText = FindObjectsOfType<Text>();
+
+        for (int i = 0; i < allText.Length; i++)
+        {
+            if (allText[i].name == "Title")
+                continue;
+
+            if (allText[i].color.r == 0.0f && allText[i].color.g == 0.0f && allText[i].color.b == 0.0f)
+                allText[i].color = redLeedsColor;
+        }
     }
 
     private void Update()
@@ -84,7 +114,6 @@ public class SettingsScene : BaseUIScene
 
     public void UpdateAutomaticallyUseTTS(Toggle toggle)
     {
-
         currentSettings.UpdateField("autoUseTTS", toggle.isOn);
         currentSettings.WriteJson();
     }
@@ -93,5 +122,16 @@ public class SettingsScene : BaseUIScene
     {
         currentSettings.UpdateField("saveConversations", toggle.isOn);
         currentSettings.WriteJson();
+    }
+
+    public void UpdateColourBlindMode(Toggle toggle)
+    {
+        currentSettings.UpdateField("useColourBlind", toggle.isOn);
+        currentSettings.WriteJson();
+
+        if (toggle.isOn)
+            UpdateColoursIfColourBlindMode();
+        else
+            ReverseColourBlindMode();
     }
 }

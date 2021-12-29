@@ -10,6 +10,7 @@ public class InfoScene : BaseUIScene
     {
         SetFade();
         SetFadeInSpeed(0.66f);
+        UpdateColoursIfColourBlindMode();
     }
 
     private void Update()

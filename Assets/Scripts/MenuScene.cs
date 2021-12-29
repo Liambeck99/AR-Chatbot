@@ -10,6 +10,7 @@ public class MenuScene : BaseUIScene
     {
         SetFade();
         SetFadeInSpeed(0.33f);
+        UpdateColoursIfColourBlindMode();
     }
 
     private void Update()
