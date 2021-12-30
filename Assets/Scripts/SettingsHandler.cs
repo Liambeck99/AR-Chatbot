@@ -16,7 +16,7 @@ public class SettingsHandler
     }
 
     // JSON format object
-    public SettingsJSON newSettingsFile;
+    private SettingsJSON newSettingsFile;
 
     // File name to store JSON
     private string fileName = "Assets/Data/ApplicationSettings.json";
