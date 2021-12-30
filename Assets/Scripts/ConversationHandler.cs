@@ -76,4 +76,10 @@ public class ConversationHandler {
 
     }
 
+    public void resetPrevConversations()
+    {
+        AllConversations resetConversation = new AllConversations();
+        File.WriteAllText(fileName, JsonUtility.ToJson(resetConversation));
+    }
+
 }

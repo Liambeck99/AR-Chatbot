@@ -12,10 +12,11 @@ public class SettingsHandler
         public bool autoUseTTS;
         public bool saveConversations;
         public bool useColorBlind;
+        public bool completeTutorial;
     }
 
     // JSON format object
-    private SettingsJSON newSettingsFile;
+    public SettingsJSON newSettingsFile;
 
     // File name to store JSON
     private string fileName = "Assets/Data/ApplicationSettings.json";
@@ -63,6 +64,10 @@ public class SettingsHandler
             case "useColourBlind":
                 newSettingsFile.useColorBlind = newValue;
                 break;
+
+            case "completeTutorial":
+                newSettingsFile.completeTutorial = newValue;
+                break;
         }
     }
 
@@ -92,9 +97,24 @@ public class SettingsHandler
             case "useColourBlind":
                 valueToReturn = newSettingsFile.useColorBlind;
                 break;
+
+            case "completeTutorial":
+                valueToReturn = newSettingsFile.completeTutorial;
+                break;
         }
 
         return valueToReturn;
+    }
+
+    public void resetSettings()
+    {
+        newSettingsFile.autoUseAR = true;
+        newSettingsFile.autoUseAvatar = true;
+        newSettingsFile.autoUseTTS = true;
+        newSettingsFile.saveConversations = true;
+        newSettingsFile.useColorBlind = false;
+        newSettingsFile.completeTutorial = false;
+        WriteJson();
     }
 
 }

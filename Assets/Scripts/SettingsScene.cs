@@ -134,4 +134,12 @@ public class SettingsScene : BaseUIScene
         else
             ReverseColourBlindMode();
     }
+
+    public void ResetApplication()
+    {
+        currentSettings.resetSettings();
+        ConversationHandler currentConversation = new ConversationHandler();
+        currentConversation.resetPrevConversations();
+        Application.Quit();
+    }
 }
