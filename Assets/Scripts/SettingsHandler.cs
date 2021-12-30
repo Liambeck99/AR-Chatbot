@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEngine;
 
+// Manages and handles the saved Settings
 public class SettingsHandler
 {
     // Object that contains the format of the Settings JSON file
@@ -106,6 +107,8 @@ public class SettingsHandler
         return valueToReturn;
     }
 
+    // Resets the settings by updating each field to the default setting value
+    // and saving as the new JSON settings file
     public void resetSettings()
     {
         newSettingsFile.autoUseAR = true;

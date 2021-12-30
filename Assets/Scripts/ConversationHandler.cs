@@ -3,34 +3,41 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+// Handles a conversation that is/has occured between the user and chatbot
 public class ConversationHandler {
 
-    public class AllConversations
+    // Holds a list of all messages that have occured in the conversation
+    // This is stored as a class as it can then be easily converted to JSON
+    public class Conversation
     {
-        public List<Conversation> conversationList;
+        public List<Message> messageList;
     }
 
-    private AllConversations currentConversation;
+    // Holds the messages for the current conversation 
+    private Conversation currentConversation;
 
-    private AllConversations prevConversations;
+    // Holds the messages for all the previous messages that are currently saved 
+    private Conversation prevConversations;
 
+    // File path to the previous conversations file
     private string fileName = "Assets/Data/PreviousConversations.json";
 
+    // Stores whether or not the previous conversation has been loaded
     private bool hasLoadedPrevConversations;
 
     public ConversationHandler()
     {
-        currentConversation = new AllConversations();
+        currentConversation = new Conversation();
         hasLoadedPrevConversations = false;
     }
 
-    // Writes the current JSON object into the specified file at file location
+    // TODO: FIX METHOD
     public void WriteJson()
     {
-        string jsonString;
+        //string jsonString;
 
-        if (hasLoadedPrevConversations)
+        //
+        /*if (hasLoadedPrevConversations)
         {
             jsonString = JsonUtility.ToJson(currentConversation);
             File.WriteAllText(fileName, jsonString);
@@ -48,26 +55,27 @@ public class ConversationHandler {
                 allConversations.conversationList.Add(currentConversation.conversationList[i]);
 
             jsonString = JsonUtility.ToJson(allConversations);
-            File.WriteAllText(fileName, jsonString);
-        }
+            File.WriteAllText(fileName, jsonString);*/
+        //}
     }
 
-    // Reads JSON from file location into current JSON object
+    // Reads previous conversation file 
     public void ReadJson()
     {
         string jsonString = File.ReadAllText(fileName);
-        currentConversation = JsonUtility.FromJson<AllConversations>(jsonString);
+        prevConversations = JsonUtility.FromJson<Conversation>(jsonString);
         hasLoadedPrevConversations = true;
     }
-
-    public void AddNewConversation(string newText, bool wasUserSpeaker)
+    
+    // Adds a new message to the conversation
+    public void AddNewMessage(string newText, bool wasUserSpeaker)
     {
-        Conversation newConversation = new Conversation();
+        Message newConversation = new Message();
         newConversation.text = newText;
         newConversation.userWasSpeaker = wasUserSpeaker;
         newConversation.timeProcessed = DateTime.Now;
 
-        currentConversation.conversationList.Add(newConversation);
+        currentConversation.messageList.Add(newConversation);
     }
 
     public void GetConversationAtPosition(int i)
@@ -76,9 +84,10 @@ public class ConversationHandler {
 
     }
 
+    // Sets the previous conversation file to an empty list
     public void resetPrevConversations()
     {
-        AllConversations resetConversation = new AllConversations();
+        Conversation resetConversation = new Conversation();
         File.WriteAllText(fileName, JsonUtility.ToJson(resetConversation));
     }
 

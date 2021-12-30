@@ -68,12 +68,14 @@ public class SettingsScene : BaseUIScene
 
     }
 
+    // Changes all buttons/text on the page back to their default colours
     public void ReverseColourBlindMode()
     {
         Button[] buttons = FindObjectsOfType<Button>();
 
         Color redLeedsColor = new Color(0.8f, 0.1f, 0.2f, 1.0f);
 
+        // All buttons get converted back to the default red colour
         for (int i = 0; i < buttons.Length; i++)
         {
             var colors = buttons[i].colors;
@@ -85,6 +87,7 @@ public class SettingsScene : BaseUIScene
 
         Text[] allText = FindObjectsOfType<Text>();
 
+        // All text, apart from the title, get converted back to red if they are black
         for (int i = 0; i < allText.Length; i++)
         {
             if (allText[i].name == "Title")
@@ -99,6 +102,8 @@ public class SettingsScene : BaseUIScene
     {
         UpdateFade();
     }
+
+    // The following methods each update an individual setting if toggled on the settings page 
 
     public void UpdateAutomaticallyUseARSetting(Toggle toggle)
     {
@@ -135,11 +140,20 @@ public class SettingsScene : BaseUIScene
             ReverseColourBlindMode();
     }
 
+    // Executed if the user selects to reset the application back to default settings
     public void ResetApplication()
     {
+        // Settings are reset
         currentSettings.resetSettings();
+
+        // Previous conversation messages are deleted
         ConversationHandler currentConversation = new ConversationHandler();
         currentConversation.resetPrevConversations();
+
+        // Clears data cache
+        Caching.ClearCache();
+
+        // Application is closed
         Application.Quit();
     }
 }
