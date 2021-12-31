@@ -8,6 +8,7 @@ public class ConversationHandler {
 
     // Holds a list of all messages that have occured in the conversation
     // This is stored as a class as it can then be easily converted to JSON
+    [Serializable]
     public class Conversation
     {
         public List<Message> messageList;
@@ -47,7 +48,7 @@ public class ConversationHandler {
         Message newConversation = new Message();
         newConversation.text = newText;
         newConversation.userWasSpeaker = wasUserSpeaker;
-        newConversation.timeProcessed = DateTime.Now;
+        newConversation.timeProcessed = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
 
         currentConversation.messageList.Add(newConversation);
 
@@ -56,12 +57,15 @@ public class ConversationHandler {
         if (saveNewMessages)
         {
             Conversation prevConversation = JsonUtility.FromJson<Conversation>(File.ReadAllText(fileName));
+
+            if (prevConversation is null)
+                prevConversation = new Conversation();
+
             if (prevConversation.messageList is null)
                 prevConversation.messageList = new List<Message>();
+
             prevConversation.messageList.Add(newConversation);
 
-            //Debug.Log(prevConversation.messageList);
-            //Debug.Log(JsonUtility.ToJson(prevConversation.messageList));
             File.WriteAllText(fileName, JsonUtility.ToJson(prevConversation));
         }
     }
