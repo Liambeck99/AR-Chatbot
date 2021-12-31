@@ -212,8 +212,8 @@ GameObject:
   - component: {fileID: 83807571}
   - component: {fileID: 83807570}
   m_Layer: 5
-  m_Name: SpeechBubbleTest
-  m_TagString: SpeechBubble
+  m_Name: UserSpeechBubbleTemplate
+  m_TagString: SpeechBubbleUser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,16 +226,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83807568}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 86.185455}
+  m_LocalScale: {x: 0.84375, y: 0.84375, z: 0.84375}
   m_Children:
   - {fileID: 1945450417}
-  m_Father: {fileID: 2022069768}
-  m_RootOrder: 8
+  m_Father: {fileID: 1855741632}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 347}
+  m_AnchoredPosition: {x: 113.06251, y: 262.40625}
   m_SizeDelta: {x: 800, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &83807570
@@ -360,7 +360,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2022069768}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -429,7 +429,7 @@ GameObject:
   - component: {fileID: 648678754}
   m_Layer: 5
   m_Name: Text
-  m_TagString: Untagged
+  m_TagString: SpeechBubbleChatbot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -485,7 +485,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hello there, how can I help you today
+  m_Text: 
 --- !u!222 &648678755
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1362,8 +1362,8 @@ GameObject:
   - component: {fileID: 1594228360}
   - component: {fileID: 1594228359}
   m_Layer: 5
-  m_Name: SpeechBubbleTest (1)
-  m_TagString: SpeechBubble
+  m_Name: ChatbotSpeechBubbleTemplate
+  m_TagString: SpeechBubbleChatbot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1376,16 +1376,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1594228357}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 86.185455}
+  m_LocalScale: {x: 0.84375, y: 0.84375, z: 0.84375}
   m_Children:
   - {fileID: 648678753}
-  m_Father: {fileID: 2022069768}
-  m_RootOrder: 9
+  m_Father: {fileID: 1855741632}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -216, y: 615}
+  m_AnchoredPosition: {x: -237.9375, y: 488.53125}
   m_SizeDelta: {x: 800, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1594228359
@@ -1609,6 +1609,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716896333}
   m_CullTransparentMesh: 0
+--- !u!1 &1855741631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1855741632}
+  m_Layer: 0
+  m_Name: ConversationContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1855741632
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855741631}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -102.14573}
+  m_LocalScale: {x: 1.1851852, y: 1.1851852, z: 1.1851852}
+  m_Children:
+  - {fileID: 83807569}
+  - {fileID: 1594228358}
+  m_Father: {fileID: 2022069768}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 66, y: 36}
+  m_SizeDelta: {x: 900, y: 1200}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1945450416
 GameObject:
   m_ObjectHideFlags: 0
@@ -1678,7 +1715,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hello there, how can I help you today
+  m_Text: 
 --- !u!222 &1945450419
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2012,8 +2049,7 @@ RectTransform:
   - {fileID: 2046552957}
   - {fileID: 2116559751}
   - {fileID: 755217250}
-  - {fileID: 83807569}
-  - {fileID: 1594228358}
+  - {fileID: 1855741632}
   - {fileID: 487585042}
   m_Father: {fileID: 0}
   m_RootOrder: 2

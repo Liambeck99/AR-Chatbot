@@ -10,7 +10,9 @@ public class ChatbotScene : BaseUIScene
 
     private float currentConversationHeadPosition;
 
-    private GameObject defaultSpeechBubble;
+    private GameObject templateUserSpeechBubble;
+
+    private GameObject templateChatbotSpeechBubble;
 
     private float distanceBetweenSpeechBubbles;
 
@@ -20,20 +22,23 @@ public class ChatbotScene : BaseUIScene
 
         currentConversation = new ConversationHandler();
         currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
-        currentConversation.AddNewMessage("Hello there, how can I help you today?", false);
 
-        defaultSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubble")[0];
+        templateUserSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubbleUser")[0];
+        templateChatbotSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubbleChatbot")[0];
 
-        distanceBetweenSpeechBubbles = 75;
+        templateUserSpeechBubble.SetActive(false);
+        templateChatbotSpeechBubble.SetActive(false);
 
+        distanceBetweenSpeechBubbles = 100;
         float defaultSpeechBubbleHeight = 200;
 
-        RectTransform canvasRectTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
+        currentConversationHeadPosition = templateChatbotSpeechBubble.transform.position.y;
 
-        currentConversationHeadPosition = defaultSpeechBubble.transform.position.y + defaultSpeechBubbleHeight/2 + distanceBetweenSpeechBubbles;
+        Vector3 newSpeechBubblePosition = templateChatbotSpeechBubble.transform.position;
+        newSpeechBubblePosition.y = currentConversationHeadPosition;
+        AddNewSpeechBubble(newSpeechBubblePosition, false, "Hello there, how can I help you today?");
 
-       
-        AddNewSpeechBubble(new Vector3(540.0f, 960.0f, 0.0f), true, "this is a test yo");
+        UpdateConversationHeadPosition(defaultSpeechBubbleHeight);
     }
 
     private void Update()
@@ -43,19 +48,26 @@ public class ChatbotScene : BaseUIScene
 
     private void AddNewSpeechBubble(Vector3 position, bool isUserSpeaker, string message)
     {
-        RectTransform canvasRectTransform = GameObject.Find("Canvas").GetComponent<RectTransform>();
+        RectTransform canvasRectTransform = GameObject.Find("ConversationContainer").GetComponent<RectTransform>();
 
-        position.x += canvasRectTransform.rect.width/2 * canvasRectTransform.localScale.x;
-        position.y += canvasRectTransform.rect.height/2 * canvasRectTransform.localScale.y;
+        GameObject speechBubbleToClone;
+        if (isUserSpeaker)
+            speechBubbleToClone = templateUserSpeechBubble;
+        else
+            speechBubbleToClone = templateChatbotSpeechBubble;
 
-        GameObject newSpeechBubble = Instantiate(defaultSpeechBubble, position, defaultSpeechBubble.transform.rotation);
+        GameObject newSpeechBubble = Instantiate(speechBubbleToClone, position, templateUserSpeechBubble.transform.rotation);
 
-        newSpeechBubble.transform.SetParent(GameObject.Find("Canvas").transform);
+        newSpeechBubble.SetActive(true);
+
+        newSpeechBubble.transform.SetParent(GameObject.Find("ConversationContainer").transform);
 
         newSpeechBubble.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = message;
-
-        //newSpeechBubble
     }
 
+    private void UpdateConversationHeadPosition(float speechBubbleHeight)
+    {
+        currentConversationHeadPosition -= speechBubbleHeight / 2 + distanceBetweenSpeechBubbles;
+    }
 
 }

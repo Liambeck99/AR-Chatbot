@@ -1,1 +1,4 @@
-{"messageList":[]}
+{"messageList":[{"text":"Hello there, how can I help you today?","userWasSpeaker":false,"timeProcessed":"12/31/2021 16:00:54"},
+{"text":"Are there printers on campus?","userWasSpeaker":true,"timeProcessed":"12/31/2021 16:02:14"},
+{"text":"Yes there are, click here to see the locations: link","userWasSpeaker":false,"timeProcessed":"12/31/2021 16:04:21"},
+{"text":"Thank you, that's excellent","userWasSpeaker":true,"timeProcessed":"12/31/2021 16:05:05"}]}
