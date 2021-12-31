@@ -130,6 +130,12 @@ public abstract class BaseUIScene : MonoBehaviour
         SceneManager.LoadScene("Settings");
     }
 
+    public void OnPrevConversationsClick()
+    {
+        SceneManager.LoadScene("PreviousConversations");
+    }
+
+
     // Executes if the user chooses to exit the app
     public void ExitApplication()
     {

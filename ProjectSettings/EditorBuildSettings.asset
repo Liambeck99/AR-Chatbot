@@ -18,12 +18,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Info.unity
     guid: 4c093f7a31d089b4eacbb2b77107c8f8
   - enabled: 1
-    path: Assets/Scenes/Mapping.unity
-    guid: ead755cc36c274f4690aedd20526938d
-  - enabled: 1
-    path: Assets/Scenes/UI.unity
-    guid: cda602f58080c8a4ebb52e2c9a76d722
-  - enabled: 1
     path: Assets/Scenes/Settings.unity
     guid: 402735b0af91caf43b510bccca9cc786
   - enabled: 1
@@ -32,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Chatbot.unity
     guid: a249a5f4e7ce8264db9933d1640388d4
+  - enabled: 1
+    path: Assets/Scenes/PreviousConversations.unity
+    guid: 7d123f34a3360e64bb86cdbdfc1553fc
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}
