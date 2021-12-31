@@ -16,72 +16,64 @@ public class ConversationHandler {
     // Holds the messages for the current conversation 
     private Conversation currentConversation;
 
-    // Holds the messages for all the previous messages that are currently saved 
-    private Conversation prevConversations;
-
     // File path to the previous conversations file
     private string fileName = "Assets/Data/PreviousConversations.json";
 
-    // Stores whether or not the previous conversation has been loaded
-    private bool hasLoadedPrevConversations;
+    // Stores whether or not to write new messages to previous conversation log
+    private bool saveNewMessages;
 
     public ConversationHandler()
     {
         currentConversation = new Conversation();
-        hasLoadedPrevConversations = false;
+        currentConversation.messageList = new List<Message>();
     }
 
-    // TODO: FIX METHOD
-    public void WriteJson()
+    public void setSaveMessages(bool saveMessages)
     {
-        //string jsonString;
-
-        //
-        /*if (hasLoadedPrevConversations)
-        {
-            jsonString = JsonUtility.ToJson(currentConversation);
-            File.WriteAllText(fileName, jsonString);
-        }
-        else
-        {
-            if (prevConversations.conversationList.Count == 0) {
-                jsonString = File.ReadAllText(fileName);
-                prevConversations = JsonUtility.FromJson<AllConversations>(jsonString);
-            }
-
-            AllConversations allConversations = prevConversations;
-
-            for (int i = 0; i < currentConversation.conversationList.Count; i++)
-                allConversations.conversationList.Add(currentConversation.conversationList[i]);
-
-            jsonString = JsonUtility.ToJson(allConversations);
-            File.WriteAllText(fileName, jsonString);*/
-        //}
+        saveNewMessages = saveMessages;
     }
 
     // Reads previous conversation file 
-    public void ReadJson()
+    public void LoadPrevConversation()
     {
         string jsonString = File.ReadAllText(fileName);
-        prevConversations = JsonUtility.FromJson<Conversation>(jsonString);
-        hasLoadedPrevConversations = true;
+        currentConversation = JsonUtility.FromJson<Conversation>(jsonString);
     }
     
     // Adds a new message to the conversation
     public void AddNewMessage(string newText, bool wasUserSpeaker)
     {
+        // Creates new Message object with properties as the passed arguments
         Message newConversation = new Message();
         newConversation.text = newText;
         newConversation.userWasSpeaker = wasUserSpeaker;
         newConversation.timeProcessed = DateTime.Now;
 
         currentConversation.messageList.Add(newConversation);
+
+        // Writes to previous conversations by loading all previous messages, adding the new message to the list
+        // and then writing the conversation to the file
+        if (saveNewMessages)
+        {
+            Conversation prevConversation = JsonUtility.FromJson<Conversation>(File.ReadAllText(fileName));
+            if (prevConversation.messageList is null)
+                prevConversation.messageList = new List<Message>();
+            prevConversation.messageList.Add(newConversation);
+
+            //Debug.Log(prevConversation.messageList);
+            //Debug.Log(JsonUtility.ToJson(prevConversation.messageList));
+            File.WriteAllText(fileName, JsonUtility.ToJson(prevConversation));
+        }
     }
 
-    public void GetConversationAtPosition(int i)
+    public Message GetNewMessageAtIndex(int i)
     {
+        return currentConversation.messageList[i];
+    }
 
-
+    public int GetCurrentConversationSize()
+    {
+        return currentConversation.messageList.Count;
     }
 
     // Sets the previous conversation file to an empty list

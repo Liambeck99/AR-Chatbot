@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class ChatbotScene : BaseUIScene
 {
-
     private ConversationHandler currentConversation;
 
     private float currentConversationHeadPosition;
@@ -20,8 +19,8 @@ public class ChatbotScene : BaseUIScene
         //UpdateColoursIfColourBlindMode();
 
         currentConversation = new ConversationHandler();
-
-        //currentConversation.AddNewConversation("Hello there, how can I help you today?", false);
+        currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
+        currentConversation.AddNewMessage("Hello there, how can I help you today?", false);
 
         defaultSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubble")[0];
 
