@@ -413,11 +413,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-    when an unknown printer took a galley of type and scrambled it to make a type
-    specimen book. It has survived not only five centuries, but also the leap into
-    electronic typesetting, remaining essentially unchanged
+  m_Text: Occassionally, you might ask a question that requires you to view a map
+    of a route across Leeds. In these circumstances, we will need access to your
+    GPS location data.
 --- !u!222 &701542891
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -826,7 +824,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -37, y: 197}
+  m_AnchoredPosition: {x: -37, y: 123}
   m_SizeDelta: {x: -100, y: -1300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1114054947
@@ -1083,7 +1081,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -37, y: -318}
+  m_AnchoredPosition: {x: -37, y: -546}
   m_SizeDelta: {x: -100, y: -1300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1280168084
@@ -1331,11 +1329,14 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-    when an unknown printer took a galley of type and scrambled it to make a type
-    specimen book. It has survived not only five centuries, but also the leap into
-    electronic typesetting, remaining essentially unchanged
+  m_Text: "Our application uses augmented reality to virtually project our avatar
+    into physical world on your screen. For this to occur, we need information about
+    your surrounding environment, hence your camera must be activated. \nOnce on
+    the 'Ask a question' screen, point your camera so that the floor is visible and
+    slowly your phone left and right. When enough data has been processed, the avatar
+    will appear, allowing you to interact with it directly.\nIf you do not wish to
+    use augmented reality, there are two other modes (avatar and chatbot) that allow
+    you to ask questions without involving your camera"
 --- !u!222 &1826067851
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1413,11 +1414,15 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-    when an unknown printer took a galley of type and scrambled it to make a type
-    specimen book. It has survived not only five centuries, but also the leap into
-    electronic typesetting, remaining essentially unchanged
+  m_Text: 'Through the wonders of modern artifical intelligence, we have developed
+    a framework that allows you to directly ask complex questions about the university
+    and recieve a bespoke response from our avatar.
+
+    Simply click the ''Ask a
+    question'' button on the menu screen, and you will be taken to a screen allowing
+    you to communicate with our artifical intelligence avatar. This can be achieved
+    through typing text directly to the avatar or allowing speech analysis to extract
+    your question'
 --- !u!222 &1930764380
 CanvasRenderer:
   m_ObjectHideFlags: 0

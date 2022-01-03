@@ -81,16 +81,6 @@ public abstract class BaseUIScene : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-
-    }
-
-    private void Update()
-    {
-
-    }
-
     // Executes when the user clicks on the 'ask a question' button
     public void OnAskQuestionClick()
     {
