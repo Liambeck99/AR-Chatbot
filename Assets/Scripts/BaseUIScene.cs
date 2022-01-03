@@ -57,6 +57,7 @@ public abstract class BaseUIScene : MonoBehaviour
                 colors.normalColor = Color.black;
                 colors.highlightedColor = new Color(0.0f, 0.0f, 0.0f, 0.8f);
                 colors.pressedColor = new Color(0.0f, 0.0f, 0.0f, 0.9f);
+                colors.selectedColor = new Color(0.0f, 0.0f, 0.0f, 0.9f);
                 buttons[i].colors = colors;
             }
 
@@ -72,6 +73,11 @@ public abstract class BaseUIScene : MonoBehaviour
                     allText[i].color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
             }
 
+            // Sets the background to white
+            GameObject background = GameObject.Find("Background");
+
+            if(background != null)
+                background.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 
