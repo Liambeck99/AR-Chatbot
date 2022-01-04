@@ -16,6 +16,7 @@ public class ChatbotScene : BaseSessionScene
         ConfigureInputs();
         ConfigureConversation();
         ConfigureConversationRenderer();
+        ConfigureMicrophone();
     }
 
     private void ConfigureConversationRenderer()

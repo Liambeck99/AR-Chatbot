@@ -47,7 +47,23 @@ public class ARScene : BaseSessionScene
 
     public override void OnKeyboardSubmit(string message)
     {
+        // Checks that the message is valid
+        if (!CheckMessageIsValid(message))
+            return;
 
+        // Keyboard input field is made inactive
+        KeyboardInputField.SetActive(false);
+
+        // Adds the new message to the conversation
+        currentConversation.AddNewMessage(message, true);
+
+        message = SimplifyMessageString(message);
+
+        // Gets the Watson response message
+        string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Adds new message to conversation and renders it
+        currentConversation.AddNewMessage(watsonResponseMessage, false);
     }
 
 
@@ -95,7 +111,7 @@ public class ARScene : BaseSessionScene
         }
     }
 
-    // Executes if the user clicks to go to the Avatar scene
+    // Executes if the user clicks to go to the Avatar scene 
     public void GoToAvatarIfTutorialFinished()
     {
         // User can only switch scenes once the tutorial is complete
@@ -109,6 +125,14 @@ public class ARScene : BaseSessionScene
         // User can only switch scenes once the tutorial is complete
         if (currentSettings.ReturnFieldValue("completeTutorial"))
             OnChatbotClick();
+    }
+
+    // Executes if the user clicks the keyboard button
+    public void GetKeyboardInputIfTutorialFinished()
+    {
+        // User can only bring up the keyboard input if the tutorial is finished
+        if (currentSettings.ReturnFieldValue("completeTutorial"))
+            OnKeyboardClick();
     }
 }
 

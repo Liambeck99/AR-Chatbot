@@ -84,8 +84,11 @@ public abstract class BaseUIScene : MonoBehaviour
     // Executes when the user clicks on the 'ask a question' button
     public void OnAskQuestionClick()
     {
+        // Switches to AR scene if the user has not yet completed the tutorial
+        if (!currentSettings.ReturnFieldValue("completeTutorial"))
+            OnARClick();
         // Switches to AR scene if the user has ticked to automatically use AR in the settings page
-        if (currentSettings.ReturnFieldValue("autoUseAR"))
+        else if (currentSettings.ReturnFieldValue("autoUseAR"))
             OnARClick();
         // Else switches to avatar scene if the user has ticked to automatically use avatar in the settings page
         else if (currentSettings.ReturnFieldValue("autoUseAvatar"))
@@ -130,7 +133,6 @@ public abstract class BaseUIScene : MonoBehaviour
     {
         SceneManager.LoadScene("PreviousConversations");
     }
-
 
     // Executes if the user chooses to exit the app
     public void ExitApplication()

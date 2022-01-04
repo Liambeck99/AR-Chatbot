@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio; 
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
@@ -9,12 +10,15 @@ using UnityEngine.SceneManagement;
 // Set to abstract as this class should not be used individually
 public abstract class BaseSessionScene : BaseUIScene
 {
-
     // Stores the current conversation for the session
     protected ConversationHandler currentConversation;
 
     // The input field for allowing the user to enter in text to the chatbot
     protected GameObject KeyboardInputField;
+
+    protected AudioSource microphoneInputClip;
+
+    protected bool currentlyRecording;
 
     // Configures the current conversation so that all messages in the current session are loaded
     protected void ConfigureConversation()
@@ -88,9 +92,30 @@ public abstract class BaseSessionScene : BaseUIScene
         }
     }
 
+    public void ConfigureMicrophone()
+    {
+        currentlyRecording = false;
+        microphoneInputClip = GetComponent<AudioSource>();
+    }
+
     // Abstract class for when the user submits a keyboard message, each subclass
     // should handle this individually
     public abstract void OnKeyboardSubmit(string message);
+
+    public void OnMicroPhoneClick()
+    {
+        if (!currentlyRecording)
+        {
+            currentlyRecording = true;
+            microphoneInputClip.clip = Microphone.Start(null, true, 10, 48000);
+        }
+        else
+        {
+            currentlyRecording = false;
+            Microphone.End(null);
+            //microphoneInputClip.Play();
+        }
+    }
 
     // Gets a response from Watsom based on the message argument
     protected string GetWatsonResponse(string message)
@@ -105,6 +130,11 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         // Add message checking
 
+        if (message.Length < 10)
+            return false;
+        else if (message.Length > 200)
+            return false;
+        
         return true;
     }
 
