@@ -18,17 +18,30 @@ public class ConversationHandler {
     private Conversation currentConversation;
 
     // File path to the previous conversations file
-    private string fileName = "Assets/Data/PreviousConversations.json";
+    private string prevConversationFilePath = "Assets/Data/PreviousConversations.json";
+
+    // File path to the session conversation file
+    private string sessionConversationFilePath = "Assets/Data/CurrentSession.json";
 
     // Stores whether or not to write new messages to previous conversation log
     private bool saveNewMessages;
 
+    // The format used for representing the timeprocessed datetime object
+    public string dateFormatUsed = "MM/dd/yyyy HH:mm:ss";
+
     public ConversationHandler()
+    {
+        ResetCurrentConversation();
+    }
+
+    // Creates a new conversation object
+    public void ResetCurrentConversation()
     {
         currentConversation = new Conversation();
         currentConversation.messageList = new List<Message>();
     }
 
+    // Sets whether or not to save messages to the previous message file
     public void setSaveMessages(bool saveMessages)
     {
         saveNewMessages = saveMessages;
@@ -37,37 +50,49 @@ public class ConversationHandler {
     // Reads previous conversation file 
     public void LoadPrevConversation()
     {
-        string jsonString = File.ReadAllText(fileName);
+        string jsonString = File.ReadAllText(prevConversationFilePath);
         currentConversation = JsonUtility.FromJson<Conversation>(jsonString);
     }
     
+    // Reads current session conversation file
+    public void LoadSessionConversation()
+    {
+        string jsonString = File.ReadAllText(sessionConversationFilePath);
+        currentConversation = JsonUtility.FromJson<Conversation>(jsonString);
+    }
+
+    public void AddMessageToConversationWithFilePath(string filePath, Message newMessage)
+    {
+        Conversation savedConversation = JsonUtility.FromJson<Conversation>(File.ReadAllText(filePath));
+
+        if (savedConversation is null)
+            savedConversation = new Conversation();
+
+        if (savedConversation.messageList is null)
+            savedConversation.messageList = new List<Message>();
+
+        savedConversation.messageList.Add(newMessage);
+
+        File.WriteAllText(filePath, JsonUtility.ToJson(savedConversation));
+    }
+
     // Adds a new message to the conversation
     public void AddNewMessage(string newText, bool wasUserSpeaker)
     {
         // Creates new Message object with properties as the passed arguments
-        Message newConversation = new Message();
-        newConversation.text = newText;
-        newConversation.userWasSpeaker = wasUserSpeaker;
-        newConversation.timeProcessed = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+        Message newMessage = new Message();
+        newMessage.text = newText;
+        newMessage.userWasSpeaker = wasUserSpeaker;
+        newMessage.timeProcessed = DateTime.Now.ToString(dateFormatUsed);
 
-        currentConversation.messageList.Add(newConversation);
+        currentConversation.messageList.Add(newMessage);
 
         // Writes to previous conversations by loading all previous messages, adding the new message to the list
         // and then writing the conversation to the file
         if (saveNewMessages)
-        {
-            Conversation prevConversation = JsonUtility.FromJson<Conversation>(File.ReadAllText(fileName));
-
-            if (prevConversation is null)
-                prevConversation = new Conversation();
-
-            if (prevConversation.messageList is null)
-                prevConversation.messageList = new List<Message>();
-
-            prevConversation.messageList.Add(newConversation);
-
-            File.WriteAllText(fileName, JsonUtility.ToJson(prevConversation));
-        }
+            AddMessageToConversationWithFilePath(prevConversationFilePath, newMessage);
+        
+        AddMessageToConversationWithFilePath(sessionConversationFilePath, newMessage);
     }
 
     public Message GetNewMessageAtIndex(int i)
@@ -84,7 +109,12 @@ public class ConversationHandler {
     public void resetPrevConversations()
     {
         Conversation resetConversation = new Conversation();
-        File.WriteAllText(fileName, JsonUtility.ToJson(resetConversation));
+        File.WriteAllText(prevConversationFilePath, JsonUtility.ToJson(resetConversation));
     }
 
+    public void ResetSessionConversation()
+    {
+        Conversation resetConversation = new Conversation();
+        File.WriteAllText(sessionConversationFilePath, JsonUtility.ToJson(resetConversation));
+    }
 }
