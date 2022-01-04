@@ -20,6 +20,8 @@ public class ConversationRenderer : MonoBehaviour
     // conversation head position
     private float distanceBetweenSpeechBubbles;
 
+    private int currentRenderedMessages;
+
     // Configures conversation data before rendering
     public void ConfigureConversation()
     {
@@ -36,6 +38,10 @@ public class ConversationRenderer : MonoBehaviour
 
         // Default distance between speech bubbles is set to 100
         distanceBetweenSpeechBubbles = 100;
+
+        currentConversationHeadPosition = templateUserSpeechBubble.transform.position.y;
+
+        currentRenderedMessages = 0;
     }
 
     // Updates the conversation head position based on the previous speechbubble height, as 
@@ -91,11 +97,8 @@ public class ConversationRenderer : MonoBehaviour
         Message newMessage;
         Vector3 newSpeechBubblePosition;
 
-        // Current head position is set to the speech bubble template (at the top of the conversation container)
-        currentConversationHeadPosition = templateUserSpeechBubble.transform.position.y;
-
         // Loops through all messages in the current conversation handler object
-        for (int i = 0; i < numMessages; i++)
+        for (int i = currentRenderedMessages; i < numMessages; i++)
         {
             // Gets current message
             newMessage = currentConversation.GetNewMessageAtIndex(i);
@@ -112,6 +115,8 @@ public class ConversationRenderer : MonoBehaviour
 
             // New speech bubble is rendered
             AddNewSpeechBubble(newSpeechBubblePosition, newMessage.userWasSpeaker, newMessage.text);
+
+            currentRenderedMessages++;
         }
     }
 
