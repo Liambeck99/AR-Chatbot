@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class AvatarScene : BaseUIScene
+public class AvatarScene : BaseSessionScene
 {
     private void Start()
     {
-
+        ConfigureInputs();
+        ConfigureConversation();
     }
 
     private void Update()
@@ -16,4 +17,8 @@ public class AvatarScene : BaseUIScene
 
     }
 
+    public override void OnKeyboardSubmit(string message)
+    {
+
+    }
 }

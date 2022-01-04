@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class ARScene : BaseUIScene
+public class ARScene : BaseSessionScene
 {
     // Stores the current phase of the tutorial the user is at
     private int tutorialPhase;
@@ -16,6 +16,9 @@ public class ARScene : BaseUIScene
 
     private void Start()
     {
+        ConfigureInputs();
+        ConfigureConversation();
+
         // Tutorial starts at phase 0
         tutorialPhase = 0;
         // The number of phases is the number of child objects from the 'Tutorial' container, 
@@ -40,7 +43,13 @@ public class ARScene : BaseUIScene
     private void Update()
     {
         
-    } 
+    }
+
+    public override void OnKeyboardSubmit(string message)
+    {
+
+    }
+
 
     // Sets the tutorial to the next phase
     public void UpdateTutorial()

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-// The main parent class used for the scenes in the project
+// The main parent class used for most of the scenes in the project
 // Set to abstract as this class should not be used individually
 public abstract class BaseUIScene : MonoBehaviour
 {
