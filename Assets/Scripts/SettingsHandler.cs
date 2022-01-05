@@ -24,7 +24,16 @@ public class SettingsHandler
 
     public SettingsHandler()
     {
+        newSettingsFile = new SettingsJSON();
+
+        CreateFileIfNotExists();
         ReadJson();
+    }
+
+    public void CreateFileIfNotExists()
+    {
+        if (!File.Exists(fileName))
+            resetSettings();
     }
 
     // Writes the current JSON object into the specified file at file location

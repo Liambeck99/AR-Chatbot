@@ -13,6 +13,8 @@ public class ChatbotScene : BaseSessionScene
     {
         //UpdateColoursIfColourBlindMode();
 
+        CheckPermissions();
+        //ConfigureTTSandSTT();
         ConfigureInputs();
         ConfigureConversation();
         ConfigureConversationRenderer();
@@ -33,7 +35,7 @@ public class ChatbotScene : BaseSessionScene
 
     private void Update()
     {
-        
+        UpdateCheckMicrophoneRecording();
     }
 
     public override void OnKeyboardSubmit(string message)

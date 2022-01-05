@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Audio; 
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Android;
+using TextSpeech;
 
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
@@ -18,7 +20,40 @@ public abstract class BaseSessionScene : BaseUIScene
 
     protected AudioSource microphoneInputClip;
 
-    protected bool currentlyRecording;
+    protected DateTime recordingStartTime;
+
+    protected int maxRecordingTime;
+
+    protected GameObject microphoneRecordingInfoContainer;
+
+    const string languageCodeForTTS = "en-US";
+
+    protected bool recordingMessage = false;
+
+    protected void CheckPermissions()
+    {
+#if UNITY_ANDRIOD
+        if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
+            Permission.RequestUserPermission(Permission.Microphone);
+
+        if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+            Permission.RequestUserPermission(Permission.Camera);
+
+        if (!Permission.HasUserAuthorizedPermission(Permission.CoarseLocation))
+            Permission.RequestUserPermission(Permission.CoarseLocation);
+
+        if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+            Permission.RequestUserPermission(Permission.FineLocation);
+#endif
+    }
+
+    protected void ConfigureTTSandSTT()
+    {
+        TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
+        SpeechToText.instance.Setting(languageCodeForTTS);
+
+        SpeechToText.instance.onResultCallback = OnSpeechTranslation;
+    }
 
     // Configures the current conversation so that all messages in the current session are loaded
     protected void ConfigureConversation()
@@ -94,8 +129,25 @@ public abstract class BaseSessionScene : BaseUIScene
 
     public void ConfigureMicrophone()
     {
-        currentlyRecording = false;
+        recordingStartTime = DateTime.Now;
+        maxRecordingTime = 10;
         microphoneInputClip = GetComponent<AudioSource>();
+        microphoneRecordingInfoContainer = GameObject.Find("MicrophoneRecordingInfoContainer");
+        microphoneRecordingInfoContainer.SetActive(false);
+    }
+
+    public void UpdateCheckMicrophoneRecording()
+    {
+        if (Microphone.IsRecording(null))
+        {
+            int secondsDifference = (int)DateTime.Now.Subtract(recordingStartTime).TotalSeconds;
+
+            if (secondsDifference >= maxRecordingTime)
+            {
+                microphoneRecordingInfoContainer.SetActive(false);
+                Microphone.End(null);
+            }
+        }
     }
 
     // Abstract class for when the user submits a keyboard message, each subclass
@@ -104,17 +156,40 @@ public abstract class BaseSessionScene : BaseUIScene
 
     public void OnMicroPhoneClick()
     {
-        if (!currentlyRecording)
+        if (!Microphone.IsRecording(null))
         {
-            currentlyRecording = true;
             microphoneInputClip.clip = Microphone.Start(null, true, 10, 48000);
+            recordingStartTime = DateTime.Now;
+            microphoneRecordingInfoContainer.SetActive(true);
         }
         else
         {
-            currentlyRecording = false;
             Microphone.End(null);
-            //microphoneInputClip.Play();
+            microphoneRecordingInfoContainer.SetActive(false);
         }
+
+        /*if (recordingMessage)
+        {
+            recordingMessage = false; 
+            SpeechToText.instance.StopRecording();
+        }
+        else
+        {
+            recordingMessage = true;
+            SpeechToText.instance.StartRecording();
+        }*/
+    }
+
+    public void OnSpeechTranslation(string message)
+    {
+        // Adds the new message to the conversation
+        currentConversation.AddNewMessage(message, true);
+
+        // Gets the Watson response message
+        string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Adds new message to conversation and renders it
+        currentConversation.AddNewMessage(watsonResponseMessage, false);
     }
 
     // Gets a response from Watsom based on the message argument
@@ -122,7 +197,11 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         // Watson exchange goes here
 
-        return "This is an example of what a response would look like...";
+        string defaultMessage = "This is an example of what a response would look like...";
+
+        //TextToSpeech.instance.StartSpeak(defaultMessage);
+
+        return defaultMessage;
     }
 
     // Checks the format and contents of the message to ensure it is valid for parsing to Watson
@@ -146,3 +225,4 @@ public abstract class BaseSessionScene : BaseUIScene
         return message;
     }
 }
+

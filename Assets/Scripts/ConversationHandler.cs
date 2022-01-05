@@ -32,6 +32,16 @@ public class ConversationHandler {
     public ConversationHandler()
     {
         ResetCurrentConversation();
+        CheckConversationFilesExist();
+    }
+
+    public void CheckConversationFilesExist()
+    {
+        if (!File.Exists(prevConversationFilePath))
+            resetPrevConversations();
+
+        if (!File.Exists(sessionConversationFilePath))
+            ResetSessionConversation();
     }
 
     // Creates a new conversation object
