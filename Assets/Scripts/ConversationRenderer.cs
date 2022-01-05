@@ -25,9 +25,6 @@ public class ConversationRenderer : MonoBehaviour
     // Configures conversation data before rendering
     public void ConfigureConversation()
     {
-        // Creates a new Conversation object and loads in all previous stored messages
-        currentConversation = new ConversationHandler();
-
         // Template user and chatbot speech bubbles are found
         templateUserSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubbleUser")[0];
         templateChatbotSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubbleChatbot")[0];

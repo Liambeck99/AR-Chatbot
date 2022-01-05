@@ -10,6 +10,8 @@ public class AvatarScene : BaseSessionScene
     {
         ConfigureInputs();
         ConfigureConversation();
+
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
     }
 
     private void Update()
@@ -25,8 +27,6 @@ public class AvatarScene : BaseSessionScene
 
         // Keyboard input field is made inactive
         KeyboardInputField.SetActive(false);
-
-        Debug.Log("SUSUSUS" + message);
 
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);

@@ -9,6 +9,8 @@ public class SettingsScene : BaseUIScene
 
     private void Start()
     {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         SetFade();
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();
@@ -154,7 +156,8 @@ public class SettingsScene : BaseUIScene
         currentSettings.resetSettings();
 
         // Previous conversation messages are deleted
-        ConversationHandler currentConversation = new ConversationHandler();
+        ConversationHandler currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
+                                                   CreateRelativeFilePath("CurrentSession"));
         currentConversation.resetPrevConversations();
 
         // Clears data cache

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +17,14 @@ public abstract class BaseUIScene : MonoBehaviour
     protected float fadeInSpeed; 
 
     // Holds current settings
-    protected SettingsHandler currentSettings = new SettingsHandler();
+    protected SettingsHandler currentSettings;
+
+    public string CreateRelativeFilePath(string JsonFile)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, "data");
+        filePath = Path.Combine(filePath, JsonFile +".json");
+        return filePath;
+    }
 
     // Initialises fade object
     protected void SetFade()
@@ -43,6 +52,8 @@ public abstract class BaseUIScene : MonoBehaviour
     // Updates object in the scene if the colour blind setting is used
     protected void UpdateColoursIfColourBlindMode()
     {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         // Checks that the colour blind setting is currently being used
         if (currentSettings.ReturnFieldValue("useColourBlind"))
         {
@@ -84,6 +95,8 @@ public abstract class BaseUIScene : MonoBehaviour
     // Executes when the user clicks on the 'ask a question' button
     public void OnAskQuestionClick()
     {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         // Switches to AR scene if the user has not yet completed the tutorial
         if (!currentSettings.ReturnFieldValue("completeTutorial"))
             OnARClick();

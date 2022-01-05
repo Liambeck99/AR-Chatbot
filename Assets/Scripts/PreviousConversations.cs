@@ -14,8 +14,11 @@ public class PreviousConversations: BaseUIScene
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();
 
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         // Creates a new conversation handler object and loads all previous saved messages
-        prevConversation = new ConversationHandler();
+        prevConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"), 
+                                                   CreateRelativeFilePath("CurrentSession"));
         prevConversation.LoadPrevConversation();
 
         // Retrieves the conversation renderer script

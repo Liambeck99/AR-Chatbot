@@ -13,6 +13,8 @@ public class ChatbotScene : BaseSessionScene
     {
         //UpdateColoursIfColourBlindMode();
 
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         CheckPermissions();
         //ConfigureTTSandSTT();
         ConfigureInputs();

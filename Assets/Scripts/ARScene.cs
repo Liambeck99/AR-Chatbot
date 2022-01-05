@@ -19,6 +19,8 @@ public class ARScene : BaseSessionScene
         ConfigureInputs();
         ConfigureConversation();
 
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         // Tutorial starts at phase 0
         tutorialPhase = 0;
         // The number of phases is the number of child objects from the 'Tutorial' container, 

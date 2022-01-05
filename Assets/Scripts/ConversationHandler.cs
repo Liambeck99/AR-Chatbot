@@ -29,8 +29,11 @@ public class ConversationHandler {
     // The format used for representing the timeprocessed datetime object
     public string dateFormatUsed = "MM/dd/yyyy HH:mm:ss";
 
-    public ConversationHandler()
+    public ConversationHandler(string newPrevConversationFilePath, string newSessionConversationFilePath)
     {
+        prevConversationFilePath = newPrevConversationFilePath;
+        sessionConversationFilePath = newSessionConversationFilePath;
+
         ResetCurrentConversation();
         CheckConversationFilesExist();
     }

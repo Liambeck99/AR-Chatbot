@@ -58,9 +58,13 @@ public abstract class BaseSessionScene : BaseUIScene
     // Configures the current conversation so that all messages in the current session are loaded
     protected void ConfigureConversation()
     {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         // Creates a new Conversation Handler and sets whether to save messages
         // based on the 'save conversation' setting
-        currentConversation = new ConversationHandler();
+        currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
+                                                   CreateRelativeFilePath("CurrentSession"));
+
         currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
 
         // Loads in session messages

@@ -8,6 +8,8 @@ public class InfoScene : BaseUIScene
 {
     private void Start()
     {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
         SetFade();
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();

@@ -19,12 +19,14 @@ public class SettingsHandler
     // JSON format object
     private SettingsJSON newSettingsFile;
 
-    // File name to store JSON
-    private string fileName = "Assets/Data/ApplicationSettings.json";
+    // File path to store JSON
+    private string filePath;
 
-    public SettingsHandler()
+    public SettingsHandler(string settingsFilePath)
     {
         newSettingsFile = new SettingsJSON();
+
+        filePath = settingsFilePath;
 
         CreateFileIfNotExists();
         ReadJson();
@@ -32,7 +34,10 @@ public class SettingsHandler
 
     public void CreateFileIfNotExists()
     {
-        if (!File.Exists(fileName))
+        if (!Directory.Exists(Path.GetDirectoryName(filePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+        if (!File.Exists(filePath))
             resetSettings();
     }
 
@@ -40,13 +45,13 @@ public class SettingsHandler
     public void WriteJson()
     {
         string jsonString = JsonUtility.ToJson(newSettingsFile);
-        File.WriteAllText(fileName, jsonString);
+        File.WriteAllText(filePath, jsonString);
     }
 
     // Reads JSON from file location into current JSON object
     public void ReadJson()
     {
-        string jsonString = File.ReadAllText(fileName);
+        string jsonString = File.ReadAllText(filePath);
         newSettingsFile = JsonUtility.FromJson<SettingsJSON>(jsonString);
     }
        
@@ -126,6 +131,8 @@ public class SettingsHandler
         newSettingsFile.saveConversations = true;
         newSettingsFile.useColorBlind = false;
         newSettingsFile.completeTutorial = false;
+
+
         WriteJson();
     }
 
