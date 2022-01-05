@@ -49,7 +49,7 @@ public abstract class BaseSessionScene : BaseUIScene
 
     protected void ConfigureTTSandSTT()
     {
-        TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
+        //TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
         SpeechToText.instance.Setting(languageCodeForTTS);
 
         SpeechToText.instance.onResultCallback = OnSpeechTranslation;
@@ -154,13 +154,32 @@ public abstract class BaseSessionScene : BaseUIScene
         }
     }
 
-    // Abstract class for when the user submits a keyboard message, each subclass
-    // should handle this individually
-    public abstract void OnKeyboardSubmit(string message);
+    // Virtual class for when the user submits a keyboard message, a subclass
+    // can handle this individually
+    public virtual void OnKeyboardSubmit(string message)
+    {
+        // Checks that the message is valid
+        if (!CheckMessageIsValid(message))
+            return;
+
+        // Keyboard input field is made inactive
+        KeyboardInputField.SetActive(false);
+
+        // Adds the new message to the conversation
+        currentConversation.AddNewMessage(message, true);
+
+        message = SimplifyMessageString(message);
+
+        // Gets the Watson response message
+        string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Adds new message to conversation and renders it
+        currentConversation.AddNewMessage(watsonResponseMessage, false);
+    }
 
     public void OnMicroPhoneClick()
     {
-        if (!Microphone.IsRecording(null))
+        /*if (!Microphone.IsRecording(null))
         {
             microphoneInputClip.clip = Microphone.Start(null, true, 10, 48000);
             recordingStartTime = DateTime.Now;
@@ -170,21 +189,23 @@ public abstract class BaseSessionScene : BaseUIScene
         {
             Microphone.End(null);
             microphoneRecordingInfoContainer.SetActive(false);
-        }
+        }*/
 
-        /*if (recordingMessage)
+        if (recordingMessage)
         {
             recordingMessage = false; 
             SpeechToText.instance.StopRecording();
+            microphoneRecordingInfoContainer.SetActive(false);
         }
         else
         {
             recordingMessage = true;
             SpeechToText.instance.StartRecording();
-        }*/
+            microphoneRecordingInfoContainer.SetActive(true);
+        }
     }
 
-    public void OnSpeechTranslation(string message)
+    public virtual void OnSpeechTranslation(string message)
     {
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);
@@ -203,7 +224,7 @@ public abstract class BaseSessionScene : BaseUIScene
 
         string defaultMessage = "This is an example of what a response would look like...";
 
-        //TextToSpeech.instance.StartSpeak(defaultMessage);
+        TextToSpeech.instance.StartSpeak(defaultMessage);
 
         return defaultMessage;
     }

@@ -157,8 +157,9 @@ public class SettingsScene : BaseUIScene
 
         // Previous conversation messages are deleted
         ConversationHandler currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
-                                                   CreateRelativeFilePath("CurrentSession"));
-        currentConversation.resetPrevConversations();
+                                                                          CreateRelativeFilePath("CurrentSession"));
+        currentConversation.ResetPrevConversations();
+        currentConversation.ResetSessionConversation();
 
         // Clears data cache
         Caching.ClearCache();

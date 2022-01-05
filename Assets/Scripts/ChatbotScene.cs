@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TextSpeech;
 
 public class ChatbotScene : BaseSessionScene
 {
@@ -16,7 +17,7 @@ public class ChatbotScene : BaseSessionScene
         currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
 
         CheckPermissions();
-        //ConfigureTTSandSTT();
+        ConfigureTTSandSTT();
         ConfigureInputs();
         ConfigureConversation();
         ConfigureConversationRenderer();
@@ -37,7 +38,7 @@ public class ChatbotScene : BaseSessionScene
 
     private void Update()
     {
-        UpdateCheckMicrophoneRecording();
+        //UpdateCheckMicrophoneRecording();
     }
 
     public override void OnKeyboardSubmit(string message)
@@ -62,6 +63,22 @@ public class ChatbotScene : BaseSessionScene
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
+        conversationRenderer.RenderConversation();
+    }
+
+    public override void OnSpeechTranslation(string message)
+    {
+        // Adds the new message to the conversation
+        currentConversation.AddNewMessage(message, true);
+
+        conversationRenderer.RenderConversation();
+
+        // Gets the Watson response message
+        string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Adds new message to conversation and renders it
+        currentConversation.AddNewMessage(watsonResponseMessage, false);
+
         conversationRenderer.RenderConversation();
     }
 }

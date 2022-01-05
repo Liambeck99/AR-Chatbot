@@ -41,7 +41,7 @@ public class ConversationHandler {
     public void CheckConversationFilesExist()
     {
         if (!File.Exists(prevConversationFilePath))
-            resetPrevConversations();
+            ResetPrevConversations();
 
         if (!File.Exists(sessionConversationFilePath))
             ResetSessionConversation();
@@ -119,7 +119,7 @@ public class ConversationHandler {
     }
 
     // Sets the previous conversation file to an empty list
-    public void resetPrevConversations()
+    public void ResetPrevConversations()
     {
         Conversation resetConversation = new Conversation();
         File.WriteAllText(prevConversationFilePath, JsonUtility.ToJson(resetConversation));
