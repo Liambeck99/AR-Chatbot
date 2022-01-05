@@ -32,7 +32,7 @@ public abstract class BaseSessionScene : BaseUIScene
 
     protected void CheckPermissions()
     {
-#if UNITY_ANDRIOD
+#if UNITY_ANDROID
         if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
             Permission.RequestUserPermission(Permission.Microphone);
 
@@ -44,15 +44,25 @@ public abstract class BaseSessionScene : BaseUIScene
 
         if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
             Permission.RequestUserPermission(Permission.FineLocation);
-#endif
+#endif 
     }
 
     protected void ConfigureTTSandSTT()
     {
-        //TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
+        TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
         SpeechToText.instance.Setting(languageCodeForTTS);
 
         SpeechToText.instance.onResultCallback = OnSpeechTranslation;
+
+#if UNITY_ANDROID
+        SpeechToText.instance.onErrorCallback = InsufficientPermissions;
+#endif
+    }
+
+    public void InsufficientPermissions(string errorCode)
+    {
+        GameObject testField = GameObject.Find("ImportantInfo");
+        testField.GetComponent<Text>().text = errorCode;
     }
 
     // Configures the current conversation so that all messages in the current session are loaded
@@ -74,6 +84,8 @@ public abstract class BaseSessionScene : BaseUIScene
         // to expire and be reset
         float timeBeforeRestartSession = 3.0f;
 
+        string welcomeMessage = "Hello there, how can I help you today?";
+
         // Checks if the number of current messages in the session is more than 0 (indicates there is a session currently taking place)
         if (currentConversation.GetCurrentConversationSize() > 0)
         {
@@ -93,13 +105,18 @@ public abstract class BaseSessionScene : BaseUIScene
                 currentConversation.ResetSessionConversation();
                 currentConversation.ResetCurrentConversation();
 
-                currentConversation.AddNewMessage("Hello there, how can I help you today?", false);
+                currentConversation.AddNewMessage(welcomeMessage, false);
+
+                TextToSpeech.instance.StartSpeak(welcomeMessage);
             }
         }
 
         // Adds the default greetings message if no messages are currently stored in the session
         else
-            currentConversation.AddNewMessage("Hello there, how can I help you today?", false);
+        {
+            currentConversation.AddNewMessage(welcomeMessage, false);
+            TextToSpeech.instance.StartSpeak(welcomeMessage);
+        }
     }
 
     // Sets all input fields to default values when the scene is loaded

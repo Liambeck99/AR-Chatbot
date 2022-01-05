@@ -8,6 +8,9 @@ public class AvatarScene : BaseSessionScene
 {
     private void Start()
     {
+        CheckPermissions();
+        //ConfigureTTSandSTT();
+
         ConfigureInputs();
         ConfigureConversation();
 

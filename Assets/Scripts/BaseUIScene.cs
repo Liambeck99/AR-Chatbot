@@ -147,6 +147,11 @@ public abstract class BaseUIScene : MonoBehaviour
         SceneManager.LoadScene("PreviousConversations");
     }
 
+    public void OnTestClick()
+    {
+        SceneManager.LoadScene("SampleSpeechToText");
+    }
+
     // Executes if the user chooses to exit the app
     public void ExitApplication()
     {

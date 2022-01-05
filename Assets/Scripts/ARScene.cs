@@ -16,6 +16,9 @@ public class ARScene : BaseSessionScene
 
     private void Start()
     {
+        CheckPermissions();
+        //ConfigureTTSandSTT();
+
         ConfigureInputs();
         ConfigureConversation();
 
