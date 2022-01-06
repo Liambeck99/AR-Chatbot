@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Script that is attached to the AR scene
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +18,7 @@ public class ARScene : BaseSessionScene
 
     private void Start()
     {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+        LoadSettings();
 
         ConfigureScene();
 

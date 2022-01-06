@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Handles a 'conversation' between the user and chatbot. Essentially, this stores a list of 
+// Message objects that hold information about what was said, by whom and when. A series
+// of methods are included that make it easy to interface with the conversation object
+
+using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;

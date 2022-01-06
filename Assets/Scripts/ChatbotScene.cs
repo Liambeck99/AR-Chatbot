@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Script that is attached to the Chatbot scene. This includes overriding methods that
+// are similar to the parent methods but also include speech bubble rendering after each
+// message is created
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +18,7 @@ public class ChatbotScene : BaseSessionScene
     {
         //UpdateColoursIfColourBlindMode();
 
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+        LoadSettings();
 
         ConfigureScene();
         ConfigureConversationRenderer();

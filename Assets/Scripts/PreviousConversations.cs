@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Script that is attached to the previous conversations scene
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +12,11 @@ public class PreviousConversations: BaseUIScene
 
     private void Start()
     {
+        LoadSettings();
+
         SetFade();
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();
-
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
 
         // Creates a new conversation handler object and loads all previous saved messages
         prevConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"), 

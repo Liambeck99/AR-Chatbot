@@ -1,4 +1,9 @@
-﻿using System;
+﻿// The purpose of the Settings Handler is to act as the interface between the Settings JSON file and the user.
+// The JSON file is comprised of a series of fields that dictate the user's experience with the app. Only SettingsHandler
+// objects will interact with this file, as SettingsJSON object only exists inside of the SettingsHandler class. A series
+// of methods have been created that allow easy access and manipulation of the Settings fields
+
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -32,6 +37,7 @@ public class SettingsHandler
         ReadJson();
     }
 
+    // Checks if the JSON file exists, if not then it is created
     public void CreateFileIfNotExists()
     {
         if (!Directory.Exists(Path.GetDirectoryName(filePath)))
@@ -131,7 +137,6 @@ public class SettingsHandler
         newSettingsFile.saveConversations = true;
         newSettingsFile.useColorBlind = false;
         newSettingsFile.completeTutorial = false;
-
 
         WriteJson();
     }

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Script that is attached to the info scene
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +10,7 @@ public class InfoScene : BaseUIScene
 {
     private void Start()
     {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+        LoadSettings();
 
         SetFade();
         SetFadeInSpeed(0.66f);

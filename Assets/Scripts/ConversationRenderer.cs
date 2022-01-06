@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿// Class that handles how conversation messages are rendered on the screen (as speech bubbles)
+
+// Note: this class needs improvement as the speech bubbles are not properly rendered yet 
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

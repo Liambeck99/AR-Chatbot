@@ -1,4 +1,7 @@
-﻿using System;
+﻿// This class contains commonly used methods that are used by all scene scripts; this class
+// is inherited by all scene scripts in the app
+
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,11 +22,18 @@ public abstract class BaseUIScene : MonoBehaviour
     // Holds current settings
     protected SettingsHandler currentSettings;
 
+    // Generates the correct path for a stored JSON file in the data folder. This must be called
+    // after the scene has started (Application.persistentDataPath only works after script instantiation) 
     public string CreateRelativeFilePath(string JsonFile)
     {
         string filePath = Path.Combine(Application.persistentDataPath, "data");
         filePath = Path.Combine(filePath, JsonFile +".json");
         return filePath;
+    }
+
+    protected void LoadSettings()
+    {
+        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
     }
 
     // Initialises fade object
@@ -52,8 +62,6 @@ public abstract class BaseUIScene : MonoBehaviour
     // Updates object in the scene if the colour blind setting is used
     protected void UpdateColoursIfColourBlindMode()
     {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
-
         // Checks that the colour blind setting is currently being used
         if (currentSettings.ReturnFieldValue("useColourBlind"))
         {
@@ -92,64 +100,16 @@ public abstract class BaseUIScene : MonoBehaviour
         }
     }
 
-    // Executes when the user clicks on the 'ask a question' button
-    public void OnAskQuestionClick()
-    {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
-
-        // Switches to AR scene if the user has not yet completed the tutorial
-        if (!currentSettings.ReturnFieldValue("completeTutorial"))
-            OnARClick();
-        // Switches to AR scene if the user has ticked to automatically use AR in the settings page
-        else if (currentSettings.ReturnFieldValue("autoUseAR"))
-            OnARClick();
-        // Else switches to avatar scene if the user has ticked to automatically use avatar in the settings page
-        else if (currentSettings.ReturnFieldValue("autoUseAvatar"))
-            OnAvatarClick();
-        // Otherwise, switch to the chatbot scene 
-        else
-            OnChatbotClick();
-    }
-
-    // The following methods load scenes if the connected GameObject dictates that the scene should be changed
-    public void OnARClick()
-    {
-        SceneManager.LoadScene("AR");
-    }
-
-    public void OnAvatarClick()
-    {
-        SceneManager.LoadScene("Avatar");
-    }
-
-    public void OnChatbotClick()
-    {
-        SceneManager.LoadScene("Chatbot");
-    }
-
+    // Loads main menu scene
     public void OnMenuClick()
     {
         SceneManager.LoadScene("Menu");
     }
 
-    public void OnInfoClick()
-    {
-        SceneManager.LoadScene("Info");
-    }
-
+    // Loads settings scene
     public void OnSettingsClick()
     {
         SceneManager.LoadScene("Settings");
-    }
-
-    public void OnPrevConversationsClick()
-    {
-        SceneManager.LoadScene("PreviousConversations");
-    }
-
-    public void OnTestClick()
-    {
-        SceneManager.LoadScene("SampleSpeechToText");
     }
 
     // Executes if the user chooses to exit the app

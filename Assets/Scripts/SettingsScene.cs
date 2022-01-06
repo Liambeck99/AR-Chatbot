@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿// Script that is attached to the settings scene
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +11,7 @@ public class SettingsScene : BaseUIScene
 
     private void Start()
     {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+        LoadSettings();
 
         SetFade();
         SetFadeInSpeed(0.66f);
@@ -166,5 +168,11 @@ public class SettingsScene : BaseUIScene
 
         // Application is closed
         Application.Quit();
+    }
+
+    // Loads previous conversation scene
+    public void OnPrevConversationsClick()
+    {
+        SceneManager.LoadScene("PreviousConversations");
     }
 }

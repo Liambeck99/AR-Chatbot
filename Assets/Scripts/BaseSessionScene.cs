@@ -1,4 +1,8 @@
-﻿using System;
+﻿// The parent class for the AR, Avatar and Chatbot scenes. This class contains
+// methods for handling user input (microphone and keyboard) as well as how
+// to output responses
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -158,8 +162,6 @@ public abstract class BaseSessionScene : BaseUIScene
     // Configures the current conversation so that all messages in the current session are loaded
     protected void ConfigureConversation()
     {
-        currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
-
         // Creates a new Conversation Handler and sets whether to save messages
         // based on the 'save conversation' setting
         currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
@@ -467,6 +469,22 @@ public abstract class BaseSessionScene : BaseUIScene
         // Add message simplification
 
         return message;
+    }
+
+    // The following methods load scenes if depending on if the Avatar or Camera button are clicked
+    public void OnARClick()
+    {
+        SceneManager.LoadScene("AR");
+    }
+
+    public void OnAvatarClick()
+    {
+        SceneManager.LoadScene("Avatar");
+    }
+
+    public void OnChatbotClick()
+    {
+        SceneManager.LoadScene("Chatbot");
     }
 }
 
