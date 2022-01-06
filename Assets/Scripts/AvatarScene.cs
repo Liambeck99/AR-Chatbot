@@ -17,4 +17,14 @@ public class AvatarScene : BaseSessionScene
     {
         UpdateScene();
     }
+
+    protected override void RenderUserMessage(string message)
+    {
+
+    }
+
+    protected override void RenderChatbotResponseMessage(string message)
+    {
+
+    }
 }

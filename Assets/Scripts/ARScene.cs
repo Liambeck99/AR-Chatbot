@@ -121,5 +121,15 @@ public class ARScene : BaseSessionScene
         if (currentSettings.ReturnFieldValue("completeTutorial"))
             OnMicroPhoneClick();
     }
+
+    protected override void RenderUserMessage(string message)
+    {
+
+    }
+
+    protected override void RenderChatbotResponseMessage(string message)
+    {
+
+    }
 }
 

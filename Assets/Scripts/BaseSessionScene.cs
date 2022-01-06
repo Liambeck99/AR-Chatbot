@@ -499,39 +499,21 @@ public abstract class BaseSessionScene : BaseUIScene
         currentlySpeaking = false;
     }
 
-    // Virtual method for when the user submits a keyboard message, a subclass
-    // can handle this individually, otherwise this method body is used
-    public virtual void OnKeyboardSubmit(string message)
+    // Method for when the user submits a keyboard message
+    public void OnKeyboardSubmit(string message)
     {
-        // Checks that the message is valid
-        if (!CheckMessageIsValid(message))
-            return;
-
         // Sets the keyboard button colour back to the default black
         keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
 
         // Keyboard input field is made inactive
         keyboardInputField.SetActive(false);
 
-        // Adds the new message to the conversation
-        currentConversation.AddNewMessage(message, true);
-
-        // Simplifies the message string
-        message = SimplifyMessageString(message);
-
-        // Gets the Watson response message
-        string watsonResponseMessage = GetWatsonResponse(message);
-
-        // Reads out the watson message response
-        StartTTSIfActivated(watsonResponseMessage);
-
-        // Adds new message to conversation and renders it
-        currentConversation.AddNewMessage(watsonResponseMessage, false);
+        // Adds new message to conversation and gets a Watson response
+        HandleNewUserMessage(message);
     }
 
-    // Virtual method for handling the STT has finished translating a message string,
-    // subclasses can handle this differently by overridding this method
-    public virtual void OnSpeechTranslation(string message)
+    // Method for handling the STT has finished translating a message string
+    public void OnSpeechTranslation(string message)
     {
         // If the microphone recording was not stopped manually, then set the recording
         // to false and hide the microphone information container
@@ -541,28 +523,46 @@ public abstract class BaseSessionScene : BaseUIScene
             microphoneRecordingInfoContainer.SetActive(false);
         }
 
+        // Adds new message to conversation and gets a Watson response
+        HandleNewUserMessage(message);
+    }
+
+    // Handles the user message and gets a response, adding these to the current conversation
+    protected void HandleNewUserMessage(string message) 
+    {
+        // Checks that the message is valid
+        if (!CheckMessageIsValid(message))
+            return;
+
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);
+
+        // Renders the user message on the screen
+        RenderUserMessage(message);
 
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
 
-        // Reads out the watson message response
-        StartTTSIfActivated(watsonResponseMessage);
+        // Render a GPS Map if the response message requires this functionality
+        bool useMapForMessage = false;
+        if (useMapForMessage)
+            RenderMap("");
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
+
+        // Renders the user message on the screen
+        RenderChatbotResponseMessage(watsonResponseMessage);
+
+        // Reads out the watson message response
+        StartTTSIfActivated(watsonResponseMessage);
     }
 
-    // Gets a response from Watsom based on the message argument
-    protected string GetWatsonResponse(string message)
-    {
-        // Watson exchange goes here
+    // Subclasses implement how the user message should be rendered on the screen
+    protected abstract void RenderUserMessage(string message);
 
-        string defaultMessage = "This is an example of what a response would look like...";
-
-        return defaultMessage;
-    }
+    // Subclasses implement how the chatbot response message should be rendered on the screen
+    protected abstract void RenderChatbotResponseMessage(string message);
 
     // Checks the format and contents of the message to ensure it is valid for parsing to Watson
     protected bool CheckMessageIsValid(string message)
@@ -583,6 +583,23 @@ public abstract class BaseSessionScene : BaseUIScene
         // Add message simplification
 
         return message;
+    }
+
+    // Renders a map with GPS Data
+    protected void RenderMap(string GPSData)
+    {
+        // Mapping goes here
+
+    }
+
+    // Gets a response from Watsom based on the message argument
+    protected string GetWatsonResponse(string message)
+    {
+        // Watson exchange goes here
+
+        string defaultMessage = "This is an example of what a response would look like...";
+
+        return defaultMessage;
     }
 }
 
