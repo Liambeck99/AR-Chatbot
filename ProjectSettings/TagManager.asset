@@ -11,6 +11,7 @@ TagManager:
   - useColourBlind
   - SpeechBubbleUser
   - SpeechBubbleChatbot
+  - SoundBar
   layers:
   - Default
   - TransparentFX

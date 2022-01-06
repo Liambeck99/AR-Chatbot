@@ -18,13 +18,13 @@ public abstract class BaseSessionScene : BaseUIScene
     // The input field for allowing the user to enter in text to the chatbot
     protected GameObject KeyboardInputField;
 
-    protected AudioSource microphoneInputClip;
-
     protected DateTime recordingStartTime;
 
     protected int maxRecordingTime;
 
     protected GameObject microphoneRecordingInfoContainer;
+
+    protected RectTransform[] soundBars;
 
     const string languageCodeForTTS = "en-US";
 
@@ -49,6 +49,14 @@ public abstract class BaseSessionScene : BaseUIScene
 
     protected void ConfigureTTSandSTT()
     {
+        Transform soundBarHolder = GameObject.Find("BarHolder").transform;
+
+        int numberOfBars = soundBarHolder.childCount;
+        soundBars = new RectTransform[numberOfBars];
+
+        for (int i=0; i < numberOfBars; i++)
+            soundBars[i] = soundBarHolder.GetChild(i).gameObject.GetComponent<RectTransform>();
+        
         TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
         SpeechToText.instance.Setting(languageCodeForTTS);
 
@@ -56,7 +64,23 @@ public abstract class BaseSessionScene : BaseUIScene
 
 #if UNITY_ANDROID
         SpeechToText.instance.onErrorCallback = InsufficientPermissions;
+        SpeechToText.instance.onRmsChangedCallback = ChangeSoundBars;
 #endif
+
+    }
+
+    public void ChangeSoundBars(float intensity)
+    {
+        float size;
+        int numSoundBars = soundBars.Length;
+        for (int i = 0; i < numSoundBars; i++)
+        {
+            size = intensity * 10;
+            size = size * (((numSoundBars + 0.5f) / 2) - Math.Abs((numSoundBars / 2) - i));
+            if (size > 600)
+                size = 600;
+            soundBars[i].sizeDelta = new Vector2(10, size);
+        }
     }
 
     public void InsufficientPermissions(string errorCode)
@@ -74,8 +98,6 @@ public abstract class BaseSessionScene : BaseUIScene
         // based on the 'save conversation' setting
         currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
                                                    CreateRelativeFilePath("CurrentSession"));
-
-        currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
 
         // Loads in session messages
         currentConversation.LoadSessionConversation();
@@ -117,6 +139,10 @@ public abstract class BaseSessionScene : BaseUIScene
             currentConversation.AddNewMessage(welcomeMessage, false);
             TextToSpeech.instance.StartSpeak(welcomeMessage);
         }
+
+        // Sets whether to save messages (after the welcom message has potentially been said)
+        // based on the user's settings
+        currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
     }
 
     // Sets all input fields to default values when the scene is loaded
@@ -131,6 +157,10 @@ public abstract class BaseSessionScene : BaseUIScene
     // Executes if the keyboard button is clicked
     protected void OnKeyboardClick()
     {
+        // Does nothing if the user is currently recording a message
+        if (recordingMessage)
+            return;
+
         // If the keyboard is active, then deactive the input
         if (KeyboardInputField.activeInHierarchy)
             KeyboardInputField.SetActive(false);
@@ -152,23 +182,34 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         recordingStartTime = DateTime.Now;
         maxRecordingTime = 10;
-        microphoneInputClip = GetComponent<AudioSource>();
         microphoneRecordingInfoContainer = GameObject.Find("MicrophoneRecordingInfoContainer");
         microphoneRecordingInfoContainer.SetActive(false);
     }
 
     public void UpdateCheckMicrophoneRecording()
     {
-        if (Microphone.IsRecording(null))
+        if (recordingMessage)
         {
             int secondsDifference = (int)DateTime.Now.Subtract(recordingStartTime).TotalSeconds;
 
             if (secondsDifference >= maxRecordingTime)
-            {
-                microphoneRecordingInfoContainer.SetActive(false);
-                Microphone.End(null);
-            }
+                StopMicroPhoneRecording();
         }
+    }
+
+    public void StartMicroPhoneRecording()
+    {
+        recordingMessage = true;
+        SpeechToText.instance.StartRecording();
+        recordingStartTime = DateTime.Now;
+        microphoneRecordingInfoContainer.SetActive(true);
+    }
+
+    public void StopMicroPhoneRecording()
+    {
+        recordingMessage = false;
+        SpeechToText.instance.StopRecording();
+        microphoneRecordingInfoContainer.SetActive(false);
     }
 
     // Virtual class for when the user submits a keyboard message, a subclass
@@ -196,34 +237,24 @@ public abstract class BaseSessionScene : BaseUIScene
 
     public void OnMicroPhoneClick()
     {
-        /*if (!Microphone.IsRecording(null))
-        {
-            microphoneInputClip.clip = Microphone.Start(null, true, 10, 48000);
-            recordingStartTime = DateTime.Now;
-            microphoneRecordingInfoContainer.SetActive(true);
-        }
-        else
-        {
-            Microphone.End(null);
-            microphoneRecordingInfoContainer.SetActive(false);
-        }*/
+        // Does nothing if the user has currently opened the keyboard
+        if (KeyboardInputField.activeInHierarchy)
+            return;
 
-        if (recordingMessage)
-        {
-            recordingMessage = false; 
-            SpeechToText.instance.StopRecording();
-            microphoneRecordingInfoContainer.SetActive(false);
-        }
+        if (!recordingMessage)
+            StartMicroPhoneRecording();
         else
-        {
-            recordingMessage = true;
-            SpeechToText.instance.StartRecording();
-            microphoneRecordingInfoContainer.SetActive(true);
-        }
+            StopMicroPhoneRecording();
     }
 
     public virtual void OnSpeechTranslation(string message)
     {
+        if (recordingMessage)
+        {
+            recordingMessage = false;
+            microphoneRecordingInfoContainer.SetActive(false);
+        }
+
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);
 

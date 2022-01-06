@@ -38,7 +38,7 @@ public class ChatbotScene : BaseSessionScene
 
     private void Update()
     {
-        //UpdateCheckMicrophoneRecording();
+        UpdateCheckMicrophoneRecording();
     }
 
     public override void OnKeyboardSubmit(string message)
