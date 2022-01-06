@@ -187,7 +187,6 @@ public abstract class BaseSessionScene : BaseUIScene
         // Calculates with each sound byte the decibel and calls the function 'ChangeSoundBars'
         SpeechToText.instance.onRmsChangedCallback = ChangeSoundBars;
 #endif
-
     }
 
     // Configures the current conversation so that all messages in the current session are loaded
@@ -271,12 +270,22 @@ public abstract class BaseSessionScene : BaseUIScene
     // Called when an error occurs and needs to be displayed to the user
     public void ErrorHandler(string errorCode)
     {
-        // The microphone is stopped, meaning all microphone information is set back to default
-        StopMicroPhoneRecording();
+        // Keyboard is closed
+        keyboardInputField.SetActive(false);
+        keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
+
+        // Microphone is closed
+        recordingMessage = false;
+        microphoneRecordingInfoContainer.SetActive(false);
+        microphoneButton.GetComponent<Image>().sprite = normalMicrophoneSprite;
 
         // Activates the error info container and sets the time that is was visible to the current time
         errorInfoText.SetActive(true);
         errorTextShownTime = DateTime.Now;
+
+        // Sets Error Info color to black (avoids colour not being black when shown)
+        Color newColor = Color.black;
+        errorInfoText.GetComponent<Text>().color = newColor;
 
         // Text is updated to the error code argument
         errorInfoText.GetComponent<Text>().text = "Error: " + errorCode;
