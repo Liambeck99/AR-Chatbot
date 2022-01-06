@@ -16,12 +16,8 @@ public class ChatbotScene : BaseSessionScene
 
         currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
 
-        CheckPermissions();
-        ConfigureTTSandSTT();
-        ConfigureInputs();
-        ConfigureConversation();
+        ConfigureScene();
         ConfigureConversationRenderer();
-        ConfigureMicrophone();
     }
 
     private void ConfigureConversationRenderer()
@@ -38,7 +34,7 @@ public class ChatbotScene : BaseSessionScene
 
     private void Update()
     {
-        UpdateCheckMicrophoneRecording();
+        UpdateScene();
     }
 
     public override void OnKeyboardSubmit(string message)
@@ -48,7 +44,7 @@ public class ChatbotScene : BaseSessionScene
             return;
 
         // Keyboard input field is made inactive
-        KeyboardInputField.SetActive(false);
+        keyboardInputField.SetActive(false);
 
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);

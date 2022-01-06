@@ -16,19 +16,67 @@ public abstract class BaseSessionScene : BaseUIScene
     protected ConversationHandler currentConversation;
 
     // The input field for allowing the user to enter in text to the chatbot
-    protected GameObject KeyboardInputField;
-
-    protected DateTime recordingStartTime;
-
-    protected int maxRecordingTime;
+    protected GameObject keyboardInputField;
 
     protected GameObject microphoneRecordingInfoContainer;
 
-    protected RectTransform[] soundBars;
+    protected GameObject errorInfoText;
 
-    const string languageCodeForTTS = "en-US";
+    protected GameObject microphoneButton;
+
+    protected GameObject keyboardButton;
+
+    protected DateTime recordingStartTime;
+
+    protected int recordingTTL;
 
     protected bool recordingMessage = false;
+
+    protected RectTransform[] soundBars;
+
+    protected Transform soundBarHolder;
+
+    protected DateTime errorTextShownTime;
+
+    protected float errorTextTTL;
+
+    protected const string languageCodeForTTS = "en-US";
+
+    public Sprite greenMicrophoneSprite;
+    public Sprite normalMicrophoneSprite;
+
+    public Sprite greenKeyboardSprite;
+    public Sprite normalKeyboardSprite;
+
+    protected void ConfigureScene()
+    {
+        CheckPermissions();
+        ConfigureTTSandSTT();
+
+        // Sets the keyboard input has inactive, meaning the user cannot view it until they click
+        // the keyboard button
+        keyboardInputField = GameObject.Find("KeyboardInputField");
+        keyboardInputField.SetActive(false);
+
+        microphoneRecordingInfoContainer = GameObject.Find("MicrophoneRecordingInfoContainer");
+        microphoneRecordingInfoContainer.SetActive(false);
+
+        errorInfoText = GameObject.Find("ErrorText");
+        errorInfoText.SetActive(false);
+
+        microphoneButton = GameObject.Find("MicrophoneButton");
+        keyboardButton = GameObject.Find("KeyboardButton");
+
+        recordingStartTime = DateTime.Now;
+        recordingTTL = 10;
+
+        errorTextShownTime = DateTime.Now;
+        errorTextTTL = 5;
+
+        ConfigureConversation();
+
+        SpeechErrorHandler("STOP BRO");
+    }
 
     protected void CheckPermissions()
     {
@@ -49,44 +97,25 @@ public abstract class BaseSessionScene : BaseUIScene
 
     protected void ConfigureTTSandSTT()
     {
-        Transform soundBarHolder = GameObject.Find("BarHolder").transform;
+        TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
+        SpeechToText.instance.Setting(languageCodeForTTS);
+
+        SpeechToText.instance.onResultCallback = OnSpeechTranslation;
+
+        soundBarHolder = GameObject.Find("BarHolder").transform;
+
+#if UNITY_ANDROID
 
         int numberOfBars = soundBarHolder.childCount;
         soundBars = new RectTransform[numberOfBars];
 
         for (int i=0; i < numberOfBars; i++)
             soundBars[i] = soundBarHolder.GetChild(i).gameObject.GetComponent<RectTransform>();
-        
-        TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
-        SpeechToText.instance.Setting(languageCodeForTTS);
 
-        SpeechToText.instance.onResultCallback = OnSpeechTranslation;
-
-#if UNITY_ANDROID
-        SpeechToText.instance.onErrorCallback = InsufficientPermissions;
+        SpeechToText.instance.onErrorCallback = SpeechErrorHandler;
         SpeechToText.instance.onRmsChangedCallback = ChangeSoundBars;
 #endif
 
-    }
-
-    public void ChangeSoundBars(float intensity)
-    {
-        float size;
-        int numSoundBars = soundBars.Length;
-        for (int i = 0; i < numSoundBars; i++)
-        {
-            size = intensity * 10;
-            size = size * (((numSoundBars + 0.5f) / 2) - Math.Abs((numSoundBars / 2) - i));
-            if (size > 600)
-                size = 600;
-            soundBars[i].sizeDelta = new Vector2(10, size);
-        }
-    }
-
-    public void InsufficientPermissions(string errorCode)
-    {
-        GameObject testField = GameObject.Find("ImportantInfo");
-        testField.GetComponent<Text>().text = errorCode;
     }
 
     // Configures the current conversation so that all messages in the current session are loaded
@@ -145,71 +174,133 @@ public abstract class BaseSessionScene : BaseUIScene
         currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
     }
 
-    // Sets all input fields to default values when the scene is loaded
-    protected void ConfigureInputs()
+    public void ChangeSoundBars(float intensity)
     {
-        // Sets the keyboard input has inactive, meaning the user cannot view it until they click
-        // the keyboard button
-        KeyboardInputField = GameObject.Find("KeyboardInputField");
-        KeyboardInputField.SetActive(false);
+        float size;
+        int numSoundBars = soundBars.Length;
+        for (int i = 0; i < numSoundBars; i++)
+        {
+            size = intensity * 10 * (((numSoundBars + 0.5f) / 2) - Math.Abs((numSoundBars / 2) - i));
+            if (size > 600)
+                size = 600;
+            soundBars[i].sizeDelta = new Vector2(10, size);
+        }
+    }
+
+    public void SpeechErrorHandler(string errorCode)
+    {
+        StopMicroPhoneRecording();
+
+        errorInfoText.SetActive(true);
+        errorTextShownTime = DateTime.Now;
+
+        errorInfoText.GetComponent<Text>().text = errorCode;
+    }
+
+    protected void UpdateScene()
+    {
+        UpdateCheckMicrophoneRecording();
+        UpdateCheckErrorInfo();
+    }
+
+    protected void UpdateCheckMicrophoneRecording()
+    {
+        if (recordingMessage)
+        {
+            int secondsDifference = (int)DateTime.Now.Subtract(recordingStartTime).TotalSeconds;
+
+            if (secondsDifference >= recordingTTL)
+                StopMicroPhoneRecording();
+        }
+    }
+
+    protected void UpdateCheckErrorInfo()
+    {
+        if (errorInfoText.activeInHierarchy) { 
+            float secondsSinceShowing = (float)DateTime.Now.Subtract(errorTextShownTime).TotalSeconds;
+
+            Color newColor = Color.black;
+
+            if (secondsSinceShowing > errorTextTTL)
+            {
+                errorInfoText.GetComponent<Text>().color = newColor;
+                errorInfoText.SetActive(false);
+            }
+            else 
+            {
+                if (secondsSinceShowing < errorTextTTL - 2.5)
+                    return; 
+
+                newColor.a = Math.Abs(errorTextTTL - secondsSinceShowing)/errorTextTTL;
+                errorInfoText.GetComponent<Text>().color = newColor;
+            }
+        }
     }
 
     // Executes if the keyboard button is clicked
-    protected void OnKeyboardClick()
+    public void OnKeyboardClick()
     {
         // Does nothing if the user is currently recording a message
         if (recordingMessage)
             return;
 
         // If the keyboard is active, then deactive the input
-        if (KeyboardInputField.activeInHierarchy)
-            KeyboardInputField.SetActive(false);
+        if (keyboardInputField.activeInHierarchy)
+        {
+            keyboardInputField.SetActive(false);
+
+            keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
+        }
         else
         {
             // Input is set to active
-            KeyboardInputField.SetActive(true);
+            keyboardInputField.SetActive(true);
+
+            keyboardButton.GetComponent<Image>().sprite = greenKeyboardSprite;
 
             // Broken
             Text currentKeyboardInputText = GameObject.Find("KeyboardInputText").GetComponent<Text>();
 
             currentKeyboardInputText.text = "";
 
-            Debug.Log(currentKeyboardInputText.text);
+
         }
     }
 
-    public void ConfigureMicrophone()
+    public void OnMicroPhoneClick()
     {
-        recordingStartTime = DateTime.Now;
-        maxRecordingTime = 10;
-        microphoneRecordingInfoContainer = GameObject.Find("MicrophoneRecordingInfoContainer");
-        microphoneRecordingInfoContainer.SetActive(false);
+        // Does nothing if the user has currently opened the keyboard
+        if (keyboardInputField.activeInHierarchy)
+            return;
+
+        if (!recordingMessage)
+            StartMicroPhoneRecording();
+        else
+            StopMicroPhoneRecording();
     }
 
-    public void UpdateCheckMicrophoneRecording()
-    {
-        if (recordingMessage)
-        {
-            int secondsDifference = (int)DateTime.Now.Subtract(recordingStartTime).TotalSeconds;
-
-            if (secondsDifference >= maxRecordingTime)
-                StopMicroPhoneRecording();
-        }
-    }
-
-    public void StartMicroPhoneRecording()
+    protected void StartMicroPhoneRecording()
     {
         recordingMessage = true;
         SpeechToText.instance.StartRecording();
         recordingStartTime = DateTime.Now;
         microphoneRecordingInfoContainer.SetActive(true);
+
+#if UNITY_ANDROID
+
+#else
+        soundBarHolder.gameObject.SetActive(false);
+#endif
+        microphoneButton.GetComponent<Image>().sprite = greenMicrophoneSprite;
     }
 
-    public void StopMicroPhoneRecording()
+    protected void StopMicroPhoneRecording()
     {
         recordingMessage = false;
         SpeechToText.instance.StopRecording();
         microphoneRecordingInfoContainer.SetActive(false);
+
+        microphoneButton.GetComponent<Image>().sprite = normalMicrophoneSprite;
     }
 
     // Virtual class for when the user submits a keyboard message, a subclass
@@ -221,7 +312,7 @@ public abstract class BaseSessionScene : BaseUIScene
             return;
 
         // Keyboard input field is made inactive
-        KeyboardInputField.SetActive(false);
+        keyboardInputField.SetActive(false);
 
         // Adds the new message to the conversation
         currentConversation.AddNewMessage(message, true);
@@ -233,18 +324,6 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
-    }
-
-    public void OnMicroPhoneClick()
-    {
-        // Does nothing if the user has currently opened the keyboard
-        if (KeyboardInputField.activeInHierarchy)
-            return;
-
-        if (!recordingMessage)
-            StartMicroPhoneRecording();
-        else
-            StopMicroPhoneRecording();
     }
 
     public virtual void OnSpeechTranslation(string message)
