@@ -10,7 +10,6 @@ public class AvatarScene : BaseSessionScene
 {
     private void Start()
     {
-        LoadSettings();
         ConfigureScene();
     }
 

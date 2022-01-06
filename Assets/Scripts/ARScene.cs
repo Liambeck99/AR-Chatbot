@@ -18,8 +18,6 @@ public class ARScene : BaseSessionScene
 
     private void Start()
     {
-        LoadSettings();
-
         ConfigureScene();
 
         // Tutorial starts at phase 0

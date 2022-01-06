@@ -32,6 +32,8 @@ public abstract class BaseSessionScene : BaseUIScene
     protected GameObject microphoneButton;
     protected GameObject keyboardButton;
 
+    protected GameObject speechTTSButton;
+
     // The time that the microphone started recording after the microphone button is clicked
     private DateTime recordingStartTime;
 
@@ -64,9 +66,21 @@ public abstract class BaseSessionScene : BaseUIScene
     public Sprite greenKeyboardSprite;
     public Sprite normalKeyboardSprite;
 
+    // Sprites for the two TTS button states (Green = active/ Normal= idle)
+    public Sprite greenTTSButtonSprite;
+    public Sprite redTTSButtonSprite;
+
+    // Contains whether or not to use the text-to-speech functionality
+    protected bool useTTS;
+
+    // Contains whether or not text is currently being spoken
+    protected bool currentlySpeaking;
+
     // Configures all data for the scene to work
     protected void ConfigureScene()
     {
+        LoadSettings();
+
         // Checks that the user has the correct permissions for the app to work
         CheckPermissions();
 
@@ -90,6 +104,8 @@ public abstract class BaseSessionScene : BaseUIScene
         microphoneButton = GameObject.Find("MicrophoneButton");
         keyboardButton = GameObject.Find("KeyboardButton");
 
+        speechTTSButton = GameObject.Find("TTSButton");
+
         // Sets the time to live for the microphone recording
         recordingStartTime = DateTime.Now;
         recordingTTL = 10;
@@ -97,6 +113,17 @@ public abstract class BaseSessionScene : BaseUIScene
         // Sets the time to live for the error box to show
         errorTextShownTime = DateTime.Now;
         errorTextTTL = 5;
+
+        // Automatically uses TTS if ticked in the settings
+        useTTS = true;
+        if (!currentSettings.ReturnFieldValue("autoUseTTS"))
+        {
+            useTTS = false;
+            speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
+        }
+
+        // Avatar is not speaking so set to false
+        currentlySpeaking = false;
 
         // Configures the conversation by analysing session data
         ConfigureConversation();
@@ -131,6 +158,10 @@ public abstract class BaseSessionScene : BaseUIScene
         // Sets TTS and STT settings to the language code
         TextToSpeech.instance.Setting(languageCodeForTTS, 1, 1);
         SpeechToText.instance.Setting(languageCodeForTTS);
+
+        // Calls when the avatar starts/stops talking
+        TextToSpeech.instance.onStartCallBack = OnSpeechStart;
+        TextToSpeech.instance.onDoneCallback = OnSpeechStop;
 
         // When a translation has been made from a user speech input,
         // then the 'OnSpeechTranslation' method is called
@@ -197,7 +228,7 @@ public abstract class BaseSessionScene : BaseUIScene
 
                 currentConversation.AddNewMessage(welcomeMessage, false);
 
-                TextToSpeech.instance.StartSpeak(welcomeMessage);
+                StartTTSIfActivated(welcomeMessage);
             }
         }
 
@@ -205,7 +236,8 @@ public abstract class BaseSessionScene : BaseUIScene
         else
         {
             currentConversation.AddNewMessage(welcomeMessage, false);
-            TextToSpeech.instance.StartSpeak(welcomeMessage);
+
+            StartTTSIfActivated(welcomeMessage);
         }
 
         // Sets whether to save messages (after the welcom message has potentially been said)
@@ -350,6 +382,47 @@ public abstract class BaseSessionScene : BaseUIScene
             StopMicroPhoneRecording();
     }
 
+    // Executes if the speech button is clicked
+    public void OnTTSButtonClick()
+    {
+        // If TTS is enabled then disable
+        if (useTTS)
+        {
+            useTTS = false;
+
+            // Sets the TTS button colour to the idle normal state
+            speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
+
+            // If the Avatar is currently speaking (using TTS) then stop
+            if (currentlySpeaking)
+                StopTTS();
+        }
+        // Otherwise enable
+        else
+        {
+            useTTS = true;
+
+            // Sets the TTS button colour to the active green state
+            speechTTSButton.GetComponent<Image>().sprite = greenTTSButtonSprite;
+        }
+    }
+
+    // The following methods load scenes if depending on if the Avatar or Camera button are clicked
+    public void OnARClick()
+    {
+        SceneManager.LoadScene("AR");
+    }
+
+    public void OnAvatarClick()
+    {
+        SceneManager.LoadScene("Avatar");
+    }
+
+    public void OnChatbotClick()
+    {
+        SceneManager.LoadScene("Chatbot");
+    }
+
     // Starts a microphone recording session
     protected void StartMicroPhoneRecording()
     {
@@ -391,6 +464,32 @@ public abstract class BaseSessionScene : BaseUIScene
         microphoneButton.GetComponent<Image>().sprite = normalMicrophoneSprite;
     }
 
+    // Reads out the message if TTS is currently enabled
+    protected void StartTTSIfActivated(string message)
+    {
+        if (useTTS)
+            TextToSpeech.instance.StartSpeak(message);
+    }
+
+    // Stops the current message being read out
+    protected void StopTTS()
+    {
+        TextToSpeech.instance.StopSpeak();
+        currentlySpeaking = false;
+    }
+
+    // Called when text starts being read out
+    public void OnSpeechStart()
+    {
+        currentlySpeaking = true;
+    }
+
+    // Called when text stops being read out
+    public void OnSpeechStop()
+    {
+        currentlySpeaking = false;
+    }
+
     // Virtual method for when the user submits a keyboard message, a subclass
     // can handle this individually, otherwise this method body is used
     public virtual void OnKeyboardSubmit(string message)
@@ -398,6 +497,9 @@ public abstract class BaseSessionScene : BaseUIScene
         // Checks that the message is valid
         if (!CheckMessageIsValid(message))
             return;
+
+        // Sets the keyboard button colour back to the default black
+        keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
 
         // Keyboard input field is made inactive
         keyboardInputField.SetActive(false);
@@ -410,6 +512,9 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Reads out the watson message response
+        StartTTSIfActivated(watsonResponseMessage);
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
@@ -433,6 +538,9 @@ public abstract class BaseSessionScene : BaseUIScene
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
 
+        // Reads out the watson message response
+        StartTTSIfActivated(watsonResponseMessage);
+
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
     }
@@ -444,9 +552,6 @@ public abstract class BaseSessionScene : BaseUIScene
 
         string defaultMessage = "This is an example of what a response would look like...";
 
-        // Reads out the watson message response
-        TextToSpeech.instance.StartSpeak(defaultMessage);
-
         return defaultMessage;
     }
 
@@ -455,10 +560,10 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         // Add message checking
 
-        if (message.Length < 10)
+        /*if (message.Length < 10)
             return false;
         else if (message.Length > 200)
-            return false;
+            return false;*/
         
         return true;
     }
@@ -469,22 +574,6 @@ public abstract class BaseSessionScene : BaseUIScene
         // Add message simplification
 
         return message;
-    }
-
-    // The following methods load scenes if depending on if the Avatar or Camera button are clicked
-    public void OnARClick()
-    {
-        SceneManager.LoadScene("AR");
-    }
-
-    public void OnAvatarClick()
-    {
-        SceneManager.LoadScene("Avatar");
-    }
-
-    public void OnChatbotClick()
-    {
-        SceneManager.LoadScene("Chatbot");
     }
 }
 

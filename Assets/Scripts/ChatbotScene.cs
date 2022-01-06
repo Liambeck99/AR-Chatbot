@@ -18,9 +18,8 @@ public class ChatbotScene : BaseSessionScene
     {
         //UpdateColoursIfColourBlindMode();
 
-        LoadSettings();
-
         ConfigureScene();
+
         ConfigureConversationRenderer();
     }
 
@@ -47,6 +46,9 @@ public class ChatbotScene : BaseSessionScene
         if (!CheckMessageIsValid(message))
             return;
 
+        // Sets the keyboard button colour back to the default black
+        keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
+
         // Keyboard input field is made inactive
         keyboardInputField.SetActive(false);
 
@@ -60,6 +62,9 @@ public class ChatbotScene : BaseSessionScene
 
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Reads out the watson message response
+        StartTTSIfActivated(watsonResponseMessage);
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
@@ -75,6 +80,9 @@ public class ChatbotScene : BaseSessionScene
 
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
+
+        // Reads out the watson message response
+        StartTTSIfActivated(watsonResponseMessage);
 
         // Adds new message to conversation and renders it
         currentConversation.AddNewMessage(watsonResponseMessage, false);
