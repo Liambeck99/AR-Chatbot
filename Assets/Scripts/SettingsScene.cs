@@ -157,11 +157,17 @@ public class SettingsScene : BaseUIScene
         // Settings are reset
         currentSettings.resetSettings();
 
+        // Creates a new session handler and passes the field paths to load in the JSON objects
+        SessionHandler currentSessionHandler = new SessionHandler(CreateRelativeFilePath("CurrentSessionData"),
+                                                   CreateRelativeFilePath("PreviousConversations"),
+                                                   CreateRelativeFilePath("CurrentSessionConversation"), false);
+
         // Previous conversation messages are deleted
-        ConversationHandler currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
-                                                                          CreateRelativeFilePath("CurrentSession"));
-        currentConversation.ResetPrevConversations();
-        currentConversation.ResetSessionConversation();
+        currentSessionHandler.currentConversation.ResetPrevConversations();
+        currentSessionHandler.currentConversation.ResetSessionConversation();
+
+        // Session Data is reset
+        currentSessionHandler.ResetSession();
 
         // Clears data cache
         Caching.ClearCache();

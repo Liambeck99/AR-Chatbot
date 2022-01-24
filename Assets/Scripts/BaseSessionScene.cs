@@ -3,6 +3,7 @@
 // to output responses
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,8 +17,8 @@ using TextSpeech;
 // Set to abstract as this class should not be used individually
 public abstract class BaseSessionScene : BaseUIScene
 {
-    // Stores the current conversation for the session
-    protected ConversationHandler currentConversation;
+    // Stores the current data for the session
+    protected SessionHandler currentSessionHandler;
 
     // The input field for allowing the user to enter in text to the chatbot
     protected GameObject keyboardInputField;
@@ -57,6 +58,10 @@ public abstract class BaseSessionScene : BaseUIScene
 
     // The language code used for the Text to Speech translation"
     protected const string languageCodeForTTS = "en-US";
+
+    // The number of minutes that must have passed since the last message was said for the session
+    // to expire and be reset
+    protected float timeBeforeRestartSession = 3.0f;
 
     // Sprites for the two microphone states (Green = active/ Normal= idle)
     public Sprite greenMicrophoneSprite;
@@ -114,19 +119,11 @@ public abstract class BaseSessionScene : BaseUIScene
         errorTextShownTime = DateTime.Now;
         errorTextTTL = 5;
 
-        // Automatically uses TTS if ticked in the settings
-        useTTS = true;
-        if (!currentSettings.ReturnFieldValue("autoUseTTS"))
-        {
-            useTTS = false;
-            speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
-        }
-
         // Avatar is not speaking so set to false
         currentlySpeaking = false;
 
-        // Configures the conversation by analysing session data
-        ConfigureConversation();
+        // Loads in previous session data for correct scene rendering
+        ConfigureSessionData();
     }
 
     // Checks if the user has correct permissions, this is only needed if the user is using andriod
@@ -189,43 +186,30 @@ public abstract class BaseSessionScene : BaseUIScene
 #endif
     }
 
-    // Configures the current conversation so that all messages in the current session are loaded
-    protected void ConfigureConversation()
+
+    // Loads in current session data and session conversation if valid and exists
+    protected void ConfigureSessionData()
     {
-        // Creates a new Conversation Handler and sets whether to save messages
-        // based on the 'save conversation' setting
-        currentConversation = new ConversationHandler(CreateRelativeFilePath("PreviousConversations"),
-                                                   CreateRelativeFilePath("CurrentSession"));
 
-        // Loads in session messages
-        currentConversation.LoadSessionConversation();
+        // Creates a new session handler and passes the field paths to load in the JSON objects
+        currentSessionHandler = new SessionHandler(CreateRelativeFilePath("CurrentSessionData"),
+                                                   CreateRelativeFilePath("PreviousConversations"),
+                                                   CreateRelativeFilePath("CurrentSessionConversation"),
+                                                   currentSettings.ReturnFieldValue("AutoUseTTS"));
 
-        // The number of minutes that must have passed since the last message was said for the session
-        // to expire and be reset
-        float timeBeforeRestartSession = 3.0f;
-
+        // Default message to display on new session
         string welcomeMessage = "Hello there, how can I help you today?";
 
         // Checks if the number of current messages in the session is more than 0 (indicates there is a session currently taking place)
-        if (currentConversation.GetCurrentConversationSize() > 0)
+        if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 0)
         {
-            // Gets the last saved message in the session
-            Message lastMessageSaved = currentConversation.GetNewMessageAtIndex(currentConversation.GetCurrentConversationSize() - 1);
-
-            // Gets the datetime for when that message was sent
-            DateTime lastTimeSent = DateTime.ParseExact(lastMessageSaved.timeProcessed, currentConversation.dateFormatUsed,
-                                                        System.Globalization.CultureInfo.InvariantCulture);
-
-            // The number of minutes difference between the current time and the last message that was sent
-            float minutesDifference = (float)DateTime.Now.Subtract(lastTimeSent).TotalMinutes;
-
             // If more time has passed since the last message was sent than the ttl, then the session is restarted
-            if (minutesDifference > timeBeforeRestartSession)
+            if (hasSessionExpired())
             {
-                currentConversation.ResetSessionConversation();
-                currentConversation.ResetCurrentConversation();
+                currentSessionHandler.currentConversation.ResetSessionConversation();
+                currentSessionHandler.currentConversation.ResetCurrentConversation();
 
-                currentConversation.AddNewMessage(welcomeMessage, false);
+                currentSessionHandler.currentConversation.AddNewMessage(welcomeMessage, false);
 
                 StartTTSIfActivated(welcomeMessage);
             }
@@ -234,15 +218,46 @@ public abstract class BaseSessionScene : BaseUIScene
         // Adds the default greetings message if no messages are currently stored in the session
         else
         {
-            currentConversation.AddNewMessage(welcomeMessage, false);
+            currentSessionHandler.currentConversation.AddNewMessage(welcomeMessage, false);
 
             StartTTSIfActivated(welcomeMessage);
         }
 
         // Sets whether to save messages (after the welcom message has potentially been said)
         // based on the user's settings
-        currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
+        currentSessionHandler.currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
+
+        // Automatically uses TTS if ticked in the settings
+        useTTS = true;
+        if (!currentSessionHandler.ReturnFieldValue("isTTSButtonActive"))
+        {
+            useTTS = false;
+            speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
+        }
+
     }
+
+    protected bool hasSessionExpired()
+    {
+        // Gets the last message that was sent in the conversation
+        Message lastMessageSaved = currentSessionHandler.currentConversation.GetNewMessageAtIndex(
+                                   currentSessionHandler.currentConversation.GetCurrentConversationSize() - 1);
+
+        // Gets the datetime for when that message was sent
+        DateTime lastTimeSent = DateTime.ParseExact(lastMessageSaved.timeProcessed, currentSessionHandler.currentConversation.dateFormatUsed,
+                                                    System.Globalization.CultureInfo.InvariantCulture);
+
+        // The number of minutes difference between the current time and the last message that was sent
+        float minutesDifference = (float)DateTime.Now.Subtract(lastTimeSent).TotalMinutes;
+
+        // If more time has passed since the last message was sent than the ttl, then the session is restarted
+        if (minutesDifference > timeBeforeRestartSession)
+            return true;
+
+        // Otherwise the session is still valid
+        return false;
+    }
+
 
     // Changes the length of the sound bars if the user is speaking
     public void ChangeSoundBars(float intensity)
@@ -399,6 +414,9 @@ public abstract class BaseSessionScene : BaseUIScene
         {
             useTTS = false;
 
+            // Session data is updated
+            currentSessionHandler.UpdateField("isTTSButtonActive", false);
+
             // Sets the TTS button colour to the idle normal state
             speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
 
@@ -410,6 +428,9 @@ public abstract class BaseSessionScene : BaseUIScene
         else
         {
             useTTS = true;
+
+            // Session data is updated
+            currentSessionHandler.UpdateField("isTTSButtonActive", true);
 
             // Sets the TTS button colour to the active green state
             speechTTSButton.GetComponent<Image>().sprite = greenTTSButtonSprite;
@@ -535,7 +556,7 @@ public abstract class BaseSessionScene : BaseUIScene
             return;
 
         // Adds the new message to the conversation
-        currentConversation.AddNewMessage(message, true);
+        currentSessionHandler.currentConversation.AddNewMessage(message, true);
 
         // Renders the user message on the screen
         RenderUserMessage(message);
@@ -549,7 +570,7 @@ public abstract class BaseSessionScene : BaseUIScene
             RenderMap("");
 
         // Adds new message to conversation and renders it
-        currentConversation.AddNewMessage(watsonResponseMessage, false);
+        currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
 
         // Renders the user message on the screen
         RenderChatbotResponseMessage(watsonResponseMessage);

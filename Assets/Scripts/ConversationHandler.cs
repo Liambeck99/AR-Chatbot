@@ -22,10 +22,10 @@ public class ConversationHandler {
     private Conversation currentConversation;
 
     // File path to the previous conversations file
-    private string prevConversationFilePath = "Assets/Data/PreviousConversations.json";
+    private string prevConversationFilePath;
 
     // File path to the session conversation file
-    private string sessionConversationFilePath = "Assets/Data/CurrentSession.json";
+    private string sessionConversationFilePath;
 
     // Stores whether or not to write new messages to previous conversation log
     private bool saveNewMessages;

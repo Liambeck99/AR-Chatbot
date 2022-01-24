@@ -31,7 +31,7 @@ public class ChatbotScene : BaseSessionScene
 
         // Configures and renders all messages in the conversation
         conversationRenderer.ConfigureConversation();
-        conversationRenderer.SetConversation(currentConversation);
+        conversationRenderer.SetConversation(currentSessionHandler.currentConversation);
         conversationRenderer.RenderConversation();
     }
 
