@@ -6,12 +6,14 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Audio; 
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Android;
 using TextSpeech;
+
 
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
@@ -549,12 +551,15 @@ public abstract class BaseSessionScene : BaseUIScene
     }
 
     // Handles the user message and gets a response, adding these to the current conversation
-    protected void HandleNewUserMessage(string message) 
+    protected void HandleNewUserMessage(string message)
     {
         // Checks that the message is valid
-        if (!CheckMessageIsValid(message))
+        string messageError = CheckMessageIsValid(message);
+        if (messageError.Length != 0) {
+            ErrorHandler(messageError);
             return;
-
+        }
+       
         // Adds the new message to the conversation
         currentSessionHandler.currentConversation.AddNewMessage(message, true);
 
@@ -586,16 +591,25 @@ public abstract class BaseSessionScene : BaseUIScene
     protected abstract void RenderChatbotResponseMessage(string message);
 
     // Checks the format and contents of the message to ensure it is valid for parsing to Watson
-    protected bool CheckMessageIsValid(string message)
+    // Returns an empty string if the message is valid, otherwise returns an error string to display
+    protected string CheckMessageIsValid(string message)
     {
-        // Add message checking
+        // Checks that the message input length is between 5-200 characters
+        if (message.Length < 5 || message.Length > 200)
+            return "Message must be between 5-200 characters";
 
-        /*if (message.Length < 10)
-            return false;
-        else if (message.Length > 200)
-            return false;*/
-        
-        return true;
+        // Since the following check ensures that no special characters are allowed in the
+        // message, a whitelist of valid special characters are instantiated which are allowed
+        // in the message
+        List<char> validSpecialCharacters = new List<char> { '.', '!', '?', ',', ' ', '\n'};
+
+        // Checks if any special characters, that are not in the valid list, are in the message, if 
+        // so then return an error
+        if (message.Any(ch => !Char.IsLetterOrDigit(ch) && !validSpecialCharacters.Contains(ch)))
+            return "Message must not contain special characters";
+
+        // Returns an empty string to symbolise the message is valid
+        return "";
     }
 
     // Simplifies the message so that it is more clear for when Watson parses it
