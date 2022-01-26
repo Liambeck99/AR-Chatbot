@@ -385,11 +385,6 @@ public abstract class BaseSessionScene : BaseUIScene
 
             // Sets the keyboard button colour to the active green state
             keyboardButton.GetComponent<Image>().sprite = greenKeyboardSprite;
-
-            // Broken
-            Text currentKeyboardInputText = GameObject.Find("KeyboardInputText").GetComponent<Text>();
-
-            currentKeyboardInputText.text = "";
         }
     }
 
@@ -533,6 +528,9 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Adds new message to conversation and gets a Watson response
         HandleNewUserMessage(message);
+
+        // Resets the input value back to an empty string (no input)
+        keyboardInputField.GetComponent<InputField>().text = "";
     }
 
     // Method for handling the STT has finished translating a message string
