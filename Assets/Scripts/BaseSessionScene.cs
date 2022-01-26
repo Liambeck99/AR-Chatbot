@@ -313,6 +313,7 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         UpdateCheckMicrophoneRecording();
         UpdateCheckErrorInfo();
+        UpdateButtonAnimations();
     }
 
     // Checks if the microphone recording has exceeded the TTL
@@ -363,6 +364,25 @@ public abstract class BaseSessionScene : BaseUIScene
         }
     }
 
+    // Updates the keyboard and microphone button animations if either is currently active
+    protected void UpdateButtonAnimations()
+    {
+        // Gets the current milleseconds over 0-2 seconds, this acts as the angle to the sin
+        // animation function
+        float milleseconds = (DateTime.Now.Second % 2) * 1000 + DateTime.Now.Millisecond;
+
+        // Gets the new scale of the button size
+        float scale = (float)Math.Sin(Math.PI * ((float)milleseconds / 4000) * 2.0f) / 6;
+
+        // If the microphone button has been clicked, then set new size
+        if (recordingMessage)
+            microphoneButton.transform.localScale = new Vector3(scale + 1.0f, scale + 1.0f, 1);
+
+        // If the keyboard button has been clicked, then set new size
+        else if (keyboardInputField.activeInHierarchy)
+            keyboardButton.transform.localScale = new Vector3(scale + 1.0f, scale + 1.0f, 1);
+    }
+
     // Executes if the keyboard button is clicked
     public void OnKeyboardClick()
     {
@@ -377,6 +397,9 @@ public abstract class BaseSessionScene : BaseUIScene
 
             // Sets the keyboard button colour back to the default black
             keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
+
+            // Resets button size to 1 (end of animation)
+            keyboardButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         }
         else
         {
@@ -489,6 +512,9 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Sets the microphone button colour back to the default black
         microphoneButton.GetComponent<Image>().sprite = normalMicrophoneSprite;
+
+        // Resets button size to 1 (end of animation)
+        microphoneButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
     }
 
     // Reads out the message if TTS is currently enabled

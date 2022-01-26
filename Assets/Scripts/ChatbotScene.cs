@@ -16,7 +16,6 @@ public class ChatbotScene : BaseSessionScene
 
     private void Start()
     {
-        //UpdateColoursIfColourBlindMode();
 
         ConfigureScene();
 
