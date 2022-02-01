@@ -552,6 +552,9 @@ public abstract class BaseSessionScene : BaseUIScene
         // Keyboard input field is made inactive
         keyboardInputField.SetActive(false);
 
+        // Set button size back to default
+        keyboardButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
         // Adds new message to conversation and gets a Watson response
         HandleNewUserMessage(message);
 
@@ -625,7 +628,7 @@ public abstract class BaseSessionScene : BaseUIScene
         // Since the following check ensures that no special characters are allowed in the
         // message, a whitelist of valid special characters are instantiated which are allowed
         // in the message
-        List<char> validSpecialCharacters = new List<char> { '.', '!', '?', ',', ' ', '\n'};
+        List<char> validSpecialCharacters = new List<char> {'.', '!', '?', ',', ' ', '\'', '\"', '\n'};
 
         // Checks if any special characters, that are not in the valid list, are in the message, if 
         // so then return an error
