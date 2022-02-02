@@ -83,13 +83,6 @@ public class ConversationRenderer : MonoBehaviour
         minutesForNewTimeStamp = 10;
     }
 
-    // Updates the conversation head position based on the previous speechbubble height, as 
-    // well as the distance that should occur between two speech bubbles
-    private void UpdateConversationHeadPosition(float speechBubbleHeight)
-    {
-        currentConversationHeadPosition -= speechBubbleHeight / 2 + distanceBetweenSpeechBubbles;
-    }
-
     // Updates the stored conversation
     public void SetConversation(ConversationHandler newConversation)
     {
@@ -130,11 +123,53 @@ public class ConversationRenderer : MonoBehaviour
         newSpeechBubble.transform.SetParent(GameObject.Find("ConversationContainer").transform);
 
         // Text is updated to the current message
-        newSpeechBubble.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = message;
+        Text newSpeechBubbleText = newSpeechBubble.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>();
+        newSpeechBubbleText.text = message;
+
+        // Gets the height of the textbox if there was not boundary on the text box. Currently the text is truncated
+        // and thus the height of the textbox with no truncation is found
+        float textHeight = LayoutUtility.GetPreferredHeight(newSpeechBubbleText.rectTransform);
+
+        // Gets the height of the speech bubble
+        float parentHeight = newSpeechBubble.GetComponent<RectTransform>().rect.height;
+        
+        // The height to use for the speech bubble is set to its default size (200)
+        float bubbleHeight = parentHeight;
+
+        // There are certain conditions where the text box height is technically not larger than
+        // the speech bubble height, but still looks like it is overflowing (or close to the edge).
+        // Hence, a discount factor is used which states that if the text box is close to overflowing,
+        // then the height of the speech bubble should be changed to accomodate this
+        float discount = 60.0f;
+
+        // The text box is overflowing outside of the bubble container (as the height of the text box and 
+        // disctoun factor is greater than the current speech bubble)
+        if (textHeight + discount > parentHeight)
+        {
+            RectTransform speechBubbleRect = newSpeechBubble.GetComponent<RectTransform>();
+            RectTransform textRect = newSpeechBubble.transform.GetChild(0).GetComponent<RectTransform>();
+
+            // The new speech bubble height is set to 2 significant figures of the text box size
+            bubbleHeight = (float)Math.Ceiling((double)textHeight / 10.0f) * 10.0f + discount;
+
+            // Speech bubble height is changed
+            speechBubbleRect.sizeDelta = new Vector2(speechBubbleRect.sizeDelta.x, bubbleHeight);
+
+            // Text box size is also updated (so that is is not truncated) and moved slightly down from the top 
+            // of the speech bubble
+            textRect.sizeDelta = new Vector2(textRect.sizeDelta.x, bubbleHeight);
+            textRect.localPosition = new Vector3(textRect.localPosition.x, textRect.localPosition.y - discount/2.0f, 0.0f);
+
+            // Since the height is changed from the centre of the speech bubble (rather than growing downwards),
+            // the position and next position of the speech bubble need to be altered so that the speech bubbles 
+            // are in the correct position
+            currentConversationHeadPosition -= (bubbleHeight - parentHeight)/2.0f;
+            speechBubbleRect.localPosition = new Vector3(speechBubbleRect.localPosition.x, speechBubbleRect.localPosition.y - (bubbleHeight - parentHeight) / 2, 0.0f);
+        }
 
         // Conversation head position is updated so that the next speech bubble is correctly rendered 
         // underneath the new speech bubble
-        UpdateConversationHeadPosition(200.0f);
+        currentConversationHeadPosition -= bubbleHeight / 2 + distanceBetweenSpeechBubbles;
     }
 
     // Renders a new timestamp on the screen with position and time
@@ -154,8 +189,7 @@ public class ConversationRenderer : MonoBehaviour
 
         // Conversation head position is updated so that the next speech bubble is correctly rendered 
         // underneath the timestamp
-        UpdateConversationHeadPosition(100.0f);
-
+        currentConversationHeadPosition -= 100.0f / 2 + distanceBetweenSpeechBubbles;
     }
 
     // Renders all messages in the conversation
