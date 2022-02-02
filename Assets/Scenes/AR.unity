@@ -168,7 +168,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 352896462}
+  - {fileID: 700323977}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -485,7 +485,7 @@ RectTransform:
   m_Children:
   - {fileID: 1084664776}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -966,7 +966,7 @@ RectTransform:
   - {fileID: 1920560656}
   - {fileID: 428159960}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 2
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1097,7 +1097,7 @@ RectTransform:
   m_Children:
   - {fileID: 708223861}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1195,34 +1195,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 341569613}
   m_CullTransparentMesh: 0
---- !u!21 &352896462
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 'target-image-placeholderMaterial
-
-    58890'
-  m_Shader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 5
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: e9b9b530a23348d4a166aa83ef543fd7, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors:
-    - _Color: {r: 0.82089555, g: 0.82089555, b: 0.82089555, a: 1}
 --- !u!1 &422769748
 GameObject:
   m_ObjectHideFlags: 0
@@ -1378,7 +1350,7 @@ RectTransform:
   - {fileID: 785155895}
   - {fileID: 779302448}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1675,6 +1647,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694100533}
   m_CullTransparentMesh: 0
+--- !u!21 &700323977
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 'target-image-placeholderMaterial
+
+    55044'
+  m_Shader: {fileID: 10752, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: e9b9b530a23348d4a166aa83ef543fd7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors:
+    - _Color: {r: 0.82089555, g: 0.82089555, b: 0.82089555, a: 1}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -2275,7 +2275,7 @@ RectTransform:
   - {fileID: 993959561}
   - {fileID: 1499435612}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -2504,15 +2504,15 @@ RectTransform:
   m_Children:
   - {fileID: 2069333572}
   - {fileID: 903406732}
-  - {fileID: 333360208}
-  - {fileID: 1997433386}
   - {fileID: 1974359506}
+  - {fileID: 1997433386}
   - {fileID: 143776261}
   - {fileID: 341569614}
   - {fileID: 1864058222}
   - {fileID: 908427090}
   - {fileID: 468874498}
   - {fileID: 1509382114}
+  - {fileID: 333360208}
   m_Father: {fileID: 2103257342}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3453,7 +3453,7 @@ RectTransform:
   m_Children:
   - {fileID: 2075821522}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3585,6 +3585,14 @@ MonoBehaviour:
   greenTTSButtonSprite: {fileID: 21300000, guid: 80cdf7f0f05d7e647a51b795c9e4d3e5,
     type: 3}
   redTTSButtonSprite: {fileID: 21300000, guid: 7d26012187cf3864897b59405ed84043, type: 3}
+  blackActiveTTSButtonSprite: {fileID: 21300000, guid: 711f5cc1f2406954295149d330881b26,
+    type: 3}
+  blackDeactiveTTSButtonSprite: {fileID: 21300000, guid: 4f7f1e7607ce4a7448a35ce25ff72c8b,
+    type: 3}
+  blackSwitchToAvatarSprite: {fileID: 21300000, guid: bcf7cc7dbc0991b4fa9ea06d0032f93e,
+    type: 3}
+  blackSwitchToChatbotSprite: {fileID: 21300000, guid: 590436c63891d9746b94765fad5d37e4,
+    type: 3}
 --- !u!4 &1698447322
 Transform:
   m_ObjectHideFlags: 0
@@ -3828,7 +3836,7 @@ RectTransform:
   m_Children:
   - {fileID: 422769749}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -4141,7 +4149,7 @@ GameObject:
   - component: {fileID: 1974359508}
   - component: {fileID: 1974359507}
   m_Layer: 5
-  m_Name: SwitchAvatar
+  m_Name: SwitchToAvatar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4160,7 +4168,7 @@ RectTransform:
   m_Children:
   - {fileID: 115708598}
   m_Father: {fileID: 1024968707}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}

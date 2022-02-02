@@ -14,6 +14,9 @@ public class ChatbotScene : BaseSessionScene
 {
     ConversationRenderer conversationRenderer;
 
+    public Sprite blackSwitchToARSprite;
+    public Sprite blackSwitchToAvatarSprite;
+
     private void Start()
     {
         ConfigureScene();
@@ -30,6 +33,10 @@ public class ChatbotScene : BaseSessionScene
         // Configures and renders all messages in the conversation
         conversationRenderer.ConfigureConversation(false);
         conversationRenderer.SetConversation(currentSessionHandler.currentConversation);
+
+        if (currentSettings.ReturnFieldValue("useColourBlind"))
+            conversationRenderer.useColourBlindMode();
+
         conversationRenderer.RenderConversation();
     }
 
@@ -46,5 +53,14 @@ public class ChatbotScene : BaseSessionScene
     protected override void RenderChatbotResponseMessage(string message)
     {
         conversationRenderer.RenderConversation();
+    }
+
+    protected override void SetColourBlindSprites()
+    {
+        Image switchAR = GameObject.Find("SwitchAR").GetComponent<Image>();
+        Image switchAvatar = GameObject.Find("SwitchAvatar").GetComponent<Image>();
+
+        switchAR.sprite = blackSwitchToARSprite;
+        switchAvatar.sprite = blackSwitchToAvatarSprite;
     }
 }

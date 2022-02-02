@@ -16,6 +16,9 @@ public class ARScene : BaseSessionScene
     // Holds references to all GameObjects used in the tutorial
     private GameObject[] tutorialElements;
 
+    public Sprite blackSwitchToAvatarSprite;
+    public Sprite blackSwitchToChatbotSprite;
+
     private void Start()
     {
         ConfigureScene();
@@ -130,6 +133,15 @@ public class ARScene : BaseSessionScene
     protected override void RenderChatbotResponseMessage(string message)
     {
 
+    }
+
+    protected override void SetColourBlindSprites()
+    {
+        Image switchChatbot = GameObject.Find("SwitchChatbot").GetComponent<Image>();
+        Image switchAvatar = GameObject.Find("SwitchToAvatar").GetComponent<Image>();
+
+        switchAvatar.sprite = blackSwitchToAvatarSprite;
+        switchChatbot.sprite = blackSwitchToChatbotSprite;
     }
 }
 

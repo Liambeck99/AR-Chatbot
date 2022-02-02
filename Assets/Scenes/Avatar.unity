@@ -2025,6 +2025,14 @@ MonoBehaviour:
   greenTTSButtonSprite: {fileID: 21300000, guid: 80cdf7f0f05d7e647a51b795c9e4d3e5,
     type: 3}
   redTTSButtonSprite: {fileID: 21300000, guid: 7d26012187cf3864897b59405ed84043, type: 3}
+  blackActiveTTSButtonSprite: {fileID: 21300000, guid: 711f5cc1f2406954295149d330881b26,
+    type: 3}
+  blackDeactiveTTSButtonSprite: {fileID: 21300000, guid: 4f7f1e7607ce4a7448a35ce25ff72c8b,
+    type: 3}
+  blackSwitchToARSprite: {fileID: 21300000, guid: 5a625627165dfd24f8b414788e135aec,
+    type: 3}
+  blackSwitchToChatbotSprite: {fileID: 21300000, guid: 590436c63891d9746b94765fad5d37e4,
+    type: 3}
 --- !u!4 &1474850850
 Transform:
   m_ObjectHideFlags: 0

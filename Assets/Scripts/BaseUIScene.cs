@@ -60,7 +60,7 @@ public abstract class BaseUIScene : MonoBehaviour
     }
 
     // Updates object in the scene if the colour blind setting is used
-    protected void UpdateColoursIfColourBlindMode()
+    protected virtual void UpdateColoursIfColourBlindMode()
     {
         // Checks that the colour blind setting is currently being used
         if (currentSettings.ReturnFieldValue("useColourBlind"))

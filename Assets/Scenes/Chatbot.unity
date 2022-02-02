@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1506,6 +1506,14 @@ MonoBehaviour:
   greenTTSButtonSprite: {fileID: 21300000, guid: 80cdf7f0f05d7e647a51b795c9e4d3e5,
     type: 3}
   redTTSButtonSprite: {fileID: 21300000, guid: 7d26012187cf3864897b59405ed84043, type: 3}
+  blackActiveTTSButtonSprite: {fileID: 21300000, guid: 711f5cc1f2406954295149d330881b26,
+    type: 3}
+  blackDeactiveTTSButtonSprite: {fileID: 21300000, guid: 4f7f1e7607ce4a7448a35ce25ff72c8b,
+    type: 3}
+  blackSwitchToARSprite: {fileID: 21300000, guid: 5a625627165dfd24f8b414788e135aec,
+    type: 3}
+  blackSwitchToAvatarSprite: {fileID: 21300000, guid: 3591f1b238874f44395f5036793d15bf,
+    type: 3}
 --- !u!4 &898573893
 Transform:
   m_ObjectHideFlags: 0

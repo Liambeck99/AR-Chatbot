@@ -77,6 +77,9 @@ public abstract class BaseSessionScene : BaseUIScene
     public Sprite greenTTSButtonSprite;
     public Sprite redTTSButtonSprite;
 
+    public Sprite blackActiveTTSButtonSprite;
+    public Sprite blackDeactiveTTSButtonSprite;
+
     // Contains whether or not to use the text-to-speech functionality
     protected bool useTTS;
 
@@ -124,9 +127,43 @@ public abstract class BaseSessionScene : BaseUIScene
         // Avatar is not speaking so set to false
         currentlySpeaking = false;
 
+        // Sets colour blind mode if this is active in the settings
+        UpdateColoursIfColourBlindMode();
+
         // Loads in previous session data for correct scene rendering
         ConfigureSessionData();
     }
+
+    // Converts scene to black and white if colour blind mode was enabled
+    protected override void UpdateColoursIfColourBlindMode()
+    {
+        if (currentSettings.ReturnFieldValue("useColourBlind"))
+        {
+            // Finds all text objects in the scene
+            Text[] allText = FindObjectsOfType<Text>();
+
+            // Sets the green (active) microphone and keyboard sprites to default black sprites (no green animation change)
+            greenMicrophoneSprite = normalMicrophoneSprite;
+            greenKeyboardSprite = normalKeyboardSprite;
+
+            // TTS button is set to the black active and deactive sprites
+            greenTTSButtonSprite = blackActiveTTSButtonSprite;
+            redTTSButtonSprite = blackDeactiveTTSButtonSprite;
+
+            
+            // Sets the background to white
+            GameObject background = GameObject.Find("Background");
+
+            if (background != null)
+                background.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+
+            // An abstract method that is defined in each of the subclass scene scripts, these 
+            // Set individual sprites to their colourblind equivalent
+            SetColourBlindSprites();
+        }
+    }
+
+    protected abstract void SetColourBlindSprites();
 
     // Checks if the user has correct permissions, this is only needed if the user is using andriod
     // as Apple does this automatically
@@ -236,9 +273,12 @@ public abstract class BaseSessionScene : BaseUIScene
             useTTS = false;
             speechTTSButton.GetComponent<Image>().sprite = redTTSButtonSprite;
         }
+        else
+            speechTTSButton.GetComponent<Image>().sprite = greenTTSButtonSprite;
 
     }
 
+    // Checks if the current session has expired and needs to be reset
     protected bool hasSessionExpired()
     {
         // Gets the last message that was sent in the conversation

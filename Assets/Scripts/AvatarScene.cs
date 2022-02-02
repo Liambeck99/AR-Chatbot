@@ -8,6 +8,10 @@ using UnityEngine.SceneManagement;
 
 public class AvatarScene : BaseSessionScene
 {
+
+    public Sprite blackSwitchToARSprite;
+    public Sprite blackSwitchToChatbotSprite;
+
     private void Start()
     {
         ConfigureScene();
@@ -26,5 +30,14 @@ public class AvatarScene : BaseSessionScene
     protected override void RenderChatbotResponseMessage(string message)
     {
 
+    }
+
+    protected override void SetColourBlindSprites()
+    {
+        Image switchAvatar = GameObject.Find("SwitchAvatar").GetComponent<Image>();
+        Image switchChatbot = GameObject.Find("SwitchChatbot").GetComponent<Image>();
+
+        switchAvatar.sprite = blackSwitchToARSprite;
+        switchChatbot.sprite = blackSwitchToChatbotSprite;
     }
 }
