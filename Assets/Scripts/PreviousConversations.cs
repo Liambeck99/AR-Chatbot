@@ -28,7 +28,7 @@ public class PreviousConversations: BaseUIScene
         ConversationRenderer conversationRenderer = conversationObject.GetComponent<ConversationRenderer>();
 
         // Configures and renders all messages in the previous conversation
-        conversationRenderer.ConfigureConversation();
+        conversationRenderer.ConfigureConversation(true);
         conversationRenderer.SetConversation(prevConversation);
         conversationRenderer.RenderConversation();
     }

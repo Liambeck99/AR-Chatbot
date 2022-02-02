@@ -16,7 +16,6 @@ public class ChatbotScene : BaseSessionScene
 
     private void Start()
     {
-
         ConfigureScene();
 
         ConfigureConversationRenderer();
@@ -29,7 +28,7 @@ public class ChatbotScene : BaseSessionScene
         conversationRenderer = conversationObject.GetComponent<ConversationRenderer>();
 
         // Configures and renders all messages in the conversation
-        conversationRenderer.ConfigureConversation();
+        conversationRenderer.ConfigureConversation(false);
         conversationRenderer.SetConversation(currentSessionHandler.currentConversation);
         conversationRenderer.RenderConversation();
     }

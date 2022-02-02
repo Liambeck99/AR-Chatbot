@@ -31,7 +31,7 @@ public class ConversationHandler {
     private bool saveNewMessages;
 
     // The format used for representing the timeprocessed datetime object
-    public string dateFormatUsed = "MM/dd/yyyy HH:mm:ss";
+    public static string dateFormatUsed = "MM/dd/yyyy HH:mm:ss";
 
     public ConversationHandler(string newPrevConversationFilePath, string newSessionConversationFilePath)
     {

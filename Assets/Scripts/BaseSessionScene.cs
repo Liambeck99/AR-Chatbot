@@ -246,7 +246,7 @@ public abstract class BaseSessionScene : BaseUIScene
                                    currentSessionHandler.currentConversation.GetCurrentConversationSize() - 1);
 
         // Gets the datetime for when that message was sent
-        DateTime lastTimeSent = DateTime.ParseExact(lastMessageSaved.timeProcessed, currentSessionHandler.currentConversation.dateFormatUsed,
+        DateTime lastTimeSent = DateTime.ParseExact(lastMessageSaved.timeProcessed, ConversationHandler.dateFormatUsed,
                                                     System.Globalization.CultureInfo.InvariantCulture);
 
         // The number of minutes difference between the current time and the last message that was sent

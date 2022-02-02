@@ -2,6 +2,8 @@
 
 // Note: this class needs improvement as the speech bubbles are not properly rendered yet 
 
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,8 +35,17 @@ public class ConversationRenderer : MonoBehaviour
     // Holds the position of the top of the scroll container
     private float defaultHeight;
 
+    // Sets whether or not to use timestamps to seperate the conversation
+    private bool useTimeStamps;
+
+    // The number of minutes before a new timestamp should be used
+    private int minutesForNewTimeStamp;
+
+    // Stores reference to the timestamp object (if enabled)
+    private GameObject timeStamp;
+
     // Configures conversation data before rendering
-    public void ConfigureConversation()
+    public void ConfigureConversation(bool enableTimeStamps)
     {
         // Template user and chatbot speech bubbles are found
         templateUserSpeechBubble = GameObject.FindGameObjectsWithTag("SpeechBubbleUser")[0];
@@ -56,6 +67,16 @@ public class ConversationRenderer : MonoBehaviour
         canvasRectTransform = GameObject.Find("ConversationContainer").GetComponent<RectTransform>();
 
         currentRenderedMessages = 0;
+
+        if (enableTimeStamps)
+        {
+            timeStamp = GameObject.Find("TimeStampTemplate");
+            timeStamp.SetActive(false);
+        }
+
+        useTimeStamps = enableTimeStamps;
+
+        minutesForNewTimeStamp = 10;
     }
 
     // Updates the conversation head position based on the previous speechbubble height, as 
@@ -100,6 +121,27 @@ public class ConversationRenderer : MonoBehaviour
         UpdateConversationHeadPosition(200.0f);
     }
 
+    // Renders a new timestamp on the screen with position and time
+    private void AddNewTimeStamp(Vector3 position, string time)
+    {
+        // Clones a new timestamp object
+        GameObject newTimeStamp = Instantiate(timeStamp, position, timeStamp.transform.rotation);
+
+        // Timestamp is made visible
+        newTimeStamp.SetActive(true);
+
+        // Timestamp is set inside of the container
+        newTimeStamp.transform.SetParent(GameObject.Find("ConversationContainer").transform);
+
+        // Timestamp text is updated to the date time
+        newTimeStamp.GetComponent<UnityEngine.UI.Text>().text = time;
+
+        // Conversation head position is updated so that the next speech bubble is correctly rendered 
+        // underneath the timestamp
+        UpdateConversationHeadPosition(100.0f);
+
+    }
+
     // Renders all messages in the conversation
     public void RenderConversation()
     {
@@ -108,6 +150,10 @@ public class ConversationRenderer : MonoBehaviour
         // Gets the first message in the conversation
         Message newMessage;
         Vector3 newSpeechBubblePosition;
+
+        // Saves the previous message that was processed in the loop (used for comparing message times)
+        Message prevMessage = null;
+        Vector3 newTimeStampPosition;
 
         // Resets container size and position for correct conversation rendering
         // (all speech bubbles are loaded without bias of the current scroll position)
@@ -119,6 +165,35 @@ public class ConversationRenderer : MonoBehaviour
         {
             // Gets current message
             newMessage = currentConversation.GetNewMessageAtIndex(i);
+
+            // If there exists a previous message and timestamps should be used
+            if(prevMessage != null && useTimeStamps)
+            {
+                // Gets datetime for the current message
+                DateTime newMessageTimeSent = DateTime.ParseExact(newMessage.timeProcessed, 
+                                                                  ConversationHandler.dateFormatUsed,
+                                                                  System.Globalization.CultureInfo.InvariantCulture);
+
+                // Gets datetime for the previous message
+                DateTime prevMessageTimeSent = DateTime.ParseExact(prevMessage.timeProcessed,
+                                                                  ConversationHandler.dateFormatUsed,
+                                                                  System.Globalization.CultureInfo.InvariantCulture);
+
+                // Gets the number of minutes difference between the previous message and the current message
+                int minutesDifference = (int)newMessageTimeSent.Subtract(prevMessageTimeSent).TotalMinutes;
+
+                // If the number of minutes difference between the two messages is larger than the 
+                // set minutes needed for a new timestamp, then create a new timestamp object
+                if (minutesDifference > minutesForNewTimeStamp)
+                {
+                    // Set new position at the head of the conversation
+                    newTimeStampPosition = timeStamp.transform.position;
+                    newTimeStampPosition.y = currentConversationHeadPosition;
+                    
+                    // Create a new timestamp
+                    AddNewTimeStamp(newTimeStampPosition, newMessage.timeProcessed);
+                }
+            }
 
             // Gets appropriate speech bubble position depending on whether to create a speech bubble for 
             // the user or chatbot
@@ -132,6 +207,8 @@ public class ConversationRenderer : MonoBehaviour
 
             // New speech bubble is rendered
             AddNewSpeechBubble(newSpeechBubblePosition, newMessage.userWasSpeaker, newMessage.text);
+
+            prevMessage = newMessage;
 
             currentRenderedMessages++;
         }
