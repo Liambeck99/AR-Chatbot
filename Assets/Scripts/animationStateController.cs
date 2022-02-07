@@ -30,18 +30,18 @@ public class animationStateController : MonoBehaviour
     // Toggles between the displayed models
     private void showModel(bool selected)
     {
-        // update ybot renders
-        Renderer[] ybotRender = yBotModel.GetComponentsInChildren<Renderer>();
-        for(int i=0; i<ybotRender.Length; i++)
+        // show Y Bot
+        if (selected)
         {
-            ybotRender[i].enabled = selected;
+            yBotModel.transform.position = new Vector3(0, 0, 0);
+            xBotModel.transform.position = new Vector3(0, 0, -2);
         }
 
-        // update xbot renders
-        Renderer[] xbotRender = xBotModel.GetComponentsInChildren<Renderer>();
-        for (int i = 0; i < xbotRender.Length; i++)
+        // show X Bot
+        if (!selected)
         {
-            xbotRender[i].enabled = !selected;
+            yBotModel.transform.position = new Vector3(0, 0, -2);
+            xBotModel.transform.position = new Vector3(0, 0, 0);
         }
 
         // invert value of sleectd
