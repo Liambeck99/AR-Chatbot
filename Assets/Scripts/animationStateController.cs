@@ -21,8 +21,11 @@ public class animationStateController : MonoBehaviour
         yBotModel = GameObject.Find("ybot");
         xBotModel = GameObject.Find("xbot");
 
+        yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, 1);
+        xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, -2);
+
         // set model selected and switch off other model
-        modelSelected = false;
+        modelSelected = true;
         showModel(modelSelected);
 
     }
@@ -33,15 +36,15 @@ public class animationStateController : MonoBehaviour
         // show Y Bot
         if (selected)
         {
-            yBotModel.transform.position = new Vector3(0, 0, 0);
-            xBotModel.transform.position = new Vector3(0, 0, -2);
+            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, -2);
+            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0,  2);
         }
 
         // show X Bot
         if (!selected)
         {
-            yBotModel.transform.position = new Vector3(0, 0, -2);
-            xBotModel.transform.position = new Vector3(0, 0, 0);
+            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0,  2);
+            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, -2);
         }
 
         // invert value of sleectd
@@ -57,8 +60,29 @@ public class animationStateController : MonoBehaviour
     // Toggle animations
     public void ToggleAnimation()
     {
-        bool current = animator.GetBool("isWalking");
-        animator.SetBool("isWalking", !current);
+        bool Walking = animator.GetBool("isWalking");
+        bool Dancing = animator.GetBool("isDancing");
+
+        if (!Walking && !Dancing)
+        {
+            animator.SetBool("isWalking", true);
+            animator.SetBool("isDancing", false);
+            return;
+        }
+
+        if (Walking)
+        {
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isDancing", true);
+            return;
+        }
+
+        if (Dancing)
+        {
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isDancing", false);
+            return;
+        }
     }
 
 }
