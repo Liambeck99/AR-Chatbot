@@ -135,9 +135,9 @@ public class ARScene : BaseSessionScene
     }
 
     // Calls the animation state controller to update animations
-    public void onAnimationChangeButton()
+    public void onChangeModelButton()
     {
-        animationController.ToggleAnimation();
+        
     }
 }
 
