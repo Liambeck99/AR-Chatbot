@@ -16,6 +16,8 @@ public class ARScene : BaseSessionScene
     // Holds references to all GameObjects used in the tutorial
     private GameObject[] tutorialElements;
 
+    private animationStateController animationController = new animationStateController();
+
     private void Start()
     {
         ConfigureScene();
@@ -130,6 +132,12 @@ public class ARScene : BaseSessionScene
     protected override void RenderChatbotResponseMessage(string message)
     {
 
+    }
+
+    // Calls the animation state controller to update animations
+    public void onAnimationChangeButton()
+    {
+        animationController.ToggleAnimation();
     }
 }
 
