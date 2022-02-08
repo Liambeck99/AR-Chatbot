@@ -10,7 +10,7 @@ Very may of the same questions are asked repeatedly:
 - "Tell  me about the university"
 - "Where exactly am I now?"
 - "Where is the Students Union/Computer Science Labs/etc from here?"
-- What COVID policy should I be aware of?"
+- "What COVID policy should I be aware of?"
 - "Show me a map of the University"
 - etc
 
