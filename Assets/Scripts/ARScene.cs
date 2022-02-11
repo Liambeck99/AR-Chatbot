@@ -17,6 +17,7 @@ public class ARScene : BaseSessionScene
     private GameObject[] tutorialElements;
 
     private animationStateController animationController = new animationStateController();
+
     public Sprite blackSwitchToAvatarSprite;
     public Sprite blackSwitchToChatbotSprite;
 
