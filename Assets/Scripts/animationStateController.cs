@@ -16,6 +16,15 @@ public class animationStateController : MonoBehaviour
 
     private float crossFadeTime = 0.05f;
 
+    private AudioSource avatarAudioSource;
+
+    public AudioClip gangnumStyleClip;
+    public AudioClip sambaDancingClip;
+    public AudioClip thrillerClip;
+    public AudioClip ymcaClip;
+    public AudioClip hotelClip;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,14 +34,14 @@ public class animationStateController : MonoBehaviour
         // get the animation component in the scene
         animator = xBotModel.GetComponent<Animator>();
 
-        Debug.Log("animator: " + animator);
+        avatarAudioSource = xBotModel.GetComponent<AudioSource>();
 
         animationPhase = 0;
 
-        setDefaultValues();
+        SetDefaultValues();
     }
 
-    private void setDefaultValues()
+    private void SetDefaultValues()
     {
         animator.SetBool("isIdle", true);
 
@@ -63,9 +72,11 @@ public class animationStateController : MonoBehaviour
     public void PerformIDLEAnimation()
     {
         animator.SetInteger("randomAnimation", 0);
+        animator.SetInteger("touchAnimation", 0);
         animator.SetBool("isExplaining", false);
         animator.SetBool("isIdle", true);
         animator.CrossFade("Breathing Idle", crossFadeTime);
+        avatarAudioSource.Stop();
         animationPhase = 0;
     }
 
@@ -85,32 +96,60 @@ public class animationStateController : MonoBehaviour
         animationPhase = 2;
     }
 
-    public void PerformRandomAnimationIfIdle()
+    public void PerformTouchAnimationIfIdle()
     {
-        int numRandomAnimations = 3;
+        AudioClip[] audioClips = { sambaDancingClip, gangnumStyleClip, ymcaClip, thrillerClip, hotelClip };
+        string[] animationNames = { "Samba Dancing", "Gangnam Style", "Ymca Dance", "Thriller", "Hotel Dancing" };
 
         // Perform random animation
-        if (animationPhase == 0)
+        if (animationPhase == 0 && IsAnimatorInCurrentState("Breathing Idle"))
         {
-            int animationNum = Random.Range(1, numRandomAnimations+1);
+            int animationNum = Random.Range(1, animationNames.Length + 1);
 
-            animator.SetInteger("randomAnimation", animationNum);
+            animator.SetInteger("touchAnimation", animationNum);
 
-            switch(animationNum){
-                case 1:
-                    animator.CrossFade("Laughing", crossFadeTime);
-                    break;
+            animator.CrossFade(animationNames[animationNum-1], crossFadeTime);
+            avatarAudioSource.clip = audioClips[animationNum - 1];
 
-                case 2:
-                    animator.CrossFade("Hip Hop Dancing", crossFadeTime);
-                    break;
-
-                case 3:
-                    animator.CrossFade("Booty Hip Hop Dance", crossFadeTime);
-                    break;
-
-            }
+            avatarAudioSource.Play();
         }
     }
 
+    public void PerformRandomAnimationIfIdle()
+    {
+        string[] animationNames = { "Arm Stretching", "Looking", "Yawn", "Waving" };
+
+        // Perform random animation
+        if (animationPhase == 0 && IsAnimatorInCurrentState("Breathing Idle"))
+        {
+            int animationNum = Random.Range(1, animationNames.Length + 1);
+
+            animator.SetInteger("randomAnimation", animationNum);
+
+            animator.CrossFade(animationNames[animationNum - 1], crossFadeTime);
+        }
+    }
+
+    public bool IsAnimatorInCurrentState(string state)
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).IsName(state);
+    }
+
+    public void MuteAudio()
+    {
+        avatarAudioSource.volume = 0.0f;
+    }
+
+    public void UnmuteAudio()
+    {
+        avatarAudioSource.volume = 1.0f;
+    }
+
+    void OnMouseDown()
+    {
+        if (IsAnimatorInCurrentState("Breathing Idle"))
+            PerformTouchAnimationIfIdle();
+        else
+            PerformIDLEAnimation();
+    }
 }

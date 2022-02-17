@@ -28,6 +28,12 @@ public class AvatarScene : BaseSessionScene
         // Sets the time that a random animation occured 4 seconds in the past, this gives
         // a little time before it is possible for a random animation to occur
         timeOfLastRandomAnimation = DateTime.Now.AddSeconds(-4);
+
+        if (useTTS)
+            animationController.UnmuteAudio();
+        else
+            animationController.MuteAudio();
+
     }
 
     private void Update()
@@ -74,19 +80,30 @@ public class AvatarScene : BaseSessionScene
 
     private void PerformRandomAnimation()
     {
-        int secondsToWait = 8;
+        int secondsToWait = 10;
 
         int secondsDifference = (int)DateTime.Now.Subtract(timeOfLastRandomAnimation).TotalSeconds;
 
         if (secondsDifference < secondsToWait)
             return;
 
-        int chanceOfRandomAnimation = 2;
+        int chanceOfRandomAnimation = 1;
 
-        if (Random.Range(0, 1000) < chanceOfRandomAnimation)
+        if (Random.Range(0, 2000) < chanceOfRandomAnimation)
         {
             animationController.PerformRandomAnimationIfIdle();
             timeOfLastRandomAnimation = DateTime.Now;
         }
     }
+
+    public void OnTTSButtonClickAvatar()
+    {
+        if (useTTS)
+            animationController.MuteAudio();
+        else
+            animationController.UnmuteAudio();
+
+        OnTTSButtonClick();
+    }
+     
 }
