@@ -8,81 +8,90 @@ public class animationStateController : MonoBehaviour
 
     private bool modelSelected;
 
-    public GameObject yBotModel;
-    public GameObject xBotModel;
+    private GameObject xBotModel;
+
+    private int animationPhase;
+
+    private float crossFadeTime = 0.05f;
 
     // Start is called before the first frame update
     void Start()
     {
-        // get the animation component in the scene
-        animator = GetComponent<Animator>();
-
         // find models in the scene
-        yBotModel = GameObject.Find("ybot");
         xBotModel = GameObject.Find("xbot");
 
-        yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, 1);
-        xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, -2);
+        // get the animation component in the scene
+        animator = xBotModel.GetComponent<Animator>();
 
-        // set model selected and switch off other model
-        modelSelected = true;
-        showModel(modelSelected);
+        Debug.Log("animator: " + animator);
 
+        animationPhase = 0;
+
+        setDefaultValues();
     }
 
-    // Toggles between the displayed models
-    private void showModel(bool selected)
+    private void setDefaultValues()
     {
-        // show Y Bot
-        if (selected)
-        {
-            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, -2);
-            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0,  2);
-        }
+        animator.SetBool("isIdle", true);
 
-        // show X Bot
-        if (!selected)
-        {
-            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0,  2);
-            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, -2);
-        }
-
-        // invert value of sleectd
-        modelSelected = !selected;
-    }
-
-    // Button to call model switch function
-    public void ToggleModel()
-    {
-        showModel(modelSelected);
+        animator.SetInteger("randomAnimation", 0);
+        animator.SetBool("isExplaining", false);
+        animator.SetBool("isThinking", false);
     }
 
     // Toggle animations
-    public void ToggleAnimation()
+    public void ToggleAnimationPhase()
     {
-        bool Walking = animator.GetBool("isWalking");
-        bool Dancing = animator.GetBool("isDancing");
-
-        if (!Walking && !Dancing)
+        switch (animationPhase)
         {
-            animator.SetBool("isWalking", true);
-            animator.SetBool("isDancing", false);
-            return;
-        }
+            case 0:
+                PerformThinkingAnimation();
+                break;
 
-        if (Walking)
-        {
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isDancing", true);
-            return;
-        }
+            case 1:
+                PerformExplinationAnimation();
+                break;
 
-        if (Dancing)
-        {
-            animator.SetBool("isWalking", false);
-            animator.SetBool("isDancing", false);
-            return;
+            case 2:
+                PerformIDLEAnimation();
+                break;
         }
+    }
+
+    public void PerformIDLEAnimation()
+    {
+        animator.SetInteger("randomAnimation", 0);
+        animator.SetBool("isExplaining", false);
+        animator.SetBool("isIdle", true);
+        animator.CrossFade("Breathing Idle", crossFadeTime);
+        animationPhase = 0;
+    }
+
+    public void PerformThinkingAnimation()
+    {
+        animator.SetBool("isIdle", false);
+        animator.SetBool("isThinking", true);
+        animator.CrossFade("Thinking", crossFadeTime);
+        animationPhase = 1;
+    }
+
+    public void PerformExplinationAnimation()
+    {
+        animator.SetBool("isThinking", false);
+        animator.SetBool("isExplaining", true);
+        animator.CrossFade("Explination", crossFadeTime);
+        animationPhase = 2;
+    }
+
+    public void PerformRandomAnimationIfIdle()
+    {
+        int numRandomAnimations = 3;
+
+        // Perform random animation
+        if (animator.GetBool("isIdle"))
+            animator.SetInteger("randomAnimation", Random.Range(1, numRandomAnimations));
+
+        animationPhase = 0;
     }
 
 }

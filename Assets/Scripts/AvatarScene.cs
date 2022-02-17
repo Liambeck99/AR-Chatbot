@@ -12,9 +12,13 @@ public class AvatarScene : BaseSessionScene
     public Sprite blackSwitchToARSprite;
     public Sprite blackSwitchToChatbotSprite;
 
+    private animationStateController animationController;
+
     private void Start()
     {
         ConfigureScene();
+        GameObject animationObject = GameObject.Find("AnimationStateController");
+        animationController = animationObject.GetComponent<animationStateController>();
     }
 
     private void Update()
@@ -24,12 +28,13 @@ public class AvatarScene : BaseSessionScene
 
     protected override void RenderUserMessage(string message)
     {
-
+        animationController.ToggleAnimationPhase();
     }
 
     protected override void RenderChatbotResponseMessage(string message)
     {
-
+        animationController.ToggleAnimationPhase();
+        animationController.ToggleAnimationPhase();
     }
 
     protected override void SetColourBlindSprites()

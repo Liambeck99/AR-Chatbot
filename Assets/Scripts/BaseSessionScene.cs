@@ -586,6 +586,8 @@ public abstract class BaseSessionScene : BaseUIScene
     // Method for when the user submits a keyboard message
     public void OnKeyboardSubmit(string message)
     {
+        Debug.Log("SUSUSUS: " + message);
+
         // Sets the keyboard button colour back to the default black
         keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
 
