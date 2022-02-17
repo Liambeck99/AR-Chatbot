@@ -86,6 +86,9 @@ public abstract class BaseSessionScene : BaseUIScene
     // Contains whether or not text is currently being spoken
     protected bool currentlySpeaking;
 
+    // Allows the keyboard and microphone buttons to be used
+    protected bool allowInputs;
+
     // Configures all data for the scene to work
     protected void ConfigureScene()
     {
@@ -126,6 +129,9 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Avatar is not speaking so set to false
         currentlySpeaking = false;
+
+        // Allows microphone and keyboard inputs
+        allowInputs = true;
 
         // Sets colour blind mode if this is active in the settings
         UpdateColoursIfColourBlindMode();
@@ -426,8 +432,8 @@ public abstract class BaseSessionScene : BaseUIScene
     // Executes if the keyboard button is clicked
     public void OnKeyboardClick()
     {
-        // Does nothing if the user is currently recording a message
-        if (recordingMessage)
+        // Does nothing if the user is currently recording a message or inputs are disabled
+        if (recordingMessage || !allowInputs)
             return;
 
         // If the keyboard is active, then deactive the input
@@ -454,8 +460,8 @@ public abstract class BaseSessionScene : BaseUIScene
     // Executes if the microphone is clicked
     public void OnMicroPhoneClick()
     {
-        // Does nothing if the user has currently opened the keyboard
-        if (keyboardInputField.activeInHierarchy)
+        // Does nothing if the user has currently opened the keyboard or inputs are disabled
+        if (keyboardInputField.activeInHierarchy || !allowInputs)
             return;
 
         // If the microphone is currently not recording, then start recording
@@ -586,8 +592,6 @@ public abstract class BaseSessionScene : BaseUIScene
     // Method for when the user submits a keyboard message
     public void OnKeyboardSubmit(string message)
     {
-        Debug.Log("SUSUSUS: " + message);
-
         // Sets the keyboard button colour back to the default black
         keyboardButton.GetComponent<Image>().sprite = normalKeyboardSprite;
 
@@ -646,11 +650,11 @@ public abstract class BaseSessionScene : BaseUIScene
         // Adds new message to conversation and renders it
         currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
 
-        // Renders the user message on the screen
-        RenderChatbotResponseMessage(watsonResponseMessage);
-
         // Reads out the watson message response
         StartTTSIfActivated(watsonResponseMessage);
+
+        // Renders the user message on the screen
+        RenderChatbotResponseMessage(watsonResponseMessage);
     }
 
     // Subclasses implement how the user message should be rendered on the screen

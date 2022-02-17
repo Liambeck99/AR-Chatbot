@@ -33,8 +33,24 @@ public class AvatarScene : BaseSessionScene
 
     protected override void RenderChatbotResponseMessage(string message)
     {
+        int charsPerSecond = 10;
+        int timeToWait = message.Length / charsPerSecond;
+        StartCoroutine(RenderExplinationAnimationWithDelay(timeToWait));
+    }
+
+    private IEnumerator RenderExplinationAnimationWithDelay(int timeToWait)
+    {
+        // Does not allow the user to enter in new messages until the current message has 
+        // properly been rendered on the screen
+        allowInputs = false;
+
         animationController.ToggleAnimationPhase();
+
+        yield return new WaitForSeconds(timeToWait);
+
         animationController.ToggleAnimationPhase();
+
+        allowInputs = true;
     }
 
     protected override void SetColourBlindSprites()
