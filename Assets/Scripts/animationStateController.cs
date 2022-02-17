@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Random = UnityEngine.Random;
+
 public class animationStateController : MonoBehaviour
 {
     Animator animator;
@@ -88,10 +90,27 @@ public class animationStateController : MonoBehaviour
         int numRandomAnimations = 3;
 
         // Perform random animation
-        if (animator.GetBool("isIdle"))
-            animator.SetInteger("randomAnimation", Random.Range(1, numRandomAnimations));
+        if (animationPhase == 0)
+        {
+            int animationNum = Random.Range(1, numRandomAnimations+1);
 
-        animationPhase = 0;
+            animator.SetInteger("randomAnimation", animationNum);
+
+            switch(animationNum){
+                case 1:
+                    animator.CrossFade("Laughing", crossFadeTime);
+                    break;
+
+                case 2:
+                    animator.CrossFade("Hip Hop Dancing", crossFadeTime);
+                    break;
+
+                case 3:
+                    animator.CrossFade("Booty Hip Hop Dance", crossFadeTime);
+                    break;
+
+            }
+        }
     }
 
 }

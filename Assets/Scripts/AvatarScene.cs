@@ -1,10 +1,13 @@
 ﻿// Script that is attached to the Avatar scene
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+
+using Random = UnityEngine.Random;
 
 public class AvatarScene : BaseSessionScene
 {
@@ -14,16 +17,23 @@ public class AvatarScene : BaseSessionScene
 
     private animationStateController animationController;
 
+    private DateTime timeOfLastRandomAnimation;
+
     private void Start()
     {
         ConfigureScene();
         GameObject animationObject = GameObject.Find("AnimationStateController");
         animationController = animationObject.GetComponent<animationStateController>();
+
+        // Sets the time that a random animation occured 4 seconds in the past, this gives
+        // a little time before it is possible for a random animation to occur
+        timeOfLastRandomAnimation = DateTime.Now.AddSeconds(-4);
     }
 
     private void Update()
     {
         UpdateScene();
+        PerformRandomAnimation();
     }
 
     protected override void RenderUserMessage(string message)
@@ -60,5 +70,23 @@ public class AvatarScene : BaseSessionScene
 
         switchAvatar.sprite = blackSwitchToARSprite;
         switchChatbot.sprite = blackSwitchToChatbotSprite;
+    }
+
+    private void PerformRandomAnimation()
+    {
+        int secondsToWait = 8;
+
+        int secondsDifference = (int)DateTime.Now.Subtract(timeOfLastRandomAnimation).TotalSeconds;
+
+        if (secondsDifference < secondsToWait)
+            return;
+
+        int chanceOfRandomAnimation = 2;
+
+        if (Random.Range(0, 1000) < chanceOfRandomAnimation)
+        {
+            animationController.PerformRandomAnimationIfIdle();
+            timeOfLastRandomAnimation = DateTime.Now;
+        }
     }
 }
