@@ -40,6 +40,7 @@ public class AvatarScene : BaseSessionScene
     {
         UpdateScene();
         PerformRandomAnimation();
+        RenderSettings.skybox.SetFloat("_Rotation", Time.time);
     }
 
     protected override void RenderUserMessage(string message)
