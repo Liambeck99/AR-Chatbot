@@ -268,7 +268,7 @@ public abstract class BaseSessionScene : BaseUIScene
             StartTTSIfActivated(welcomeMessage);
         }
 
-        // Sets whether to save messages (after the welcom message has potentially been said)
+        // Sets whether to save messages (after the welcome message has potentially been said)
         // based on the user's settings
         currentSessionHandler.currentConversation.setSaveMessages(currentSettings.ReturnFieldValue("saveConversations"));
 

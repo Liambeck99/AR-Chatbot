@@ -24,7 +24,6 @@ public class animationStateController : MonoBehaviour
     public AudioClip ymcaClip;
     public AudioClip hotelClip;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -43,11 +42,24 @@ public class animationStateController : MonoBehaviour
 
     private void SetDefaultValues()
     {
-        animator.SetBool("isIdle", true);
+        animator.SetBool("isWalking", true);
+
+        animator.SetBool("isIdle", false);
 
         animator.SetInteger("randomAnimation", 0);
         animator.SetBool("isExplaining", false);
         animator.SetBool("isThinking", false);
+    }
+
+    public void FinishWalkAnimation(float crossFadeSpeed, bool performWave)
+    {
+        animator.SetBool("isWalking", false);
+        animator.SetBool("isIdle", true);
+        
+        if(performWave)
+            animator.CrossFade("Waving Intro", crossFadeSpeed);
+        else
+            animator.CrossFade("Breathing Idle", crossFadeSpeed);
     }
 
     // Toggle animations
