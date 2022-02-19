@@ -67,7 +67,7 @@ public class AvatarScene : BaseSessionScene
         FinalPosition = new Vector3(-0.05f, -2.0f, -0.5f);
         BeginningPosition = new Vector3(-0.05f, -0.7f, 20.0f);
 
-        SidePosition = new Vector3(1.0f, -2.0f, -1.0f);
+        SidePosition = new Vector3(1.2f, -2.0f, -1.0f);
 
         // There is a session in progress, therefore do not play intro animation
         if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 1)

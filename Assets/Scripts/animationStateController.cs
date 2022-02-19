@@ -24,6 +24,9 @@ public class animationStateController : MonoBehaviour
     public AudioClip ymcaClip;
     public AudioClip hotelClip;
 
+    GameObject KeyboardInputField;
+    GameObject MicrophoneRecording;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +37,10 @@ public class animationStateController : MonoBehaviour
         animator = xBotModel.GetComponent<Animator>();
 
         avatarAudioSource = xBotModel.GetComponent<AudioSource>();
+
+        KeyboardInputField = GameObject.Find("KeyboardInputField");
+
+        MicrophoneRecording = GameObject.Find("MicrophoneRecordingInfoContainer");
 
         animationPhase = 0;
 
@@ -97,6 +104,7 @@ public class animationStateController : MonoBehaviour
         animator.SetBool("isIdle", false);
         animator.SetBool("isThinking", true);
         animator.CrossFade("Thinking", crossFadeTime);
+        avatarAudioSource.Stop();
         animationPhase = 1;
     }
 
@@ -105,6 +113,7 @@ public class animationStateController : MonoBehaviour
         animator.SetBool("isThinking", false);
         animator.SetBool("isExplaining", true);
         animator.CrossFade("Explination", crossFadeTime);
+        avatarAudioSource.Stop();
         animationPhase = 2;
     }
 
@@ -159,6 +168,12 @@ public class animationStateController : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (IsAnimatorInCurrentState("Thinking") || IsAnimatorInCurrentState("Explination"))
+            return;
+
+        if (KeyboardInputField.activeInHierarchy || MicrophoneRecording.activeInHierarchy)
+            return;
+
         if (IsAnimatorInCurrentState("Breathing Idle"))
             PerformTouchAnimationIfIdle();
         else
