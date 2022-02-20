@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4667198, g: 0.47035295, b: 0.4454862, a: 1}
+  m_IndirectSpecularColor: {r: 0.5210446, g: 0.52532095, b: 0.49647945, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1295,7 +1295,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!154 &795942535
 TerrainCollider:
   m_ObjectHideFlags: 0
@@ -1901,7 +1901,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98436c2ede2113c4ca89fedee9149640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isShowPopupAndroid: 0
 --- !u!4 &1364362672
 Transform:
   m_ObjectHideFlags: 0
@@ -2825,13 +2824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1edb39aa169eb40cfa015393d5396847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_WindZone: {fileID: 1630371508}
-  WindDirection: {x: -0.9999226, y: 0, z: 0.012446642}
-  WindStrength: 1
-  WindTurbulence: 0.25
   WindMultiplier: 0.5
-  init: 0
-  TerrainLODWindPID: 631
 --- !u!182 &1630371508
 WindZone:
   m_ObjectHideFlags: 0
