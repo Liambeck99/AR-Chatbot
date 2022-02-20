@@ -16,7 +16,7 @@ public class ARScene : BaseSessionScene
     // Holds references to all GameObjects used in the tutorial
     private GameObject[] tutorialElements;
 
-    private animationStateController animationController = new animationStateController();
+    private AvatarMeshHandler animationController = new AvatarMeshHandler();
 
     public Sprite blackSwitchToAvatarSprite;
     public Sprite blackSwitchToChatbotSprite;

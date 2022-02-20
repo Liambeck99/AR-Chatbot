@@ -306,7 +306,6 @@ public abstract class BaseSessionScene : BaseUIScene
         return false;
     }
 
-
     // Changes the length of the sound bars if the user is speaking
     public void ChangeSoundBars(float intensity)
     {
@@ -667,9 +666,9 @@ public abstract class BaseSessionScene : BaseUIScene
     // Returns an empty string if the message is valid, otherwise returns an error string to display
     protected string CheckMessageIsValid(string message)
     {
-        // Checks that the message input length is between 5-200 characters
-        if (message.Length < 5 || message.Length > 200)
-            return "Message must be between 5-200 characters";
+        // Checks that the message input length is between 1-200 characters
+        if (message.Length < 1 || message.Length > 200)
+            return "Message must be between 1-200 characters";
 
         // Since the following check ensures that no special characters are allowed in the
         // message, a whitelist of valid special characters are instantiated which are allowed
@@ -685,14 +684,6 @@ public abstract class BaseSessionScene : BaseUIScene
         return "";
     }
 
-    // Simplifies the message so that it is more clear for when Watson parses it
-    protected string SimplifyMessageString(string message)
-    {
-        // Add message simplification
-
-        return message;
-    }
-
     // Renders a map with GPS Data
     protected void RenderMap(string GPSData)
     {
@@ -706,6 +697,8 @@ public abstract class BaseSessionScene : BaseUIScene
         // Watson exchange goes here
 
         string defaultMessage = "This is an example of what a response would look like...";
+
+        RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
 
         return defaultMessage;
     }
