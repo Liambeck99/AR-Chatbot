@@ -82,6 +82,9 @@ public class AvatarScene : BaseSessionScene
 
     private void Start()
     {
+        // Sets lighting intensity to 1.0f (will be needed later)
+        RenderSettings.ambientIntensity = 1.0f;
+
         // Configures the scene correctly
         ConfigureScene();
 
