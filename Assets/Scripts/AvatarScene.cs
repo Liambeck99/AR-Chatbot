@@ -80,11 +80,18 @@ public class AvatarScene : BaseSessionScene
     // Defines the chances that a random animation should occur if the avatar is in the idle state
     int chanceOfRandomAnimation;
 
+    public bool useSnow;
+    public bool useRain;
+
+    public Material sunriseSkyBox;
+    public Material daySkyBox;
+    public Material sunsetSkyBox;
+    public Material nightSkyBox;
+    public Material snowSkyBox;
+    public Material rainSkyBox;
+
     private void Start()
     {
-        // Sets lighting intensity to 1.0f (will be needed later)
-        RenderSettings.ambientIntensity = 1.0f;
-
         // Configures the scene correctly
         ConfigureScene();
 
@@ -174,7 +181,7 @@ public class AvatarScene : BaseSessionScene
         // Determines the chances of a random animation occuring out of 10000 (per frame)- if the avatar is idle
         chanceOfRandomAnimation = 10;
 
-        ConfigureWeatherSystem();
+        ConfigureWeatherAndLightingSystem();
     }
 
     private void Update()
@@ -191,10 +198,46 @@ public class AvatarScene : BaseSessionScene
         PerformAnimations();
     }
 
-    private void ConfigureWeatherSystem()
+    private void ConfigureWeatherAndLightingSystem()
     {
-        GameObject RainSystem = GameObject.Find("RainPrefab");
-        RainSystem.SetActive(false);
+        float lightIntensity = 1.0f;
+
+        GameObject MainTerrain = GameObject.Find("Terrain");
+        
+        GameObject SnowEnvironment = GameObject.Find("Snow_Environment");
+
+        GameObject RainEnvironment = GameObject.Find("Rain_Environment");
+
+        SnowEnvironment.SetActive(false);
+        RainEnvironment.SetActive(false);
+
+        RenderSettings.skybox = sunsetSkyBox;
+
+        if (useSnow)
+        {
+            MainTerrain.SetActive(false);
+
+            SnowEnvironment.SetActive(true);
+
+            RenderSettings.fogDensity = 0.04f;
+            RenderSettings.fogColor = Color.white;
+
+            RenderSettings.skybox = snowSkyBox;
+
+            lightIntensity *= 1.40f;
+        }
+
+        else if (useRain)
+        {
+            RainEnvironment.SetActive(true);
+
+            RenderSettings.skybox = rainSkyBox;
+
+            lightIntensity *= 0.65f;
+        }
+
+        RenderSettings.ambientIntensity = lightIntensity;
+
     }
 
     // Checks if any of the animation flags are set, if so then perform the current frame of animation
