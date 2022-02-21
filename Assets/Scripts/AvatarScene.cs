@@ -173,6 +173,8 @@ public class AvatarScene : BaseSessionScene
 
         // Determines the chances of a random animation occuring out of 10000 (per frame)- if the avatar is idle
         chanceOfRandomAnimation = 10;
+
+        ConfigureWeatherSystem();
     }
 
     private void Update()
@@ -187,6 +189,12 @@ public class AvatarScene : BaseSessionScene
 
         // Performs the appropriate animations if required
         PerformAnimations();
+    }
+
+    private void ConfigureWeatherSystem()
+    {
+        GameObject RainSystem = GameObject.Find("RainPrefab");
+        RainSystem.SetActive(false);
     }
 
     // Checks if any of the animation flags are set, if so then perform the current frame of animation
