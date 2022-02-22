@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Networking;
 
 using Random = UnityEngine.Random;
 
@@ -89,6 +90,12 @@ public class AvatarScene : BaseSessionScene
     public Material nightSkyBox;
     public Material snowSkyBox;
     public Material rainSkyBox;
+
+    public string openWeatherAPIKey;
+
+    private WeatherHandler weatherHandler;
+
+    bool weatherConfigured;
 
     private void Start()
     {
@@ -181,21 +188,38 @@ public class AvatarScene : BaseSessionScene
         // Determines the chances of a random animation occuring out of 10000 (per frame)- if the avatar is idle
         chanceOfRandomAnimation = 10;
 
-        ConfigureWeatherAndLightingSystem();
+        weatherConfigured = false;
+
+        weatherHandler = GameObject.Find("WeatherHandler").GetComponent<WeatherHandler>();
+
+        weatherHandler.GetWeatherInfo();
     }
 
     private void Update()
     {
-        UpdateScene();
+        if (!weatherConfigured)
+        {
+            if (weatherHandler.HasFinishedSearch())
+            {
+                ConfigureWeatherAndLightingSystem();
+                GameObject.Find("LoadingBackground").SetActive(false);
+                weatherConfigured = true;
+            }
+        }
 
-        // If the avatar is idle, then it has the chance to perform a random animation
-        PerformRandomAnimation();
+        else
+        {
+            UpdateScene();
 
-        // Rotates the skybox by a factor of the current time, this gives the effect that the clouds are moving
-        RenderSettings.skybox.SetFloat("_Rotation", Time.time);
+            // If the avatar is idle, then it has the chance to perform a random animation
+            PerformRandomAnimation();
 
-        // Performs the appropriate animations if required
-        PerformAnimations();
+            // Rotates the skybox by a factor of the current time, this gives the effect that the clouds are moving
+            RenderSettings.skybox.SetFloat("_Rotation", Time.time);
+
+            // Performs the appropriate animations if required
+            PerformAnimations();
+        }
     }
 
     private void ConfigureWeatherAndLightingSystem()
@@ -237,7 +261,6 @@ public class AvatarScene : BaseSessionScene
         }
 
         RenderSettings.ambientIntensity = lightIntensity;
-
     }
 
     // Checks if any of the animation flags are set, if so then perform the current frame of animation
