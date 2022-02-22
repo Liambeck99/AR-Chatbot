@@ -80,9 +80,8 @@ public class AvatarScene : BaseSessionScene
 
     // Defines the chances that a random animation should occur if the avatar is in the idle state
     int chanceOfRandomAnimation;
-
-    public bool useSnow;
-    public bool useRain;
+    
+    public bool useWeatherBasedOnLocation;
 
     public Material sunriseSkyBox;
     public Material daySkyBox;
@@ -96,6 +95,16 @@ public class AvatarScene : BaseSessionScene
     private WeatherHandler weatherHandler;
 
     bool weatherConfigured;
+
+    private GameObject MainTerrain;
+
+    private GameObject SnowEnvironment;
+
+    private GameObject RainEnvironment;
+
+    private GameObject DrizzlePrefab;
+    private GameObject RainPrefab;
+    private GameObject ThunderstormPrefab;
 
     private void Start()
     {
@@ -188,11 +197,22 @@ public class AvatarScene : BaseSessionScene
         // Determines the chances of a random animation occuring out of 10000 (per frame)- if the avatar is idle
         chanceOfRandomAnimation = 10;
 
-        weatherConfigured = false;
+        SetDefaultEnvironment();
 
-        weatherHandler = GameObject.Find("WeatherHandler").GetComponent<WeatherHandler>();
+        if (useWeatherBasedOnLocation)
+        {
+            weatherConfigured = false;
 
-        weatherHandler.GetWeatherInfo();
+            weatherHandler = GameObject.Find("WeatherHandler").GetComponent<WeatherHandler>();
+
+            weatherHandler.GetWeatherInfo();
+        }
+        else
+        {
+            weatherConfigured = true;
+
+            GameObject.Find("LoadingBackground").SetActive(false);
+        }
     }
 
     private void Update()
@@ -222,22 +242,48 @@ public class AvatarScene : BaseSessionScene
         }
     }
 
-    private void ConfigureWeatherAndLightingSystem()
+    private void SetDefaultEnvironment()
     {
-        float lightIntensity = 1.0f;
+        MainTerrain = GameObject.Find("Terrain");
 
-        GameObject MainTerrain = GameObject.Find("Terrain");
-        
-        GameObject SnowEnvironment = GameObject.Find("Snow_Environment");
+        SnowEnvironment = GameObject.Find("Snow_Environment");
 
-        GameObject RainEnvironment = GameObject.Find("Rain_Environment");
+        RainEnvironment = GameObject.Find("Rain_Environment");
+
+        DrizzlePrefab = GameObject.Find("DrizzlePrefab");
+        RainPrefab = GameObject.Find("RainPrefab");
+        ThunderstormPrefab = GameObject.Find("ThunderstormPrefab");
 
         SnowEnvironment.SetActive(false);
         RainEnvironment.SetActive(false);
 
-        RenderSettings.skybox = sunsetSkyBox;
+        DrizzlePrefab.SetActive(false);
+        RainPrefab.SetActive(false);
+        ThunderstormPrefab.SetActive(false);
 
-        if (useSnow)
+        RenderSettings.skybox = sunsetSkyBox;
+    }
+
+    private void ConfigureWeatherAndLightingSystem()
+    {
+        float lightIntensity = 1.0f;
+
+        float wind = weatherHandler.GetWindSpeed();
+
+        float windSpeedMain = Math.Min((float)wind / 4.0f, 11.0f);
+        float windTurbulance = Math.Max((float)wind / 15.0f, 0.5f);
+
+        WindZone windZone = GameObject.Find("PF CTI Windzone").GetComponent<WindZone>();
+
+        windZone.windMain = windSpeedMain;
+        windZone.windTurbulence = windTurbulance;
+
+        string weatherType = weatherHandler.GetWeatherType();
+
+        Debug.Log("Current Weather: " + weatherType);
+        Debug.Log("Current Wind: " + wind);
+
+        if (weatherType == "Snow")
         {
             MainTerrain.SetActive(false);
 
@@ -251,13 +297,46 @@ public class AvatarScene : BaseSessionScene
             lightIntensity *= 1.40f;
         }
 
-        else if (useRain)
+        else if (weatherType == "Drizzle")
         {
             RainEnvironment.SetActive(true);
 
-            RenderSettings.skybox = rainSkyBox;
+            DrizzlePrefab.SetActive(true);
 
             lightIntensity *= 0.65f;
+        }
+
+        else if (weatherType == "Rain")
+        {
+            RainEnvironment.SetActive(true);
+
+            RainPrefab.SetActive(true);
+
+            RenderSettings.skybox = rainSkyBox;
+
+            lightIntensity *= 0.45f;
+        }
+
+        else if(weatherType == "Thunderstorm")
+        {
+            RainEnvironment.SetActive(true);
+
+            ThunderstormPrefab.SetActive(true);
+
+            RenderSettings.skybox = rainSkyBox;
+
+            lightIntensity *= 0.3f;
+        }
+
+        else if(weatherType == "Clouds")
+        {
+
+        }
+
+        else if(weatherType == "Mist" || weatherType == "Fog")
+        {
+            RenderSettings.fogDensity = 0.06f;
+            RenderSettings.fogColor = Color.white;
         }
 
         RenderSettings.ambientIntensity = lightIntensity;
