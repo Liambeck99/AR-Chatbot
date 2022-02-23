@@ -98,6 +98,8 @@ public class AvatarScene : BaseSessionScene
 
     private GameObject MainTerrain;
 
+    private GameObject CloudEnvironment;
+
     private GameObject SnowEnvironment;
 
     private GameObject RainEnvironment;
@@ -105,6 +107,10 @@ public class AvatarScene : BaseSessionScene
     private GameObject DrizzlePrefab;
     private GameObject RainPrefab;
     private GameObject ThunderstormPrefab;
+
+    private float currentSceneLightIntensity;
+
+    public Material cloudMaterial;
 
     private void Start()
     {
@@ -222,6 +228,7 @@ public class AvatarScene : BaseSessionScene
             if (weatherHandler.HasFinishedSearch())
             {
                 ConfigureWeatherAndLightingSystem();
+                UpdateAvatar();
                 GameObject.Find("LoadingBackground").SetActive(false);
                 weatherConfigured = true;
             }
@@ -231,20 +238,27 @@ public class AvatarScene : BaseSessionScene
         {
             UpdateScene();
 
-            // If the avatar is idle, then it has the chance to perform a random animation
-            PerformRandomAnimation();
-
             // Rotates the skybox by a factor of the current time, this gives the effect that the clouds are moving
             RenderSettings.skybox.SetFloat("_Rotation", Time.time);
 
-            // Performs the appropriate animations if required
-            PerformAnimations();
+            UpdateAvatar();
         }
+    }
+
+    private void UpdateAvatar()
+    {
+        // If the avatar is idle, then it has the chance to perform a random animation
+        PerformRandomAnimation();
+
+        // Performs the appropriate animations if required
+        PerformAnimations();
     }
 
     private void SetDefaultEnvironment()
     {
         MainTerrain = GameObject.Find("Terrain");
+
+        CloudEnvironment = GameObject.Find("Cloud_Environment");
 
         SnowEnvironment = GameObject.Find("Snow_Environment");
 
@@ -254,6 +268,7 @@ public class AvatarScene : BaseSessionScene
         RainPrefab = GameObject.Find("RainPrefab");
         ThunderstormPrefab = GameObject.Find("ThunderstormPrefab");
 
+        CloudEnvironment.SetActive(false);
         SnowEnvironment.SetActive(false);
         RainEnvironment.SetActive(false);
 
@@ -261,40 +276,97 @@ public class AvatarScene : BaseSessionScene
         RainPrefab.SetActive(false);
         ThunderstormPrefab.SetActive(false);
 
+        cloudMaterial.SetFloat("_Density", 2.0f);
+
         RenderSettings.skybox = sunsetSkyBox;
     }
 
     private void ConfigureWeatherAndLightingSystem()
     {
-        float lightIntensity = 1.0f;
+        TransformSkyBoxDependingOnTimeOfDay(weatherHandler.GetSunriseEpoch(), weatherHandler.GetSunsetEpoch());
 
-        float wind = weatherHandler.GetWindSpeed();
+        TransformSceneWithWind(weatherHandler.GetWindSpeed());
 
-        float windSpeedMain = Math.Min((float)wind / 4.0f, 11.0f);
-        float windTurbulance = Math.Max((float)wind / 15.0f, 0.5f);
+        TransformSceneWithWeather(weatherHandler.GetWeatherType());
+
+        TransformSceneWithClouds(weatherHandler.GetCloudPercentage());
+
+        Debug.Log("Current Weather: " + weatherHandler.GetWeatherType());
+        Debug.Log("Current Wind: " + weatherHandler.GetWindSpeed());
+        Debug.Log("Current Cloud Percentage: " + weatherHandler.GetCloudPercentage());
+
+        RenderSettings.ambientIntensity = currentSceneLightIntensity;
+    }
+
+    private void TransformSkyBoxDependingOnTimeOfDay(int sunriseEpochTime, int sunsetEpochTime)
+    {
+        System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+        int currentEpochTime = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
+
+        int sunsetAndSunriseDurations = 60 * 60;
+
+        if (currentEpochTime <= sunriseEpochTime || currentEpochTime >= (sunsetEpochTime + sunsetAndSunriseDurations))
+        {
+            currentSceneLightIntensity = 0.4f;
+            RenderSettings.skybox = nightSkyBox;
+        }
+
+        else if (currentEpochTime < (sunriseEpochTime + sunsetAndSunriseDurations))
+        {
+            currentSceneLightIntensity = 0.8f;
+            RenderSettings.skybox = sunriseSkyBox;
+        }
+
+        else if (currentEpochTime < sunsetEpochTime)
+        {
+            currentSceneLightIntensity = 1.1f;
+            RenderSettings.skybox = daySkyBox;
+        }
+
+        else
+        {
+            currentSceneLightIntensity = 0.8f;
+            RenderSettings.skybox = sunsetSkyBox;
+        }
+    }
+
+    private void TransformSceneWithClouds(float cloudPercentage)
+    {
+        if (cloudPercentage < 0.15f)
+            return;
+
+        CloudEnvironment.SetActive(true);
+
+        float cloudDensity = 2.0f - (cloudPercentage * 2.0f);
+
+        cloudMaterial.SetFloat("_Density", cloudDensity);
+    }
+
+    private void TransformSceneWithWind(float windSpeed)
+    {
+        float windSpeedMain = Math.Min((float)windSpeed / 3.0f, 11.0f);
+        float windTurbulance = Math.Max((float)windSpeed / 15.0f, 0.5f);
 
         WindZone windZone = GameObject.Find("PF CTI Windzone").GetComponent<WindZone>();
 
         windZone.windMain = windSpeedMain;
         windZone.windTurbulence = windTurbulance;
+    }
 
-        string weatherType = weatherHandler.GetWeatherType();
-
-        Debug.Log("Current Weather: " + weatherType);
-        Debug.Log("Current Wind: " + wind);
-
+    private void TransformSceneWithWeather(string weatherType)
+    {
         if (weatherType == "Snow")
         {
             MainTerrain.SetActive(false);
 
             SnowEnvironment.SetActive(true);
 
-            RenderSettings.fogDensity = 0.04f;
+            RenderSettings.fogDensity = 0.036f;
             RenderSettings.fogColor = Color.white;
 
             RenderSettings.skybox = snowSkyBox;
 
-            lightIntensity *= 1.40f;
+            currentSceneLightIntensity *= 1.40f;
         }
 
         else if (weatherType == "Drizzle")
@@ -303,7 +375,7 @@ public class AvatarScene : BaseSessionScene
 
             DrizzlePrefab.SetActive(true);
 
-            lightIntensity *= 0.65f;
+            currentSceneLightIntensity *= 0.65f;
         }
 
         else if (weatherType == "Rain")
@@ -314,10 +386,10 @@ public class AvatarScene : BaseSessionScene
 
             RenderSettings.skybox = rainSkyBox;
 
-            lightIntensity *= 0.45f;
+            currentSceneLightIntensity *= 0.45f;
         }
 
-        else if(weatherType == "Thunderstorm")
+        else if (weatherType == "Thunderstorm")
         {
             RainEnvironment.SetActive(true);
 
@@ -325,21 +397,20 @@ public class AvatarScene : BaseSessionScene
 
             RenderSettings.skybox = rainSkyBox;
 
-            lightIntensity *= 0.3f;
+            currentSceneLightIntensity *= 0.3f;
         }
 
-        else if(weatherType == "Clouds")
-        {
-
-        }
-
-        else if(weatherType == "Mist" || weatherType == "Fog")
+        else if (weatherType == "Fog")
         {
             RenderSettings.fogDensity = 0.06f;
             RenderSettings.fogColor = Color.white;
         }
 
-        RenderSettings.ambientIntensity = lightIntensity;
+        else if (weatherType == "Mist")
+        {
+            RenderSettings.fogDensity = 0.03f;
+            RenderSettings.fogColor = Color.white;
+        }
     }
 
     // Checks if any of the animation flags are set, if so then perform the current frame of animation

@@ -24,7 +24,7 @@ public class WeatherHandler : MonoBehaviour
         public MainWeatherData main;
         public int visibility;
         public Wind wind;
-        public Clouds cloud;
+        public Clouds clouds;
         public Sys sys;
         public int timezone;
         public int id;
@@ -72,8 +72,8 @@ public class WeatherHandler : MonoBehaviour
         public string type;
         public int id;
         public string country;
-        public string sunrise;
-        public string sunset;
+        public int sunrise;
+        public int sunset;
     }
 
     public bool GetWeatherInfo()
@@ -120,6 +120,8 @@ public class WeatherHandler : MonoBehaviour
 
         string request = "api.openweathermap.org/data/2.5/weather?lat=" + currentLocation.lat + "&lon=" + currentLocation.lon + "&appid=" + openWeatherAPIKey;
 
+        Debug.Log(request);
+
         finishedSearch = false;
 
         StartCoroutine(GetRequest(request));
@@ -150,6 +152,16 @@ public class WeatherHandler : MonoBehaviour
         yield break;
     }
 
+    public int GetSunsetEpoch()
+    {
+        return currentWeather.sys.sunset;
+    }
+
+    public int GetSunriseEpoch()
+    {
+        return currentWeather.sys.sunrise;
+    }
+
     public float GetWindSpeed()
     {
         return currentWeather.wind.speed;
@@ -158,6 +170,11 @@ public class WeatherHandler : MonoBehaviour
     public string GetWeatherType()
     {
         return currentWeather.weather[0].main;
+    }
+
+    public float GetCloudPercentage()
+    {
+        return (float)currentWeather.clouds.all / 100.0f;
     }
 
     public Coords GetCurrentLocation()
