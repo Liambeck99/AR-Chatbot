@@ -93,7 +93,7 @@ Material:
     - _Brightness: 0.2
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _Density: 0.757
+    - _Density: 1.117
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _Emptiness: 0.096
@@ -107,7 +107,7 @@ Material:
     - _Sharpness: 0.712
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: -0.513
+    - _Speed: -0.243
     - _SrcBlend: 5
     - _UVSec: 0
     - _ZWrite: 0
