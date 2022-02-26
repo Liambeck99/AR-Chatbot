@@ -15,6 +15,9 @@ public class InfoScene : BaseUIScene
         SetFade();
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();
+        if (currentSettings.GetLanguage() != "English"){
+            Translate();
+        }
     }
 
     private void Update()

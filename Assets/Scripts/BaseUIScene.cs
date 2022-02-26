@@ -8,11 +8,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Networking;
+using System.Net;
 // The main parent class used for most of the scenes in the project
 // Set to abstract as this class should not be used individually
 public abstract class BaseUIScene : MonoBehaviour
 {
+    protected Dictionary<string, string> languages;
+
     // The fade object
     protected CanvasGroup fadeGroup;
 
@@ -116,5 +119,63 @@ public abstract class BaseUIScene : MonoBehaviour
     public void ExitApplication()
     {
         Application.Quit();
+    }
+
+    private void Translation(){
+        Text[] textobjs = FindObjectsOfType<Text>();
+        string model = "";
+        var result ="";
+        var url = "https://api.eu-gb.language-translator.watson.cloud.ibm.com/instances/fb81b1cf-25f6-426b-b292-bd4228bccc3e/v3/translate?version=2018-05-01"; 
+
+        if (languages.TryGetValue(currentSettings.GetLanguage(), out model)){
+            model = model;
+        }
+
+
+        foreach(Text t in textobjs){
+
+            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpRequest.Method = "POST";
+
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers["Authorization"] = "Basic YXBpa2V5OlZ5WUItRkljQlVJRHc1SGJXR1NQMjVzOFFCYXU4TkptWkF2RDNrVHNWaHNB";
+
+            var data = "{\"text\":[\"" + t.text.Replace("\n","") +  "\"],\"model_id\":\"en-" + model + "\"}";
+
+            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+            {
+                streamWriter.Write(data);
+            }
+
+            var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            string[] strlist = result.Split('{');
+            foreach (string split in strlist){
+                if (split.Contains("translation") == true && split.Contains("translations") == false){
+                    var text = split.Split(':')[1].Split('"')[1];
+                    t.text = text;
+                }
+            }            
+        }
+    }
+
+    public void Translate(){
+        languages = new Dictionary<string,string>();
+        if (languages.Count == 0){
+            AddLanguages();
+        }
+        Translation();
+    }
+
+    private void AddLanguages(){
+        languages = new Dictionary<string,string>();
+        languages.Add("Spanish","es");
+        languages.Add("Simplified Chinese","zh");
+        languages.Add("Traditional Chinese","zh_TW");
+        languages.Add("Japanese","ja");
     }
 }

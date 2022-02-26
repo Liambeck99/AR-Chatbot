@@ -11,13 +11,23 @@ public class SettingsScene : BaseUIScene
 
     private void Start()
     {
+       
         LoadSettings();
+        Dropdown dropdown = FindObjectOfType<Dropdown>();
+        SetLanguages(dropdown);
+        DropdownHandler(dropdown);
+
 
         SetFade();
         SetFadeInSpeed(0.66f);
         UpdateColoursIfColourBlindMode();
 
         ConfigureToggles();
+
+        if (currentSettings.GetLanguage() != "English"){
+            Translate();
+        }
+
     }
 
     private void ConfigureToggles()
@@ -174,5 +184,26 @@ public class SettingsScene : BaseUIScene
     public void OnPrevConversationsClick()
     {
         SceneManager.LoadScene("PreviousConversations");
+    }
+
+    public void DropdownHandler(Dropdown dropdown){
+
+        dropdown.value = dropdown.options.FindIndex(option => option.text == currentSettings.GetLanguage());
+        dropdown.captionText.text = dropdown.options[dropdown.value].text;
+
+        dropdown.onValueChanged.AddListener(
+            delegate { 
+                currentSettings.SetLanguage( dropdown.options[dropdown.value].text); 
+                currentSettings.WriteJson();
+            }
+        );
+    }
+    public void SetLanguages(Dropdown dropdown){
+        dropdown.options.Clear();
+        dropdown.options.Add(new Dropdown.OptionData() { text = "English"});
+        dropdown.options.Add(new Dropdown.OptionData() { text = "Simplified Chinese"});
+        dropdown.options.Add(new Dropdown.OptionData() { text = "Traditional Chinese"});
+        dropdown.options.Add(new Dropdown.OptionData() { text = "Japanese"});
+        dropdown.options.Add(new Dropdown.OptionData() { text = "Spanish"});
     }
 }
