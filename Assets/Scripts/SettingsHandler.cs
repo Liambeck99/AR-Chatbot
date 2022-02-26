@@ -19,6 +19,7 @@ public class SettingsHandler
         public bool saveConversations;
         public bool useColorBlind;
         public bool completeTutorial;
+        public string language;
     }
 
     // JSON format object
@@ -127,6 +128,15 @@ public class SettingsHandler
         return valueToReturn;
     }
 
+    public void SetLanguage(string language){
+        newSettingsFile.language = language;
+    }
+
+    public string GetLanguage()
+    {
+        return newSettingsFile.language;
+    }
+
     // Resets the settings by updating each field to the default setting value
     // and saving as the new JSON settings file
     public void resetSettings()
@@ -137,7 +147,7 @@ public class SettingsHandler
         newSettingsFile.saveConversations = true;
         newSettingsFile.useColorBlind = false;
         newSettingsFile.completeTutorial = false;
-
+        newSettingsFile.language = "English";
         WriteJson();
     }
 
