@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class animationStateController : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class animationStateController : MonoBehaviour
 
     public GameObject yBotModel;
     public GameObject xBotModel;
+
+    public TextMeshProUGUI output;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +31,28 @@ public class animationStateController : MonoBehaviour
         modelSelected = true;
         showModel(modelSelected);
 
+    }
+
+    // Handle selected value from drop down menu
+    public void HandleInputData(int val)
+    {
+        // ybot
+        if (val == 0)
+        {
+            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, -2);
+            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, 2);
+        }
+        // xbot
+        if (val == 1)
+        {
+            yBotModel.transform.position = yBotModel.transform.position + new Vector3(0, 0, 2);
+            xBotModel.transform.position = xBotModel.transform.position + new Vector3(0, 0, -2);
+        }
+        // bryce
+        if (val == 2)
+        {
+            Debug.Log("VAL == 2");
+        }
     }
 
     // Toggles between the displayed models
