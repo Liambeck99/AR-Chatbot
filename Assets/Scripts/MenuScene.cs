@@ -27,7 +27,7 @@ public class MenuScene : BaseUIScene
     {
         // Switches to AR scene if the user has not yet completed the tutorial
         if (!currentSettings.ReturnFieldValue("completeTutorial"))
-            SceneManager.LoadScene("AR");
+            SceneManager.LoadScene("Avatar"); // CHANGE THIS
         // Switches to AR scene if the user has ticked to automatically use AR in the settings page
         else if (currentSettings.ReturnFieldValue("autoUseAR"))
             SceneManager.LoadScene("AR");

@@ -721,8 +721,21 @@ public abstract class BaseSessionScene : BaseUIScene
 
     private void OnMessage(DetailedResponse<MessageResponse> response, IBMError error)
     {
-        //Log.Debug("Chatbot response: {0}", response.Result.Output.Generic[0].Text);
-        watsonResponseMessage = response.Result.Output.Generic[0].Text;
+        if (response.Result.Output.Generic[0].ResponseType == "text")
+            watsonResponseMessage = response.Result.Output.Generic[0].Text;
+        else
+        {
+            watsonResponseMessage = response.Result.Output.Generic[0].Title;
+            int numSuggestions = response.Result.Output.Generic[0].Suggestions.Count;
+            for (int i = 0; i < numSuggestions; i++)
+            {
+                watsonResponseMessage += "\n\n";
+                watsonResponseMessage += response.Result.Output.Generic[0].Suggestions[i].Label;
+            }
+        }
+
+        Log.Debug("AssistantV2", "result: {0}", response.Response);
+        //Log.Debug("Chatbot response: " + response.Response);
     }
 
     private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
