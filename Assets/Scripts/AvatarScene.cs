@@ -8,6 +8,13 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+using IBM.Cloud.SDK;
+using IBM.Cloud.SDK.Authentication;
+using IBM.Cloud.SDK.Authentication.Iam;
+using IBM.Cloud.SDK.Utilities;
+using IBM.Watson.Assistant.V2;
+using IBM.Watson.Assistant.V2.Model;
+
 using Random = UnityEngine.Random;
 
 public class AvatarScene : BaseAvatarScene
@@ -63,6 +70,9 @@ public class AvatarScene : BaseAvatarScene
 
     private void Start()
     {
+        LogSystem.InstallDefaultReactors();
+        Runnable.Run(CreateService());
+
         // Configures the scene correctly
         ConfigureScene();
 
@@ -153,6 +163,9 @@ public class AvatarScene : BaseAvatarScene
             // Perform an update on the avatar (e.g. animations)
             UpdateAvatar();
         }
+
+        if (watsonResponseMessage != null)
+            HandleWatsonResponse();
     }
 
     private void UpdateAvatar()
@@ -290,6 +303,8 @@ public class AvatarScene : BaseAvatarScene
     // The current windzone in the scene is updated to mimic the wind in Leeds
     private void TransformSceneWithWind(float windSpeed)
     {
+        windSpeed = 10;
+
         // Based on the current wind speed in Leeds, an estimation for the equivalent for
         // the virtual environment is calculated. The current maximum wind speed is set 11,
         // since anymore than this would result in essentially horizontal trees
@@ -307,6 +322,8 @@ public class AvatarScene : BaseAvatarScene
     // weather environment to use in the scene
     private void TransformSceneWithWeather(string weatherType)
     {
+        weatherType = "Thunderstorm";
+
         switch (weatherType)
         {
             // It is currently snowing in Leeds

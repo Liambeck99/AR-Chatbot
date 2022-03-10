@@ -14,11 +14,30 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Android;
 using TextSpeech;
 
+using IBM.Cloud.SDK;
+using IBM.Cloud.SDK.Authentication;
+using IBM.Cloud.SDK.Authentication.Iam;
+using IBM.Cloud.SDK.Utilities;
+using IBM.Watson.Assistant.V2;
+using IBM.Watson.Assistant.V2.Model;
+
 
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
 public abstract class BaseSessionScene : BaseUIScene
 {
+    [SerializeField]
+    private string iamApikey;
+
+    [SerializeField]
+    private string serviceUrl;
+
+    [SerializeField]
+    private string versionDate;
+
+    [SerializeField]
+    private string assistantId;
+
     // Stores the current data for the session
     protected SessionHandler currentSessionHandler;
 
@@ -89,9 +108,47 @@ public abstract class BaseSessionScene : BaseUIScene
     // Allows the keyboard and microphone buttons to be used
     protected bool allowInputs;
 
+    private AssistantService service;
+
+    private bool createSessionTested = false;
+    protected string watsonResponseMessage = null;
+    private string sessionId;
+
+    protected IEnumerator CreateService()
+    {
+        if (string.IsNullOrEmpty(iamApikey))
+        {
+            throw new IBMException("Plesae provide IAM ApiKey for the service.");
+        }
+
+        //  Create credential and instantiate service
+        IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
+
+        //  Wait for tokendata
+        while (!authenticator.CanAuthenticate())
+            yield return null;
+
+        service = new AssistantService(versionDate, authenticator);
+        if (!string.IsNullOrEmpty(serviceUrl))
+        {
+            service.SetServiceUrl(serviceUrl);
+        }
+
+        service.CreateSession(OnCreateSession, assistantId);
+
+        while (!createSessionTested)
+        {
+            yield return null;
+        }
+    }
+
     // Configures all data for the scene to work
     protected void ConfigureScene()
     {
+        watsonResponseMessage = null;
+
+        createSessionTested = false;
+
         LoadSettings();
 
         // Checks that the user has the correct permissions for the app to work
@@ -638,13 +695,52 @@ public abstract class BaseSessionScene : BaseUIScene
         // Renders the user message on the screen
         RenderUserMessage(message);
 
-        // Gets the Watson response message
-        string watsonResponseMessage = GetWatsonResponse(message);
+        Debug.Log("User Message: " + message);
 
-        // Render a GPS Map if the response message requires this functionality
-        bool useMapForMessage = false;
-        if (useMapForMessage)
-            RenderMap("");
+        Runnable.Run(GetWatsonResponse(message));
+    }
+
+    protected IEnumerator GetWatsonResponse(string userMessage)
+    {
+        var requestMessage = new MessageInput()
+        {
+            Text = userMessage,
+            Options = new MessageInputOptions()
+            {
+                ReturnContext = true
+            }
+        };
+
+        service.Message(OnMessage, assistantId, sessionId, input: requestMessage);
+
+        while (watsonResponseMessage == null)
+        {
+            yield return null;
+        }
+    }
+
+    private void OnMessage(DetailedResponse<MessageResponse> response, IBMError error)
+    {
+        //Log.Debug("Chatbot response: {0}", response.Result.Output.Generic[0].Text);
+        watsonResponseMessage = response.Result.Output.Generic[0].Text;
+    }
+
+    private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
+    {
+        Log.Debug("Session ID: {0}", response.Result.SessionId);
+        sessionId = response.Result.SessionId;
+        createSessionTested = true;
+    }
+
+    protected void ResetWatsonResponse()
+    {
+        watsonResponseMessage = null;
+        //createSessionTested = false;
+    }
+
+    protected void HandleWatsonResponse()
+    {
+        Debug.Log("Watson response: " + watsonResponseMessage);
 
         // Adds new message to conversation and renders it
         currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
@@ -654,6 +750,8 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Renders the user message on the screen
         RenderChatbotResponseMessage(watsonResponseMessage);
+
+        ResetWatsonResponse();
     }
 
     // Subclasses implement how the user message should be rendered on the screen
@@ -684,15 +782,8 @@ public abstract class BaseSessionScene : BaseUIScene
         return "";
     }
 
-    // Renders a map with GPS Data
-    protected void RenderMap(string GPSData)
-    {
-        // Mapping goes here
-
-    }
-
     // Gets a response from Watsom based on the message argument
-    protected string GetWatsonResponse(string message)
+    /*protected string GetWatsonResponse(string message)
     {
         // Watson exchange goes here
 
@@ -701,6 +792,6 @@ public abstract class BaseSessionScene : BaseUIScene
         RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
 
         return defaultMessage;
-    }
+    }*/
 }
 

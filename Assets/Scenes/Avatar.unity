@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3889797, g: 0.17646788, b: 0.17201641, a: 1}
+  m_IndirectSpecularColor: {r: 0.38899153, g: 0.17659386, b: 0.17182177, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2067,6 +2067,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openWeatherAPIKey: c452fe2ceccf57c42dde706f26641b5c
+  latitudeToUse: 53.807186
+  longlitudeToUse: -1.5549648
 --- !u!4 &846897890
 Transform:
   m_ObjectHideFlags: 0
@@ -3374,7 +3376,6 @@ MonoBehaviour:
   nightSkyBox: {fileID: 2100000, guid: 1cc6e6796f833a94f94e6d794ca654c3, type: 2}
   snowSkyBox: {fileID: 2100000, guid: 7b0f2096b49ccfb4f8b47c8084d650fa, type: 2}
   rainSkyBox: {fileID: 2100000, guid: b5a27fa4b11bfb24cbc6daff3802c229, type: 2}
-  openWeatherAPIKey: 'c452fe2ceccf57c42dde706f26641b5c '
   cloudMaterial: {fileID: 2100000, guid: 0e149e22a60d2eb47b181688cff3297d, type: 2}
 --- !u!4 &1474850850
 Transform:
