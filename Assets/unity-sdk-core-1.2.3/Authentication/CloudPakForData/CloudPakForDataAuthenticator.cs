@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-using Utility = IBM.Cloud.SDK.Utilities.Utility;
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
 
 namespace IBM.Cloud.SDK.Authentication.Cp4d
 {
@@ -154,7 +154,7 @@ namespace IBM.Cloud.SDK.Authentication.Cp4d
             req.HttpMethod = UnityWebRequest.kHttpVerbGET;
             req.Callback = callback;
             req.Headers.Add("Content-type", "application/x-www-form-urlencoded");
-            req.Headers.Add("Authorization", Utility.CreateAuthorization(Username, Password));
+            req.Headers.Add("Authorization", Utility2.CreateAuthorization(Username, Password));
             req.OnResponse = OnRequestCloudPakForDataTokenResponse;
             req.DisableSslVerification = DisableSslVerification;
             return connector.Send(req);
@@ -207,17 +207,17 @@ namespace IBM.Cloud.SDK.Authentication.Cp4d
                 throw new ArgumentNullException(string.Format(ErrorMessagePropMissing, "Password"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(Url))
+            if (Utility2.HasBadFirstOrLastCharacter(Url))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "Url"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(Username))
+            if (Utility2.HasBadFirstOrLastCharacter(Username))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "Username"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(Password))
+            if (Utility2.HasBadFirstOrLastCharacter(Password))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "Password"));
             }

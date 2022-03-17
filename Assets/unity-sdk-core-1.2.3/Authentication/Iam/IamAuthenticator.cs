@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-using Utility = IBM.Cloud.SDK.Utilities.Utility;
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
 
 namespace IBM.Cloud.SDK.Authentication.Iam
 {
@@ -179,7 +179,7 @@ namespace IBM.Cloud.SDK.Authentication.Iam
             // If both the clientId and secret were specified by the user, then use them.
             if (!string.IsNullOrEmpty(ClientId) && !string.IsNullOrEmpty(ClientSecret))
             {
-                req.Headers.Add("Authorization", Utility.CreateAuthorization(ClientId, ClientSecret));
+                req.Headers.Add("Authorization", Utility2.CreateAuthorization(ClientId, ClientSecret));
             }
             req.OnResponse = OnRequestIamTokenResponse;
             req.DisableSslVerification = DisableSslVerification;
@@ -230,12 +230,12 @@ namespace IBM.Cloud.SDK.Authentication.Iam
                 throw new ArgumentNullException(string.Format(ErrorMessagePropMissing, "apikey"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(Apikey))
+            if (Utility2.HasBadFirstOrLastCharacter(Apikey))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "apikey"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(Url))
+            if (Utility2.HasBadFirstOrLastCharacter(Url))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "url"));
             }

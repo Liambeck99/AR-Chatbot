@@ -206,7 +206,7 @@ public class AvatarMeshHandler : MonoBehaviour
     public void PerformRandomAnimationIfIdle()
     {
         // List that stores the animation states that can occur if the avatar is idle
-        string[] animationNames = { "Arm Stretching", "Looking", "Yawn", "Waving" };
+        string[] animationNames = { "Arm Stretching", "Looking", "Yawn", "Waving"};
 
         // Perform random animation if the avatar is idle
         if (animationPhase == 0 && IsAnimatorInCurrentState("Breathing Idle"))

@@ -35,6 +35,8 @@ using Windows.Security.Credentials;
 using Windows.Storage.Streams;
 #endif
 
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
+
 namespace IBM.Cloud.SDK.Connection
 {
     /// <summary>
@@ -165,7 +167,7 @@ namespace IBM.Cloud.SDK.Connection
             {
                Headers = new Dictionary<string,string>();;
             }
-            Headers.Add(AUTHENTICATION_AUTHORIZATION_HEADER, Utility.CreateAuthorization(username, password));
+            Headers.Add(AUTHENTICATION_AUTHORIZATION_HEADER, Utility2.CreateAuthorization(username, password));
         }
         #endregion
 
@@ -339,7 +341,7 @@ namespace IBM.Cloud.SDK.Connection
                 throw new ArgumentNullException("The serviceUrl must not be empty or null.");
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(serviceUrl))
+            if (Utility2.HasBadFirstOrLastCharacter(serviceUrl))
             {
                 throw new ArgumentException("The serviceUrl property is invalid. Please remove any surrounding {{, }}, or \" characters.");
             }

@@ -303,8 +303,6 @@ public class AvatarScene : BaseAvatarScene
     // The current windzone in the scene is updated to mimic the wind in Leeds
     private void TransformSceneWithWind(float windSpeed)
     {
-        windSpeed = 10;
-
         // Based on the current wind speed in Leeds, an estimation for the equivalent for
         // the virtual environment is calculated. The current maximum wind speed is set 11,
         // since anymore than this would result in essentially horizontal trees
@@ -322,8 +320,6 @@ public class AvatarScene : BaseAvatarScene
     // weather environment to use in the scene
     private void TransformSceneWithWeather(string weatherType)
     {
-        weatherType = "Thunderstorm";
-
         switch (weatherType)
         {
             // It is currently snowing in Leeds

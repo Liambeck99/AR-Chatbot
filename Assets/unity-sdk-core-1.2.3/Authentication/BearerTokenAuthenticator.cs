@@ -19,7 +19,7 @@ using IBM.Cloud.SDK.Connection;
 using IBM.Cloud.SDK.Utilities;
 using System;
 using System.Collections.Generic;
-using Utility = IBM.Cloud.SDK.Utilities.Utility;
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
 
 namespace IBM.Cloud.SDK.Authentication.Bearer
 {
@@ -103,7 +103,7 @@ namespace IBM.Cloud.SDK.Authentication.Bearer
                 throw new ArgumentNullException(string.Format(ErrorMessagePropMissing, "BearerToken"));
             }
 
-            if (Utility.HasBadFirstOrLastCharacter(BearerToken))
+            if (Utility2.HasBadFirstOrLastCharacter(BearerToken))
             {
                 throw new ArgumentException(string.Format(ErrorMessagePropInvalid, "BearerToken"));
             }

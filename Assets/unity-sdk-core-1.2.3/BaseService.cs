@@ -22,6 +22,8 @@ using IBM.Cloud.SDK.Authentication.NoAuth;
 using System;
 using System.Collections.Generic;
 
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
+
 namespace IBM.Cloud.SDK
 {
     public class BaseService
@@ -74,7 +76,7 @@ namespace IBM.Cloud.SDK
             {
                 throw new ArgumentNullException("The serviceUrl must not be empty or null.");
             }
-            if (Utility.HasBadFirstOrLastCharacter(url))
+            if (Utility2.HasBadFirstOrLastCharacter(url))
             {
                 throw new ArgumentException("The serviceUrl property is invalid. Please remove any surrounding {{, }}, or \" characters.");
             }

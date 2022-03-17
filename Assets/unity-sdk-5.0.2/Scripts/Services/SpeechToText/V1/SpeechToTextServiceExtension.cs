@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-using Utility = IBM.Cloud.SDK.Utilities.Utility;
+using Utility2 = IBM.Cloud.SDK.Utilities.Utility;
 
 namespace IBM.Watson.SpeechToText.V1
 {
@@ -749,10 +749,10 @@ namespace IBM.Watson.SpeechToText.V1
                         continue;
 
                     SpeakerLabelsResult result = new SpeakerLabelsResult();
-                    result.confidence = Utility.StringToDouble(iresult["confidence"].ToString());
+                    result.confidence = Utility2.StringToDouble(iresult["confidence"].ToString());
                     result.final = (bool)iresult["final"];
-                    result.from = Utility.StringToDouble(iresult["from"].ToString());
-                    result.to = Utility.StringToDouble(iresult["to"].ToString());
+                    result.from = Utility2.StringToDouble(iresult["from"].ToString());
+                    result.to = Utility2.StringToDouble(iresult["to"].ToString());
                     result.speaker = (Int64)iresult["speaker"];
 
                     results.Add(result);
@@ -802,9 +802,9 @@ namespace IBM.Watson.SpeechToText.V1
 
                             WordAlternativeResults wordAlternativeResults = new WordAlternativeResults();
                             if (iwordAlternative.Contains("start_time"))
-                                wordAlternativeResults.start_time = Utility.StringToDouble(iwordAlternative["start_time"].ToString());
+                                wordAlternativeResults.start_time = Utility2.StringToDouble(iwordAlternative["start_time"].ToString());
                             if (iwordAlternative.Contains("end_time"))
-                                wordAlternativeResults.end_time = Utility.StringToDouble(iwordAlternative["end_time"].ToString());
+                                wordAlternativeResults.end_time = Utility2.StringToDouble(iwordAlternative["end_time"].ToString());
                             if (iwordAlternative.Contains("alternatives"))
                             {
                                 List<WordAlternativeResult> wordAlternativeResultList = new List<WordAlternativeResult>();
@@ -819,7 +819,7 @@ namespace IBM.Watson.SpeechToText.V1
                                     if (ialternative.Contains("word"))
                                         wordAlternativeResult.word = (string)ialternative["word"];
                                     if (ialternative.Contains("confidence"))
-                                        wordAlternativeResult.confidence = Utility.StringToDouble(ialternative["confidence"].ToString());
+                                        wordAlternativeResult.confidence = Utility2.StringToDouble(ialternative["confidence"].ToString());
                                     wordAlternativeResultList.Add(wordAlternativeResult);
                                 }
 
@@ -846,7 +846,7 @@ namespace IBM.Watson.SpeechToText.V1
                             SpeechRecognitionAlternative alternative = new SpeechRecognitionAlternative();
                             alternative.transcript = (string)ialternative["transcript"];
                             if (ialternative.Contains("confidence"))
-                                alternative.confidence = Utility.StringToDouble(ialternative["confidence"].ToString());
+                                alternative.confidence = Utility2.StringToDouble(ialternative["confidence"].ToString());
 
                             if (ialternative.Contains("timestamps"))
                             {
@@ -861,8 +861,8 @@ namespace IBM.Watson.SpeechToText.V1
 
                                     TimeStamp ts = new TimeStamp();
                                     ts.Word = (string)itimestamp[0];
-                                    ts.Start = Utility.StringToDouble(itimestamp[1].ToString());
-                                    ts.End = Utility.StringToDouble(itimestamp[2].ToString());
+                                    ts.Start = Utility2.StringToDouble(itimestamp[1].ToString());
+                                    ts.End = Utility2.StringToDouble(itimestamp[2].ToString());
                                     timestamps[i] = ts;
                                 }
 
@@ -880,7 +880,7 @@ namespace IBM.Watson.SpeechToText.V1
 
                                     WordConfidence wc = new WordConfidence();
                                     wc.Word = (string)iwordconf[0];
-                                    wc.Confidence = Utility.StringToDouble(iwordconf[1].ToString());
+                                    wc.Confidence = Utility2.StringToDouble(iwordconf[1].ToString());
                                     confidence[i] = wc;
                                 }
 
@@ -911,9 +911,9 @@ namespace IBM.Watson.SpeechToText.V1
                                     IDictionary iKeywordDictionary = k as IDictionary;
                                     KeywordResult keywordResult = new KeywordResult();
                                     keywordResult.keyword = keyword;
-                                    keywordResult.confidence = Utility.StringToDouble(iKeywordDictionary["confidence"].ToString());
-                                    keywordResult.end_time = Utility.StringToDouble(iKeywordDictionary["end_time"].ToString());
-                                    keywordResult.start_time = Utility.StringToDouble(iKeywordDictionary["start_time"].ToString());
+                                    keywordResult.confidence = Utility2.StringToDouble(iKeywordDictionary["confidence"].ToString());
+                                    keywordResult.end_time = Utility2.StringToDouble(iKeywordDictionary["end_time"].ToString());
+                                    keywordResult.start_time = Utility2.StringToDouble(iKeywordDictionary["start_time"].ToString());
                                     keywordResult.normalized_text = (string)iKeywordDictionary["normalized_text"];
                                     keywordResults.Add(keywordResult);
                                 }
