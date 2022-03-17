@@ -70,9 +70,6 @@ public class AvatarScene : BaseAvatarScene
 
     private void Start()
     {
-        LogSystem.InstallDefaultReactors();
-        Runnable.Run(CreateService());
-
         // Configures the scene correctly
         ConfigureScene();
 
@@ -164,8 +161,7 @@ public class AvatarScene : BaseAvatarScene
             UpdateAvatar();
         }
 
-        if (watsonResponseMessage != null)
-            HandleWatsonResponse();
+        CheckIfWatsonHasReturned();
     }
 
     private void UpdateAvatar()

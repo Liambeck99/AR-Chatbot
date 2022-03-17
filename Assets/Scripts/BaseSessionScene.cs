@@ -145,6 +145,9 @@ public abstract class BaseSessionScene : BaseUIScene
     // Configures all data for the scene to work
     protected void ConfigureScene()
     {
+        LogSystem.InstallDefaultReactors();
+        Runnable.Run(CreateService());
+
         watsonResponseMessage = null;
 
         createSessionTested = false;
@@ -195,6 +198,12 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Loads in previous session data for correct scene rendering
         ConfigureSessionData();
+    }
+
+    protected void CheckIfWatsonHasReturned()
+    {
+        if (watsonResponseMessage != null)
+            HandleWatsonResponse();
     }
 
     // Converts scene to black and white if colour blind mode was enabled

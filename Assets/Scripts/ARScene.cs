@@ -49,6 +49,8 @@ public class ARScene : BaseSessionScene
     private void Update()
     {
         UpdateScene();
+
+        CheckIfWatsonHasReturned();
     }
 
     // Sets the tutorial to the next phase

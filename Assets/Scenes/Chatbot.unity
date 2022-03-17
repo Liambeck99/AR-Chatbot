@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3890769, g: 0.17650643, b: 0.17209962, a: 1}
+  m_IndirectSpecularColor: {r: 0.3890018, g: 0.17649613, b: 0.17192689, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1703,6 +1703,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90ecc5fdbca1464d9593e96a270307d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  iamApikey: cg0TEXET2o6rnOaHknX86nQvI7udiNSvMMpLafPG6Any
+  serviceUrl: https://api.eu-gb.assistant.watson.cloud.ibm.com/instances/40f7db54-e31f-485a-86bc-d8d32deede56
+  versionDate: 2020-09-24
+  assistantId: 9e981394-1da2-4f1e-a342-9841e27dedff
   greenMicrophoneSprite: {fileID: 21300000, guid: 10063fb72867ad34581ae542076a4d9d,
     type: 3}
   normalMicrophoneSprite: {fileID: 21300000, guid: 6ddc74370f6cc754695c778d97865ff1,
