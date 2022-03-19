@@ -112,7 +112,7 @@ public abstract class BaseSessionScene : BaseUIScene
 
     private bool createSessionTested = false;
     protected string watsonResponseMessage = null;
-    private string sessionId;
+    protected string sessionId;
 
     protected IEnumerator CreateService()
     {
@@ -140,6 +140,7 @@ public abstract class BaseSessionScene : BaseUIScene
         {
             yield return null;
         }
+
     }
 
     // Configures all data for the scene to work
@@ -730,6 +731,19 @@ public abstract class BaseSessionScene : BaseUIScene
 
     private void OnMessage(DetailedResponse<MessageResponse> response, IBMError error)
     {
+
+        Debug.Log("Response Object: " + response.Response);
+        Debug.Log("Is instance: " + (response != null).ToString());
+
+        if (error == null)
+        {
+            Log.Debug("ExampleCallback", "Response received: {0}", response.Response);
+        }
+        else
+        {
+            Log.Debug("ExampleCallback", "Error received: {0}, {1}, {3}", error.StatusCode, error.ErrorMessage, error.Response);
+        }
+
         if (response.Result.Output.Generic[0].ResponseType == "text")
             watsonResponseMessage = response.Result.Output.Generic[0].Text;
         else
@@ -743,8 +757,6 @@ public abstract class BaseSessionScene : BaseUIScene
             }
         }
 
-        Log.Debug("AssistantV2", "result: {0}", response.Response);
-        //Log.Debug("Chatbot response: " + response.Response);
     }
 
     private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)

@@ -134,6 +134,8 @@ public abstract class BaseAvatarScene : BaseSessionScene
         // speech bubble should appear on the screen
         int timeToWait = message.Length / charsPerSecond;
 
+        timeToWait = Math.Max(timeToWait, 3);
+
         // The speechbubble and response text are set to appear in the environment
         responseContainer.SetActive(true);
 

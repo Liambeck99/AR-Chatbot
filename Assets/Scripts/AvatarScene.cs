@@ -68,6 +68,8 @@ public class AvatarScene : BaseAvatarScene
     // Material shader that is used for the background clouds in the scene
     public Material cloudMaterial;
 
+    private bool done = false;
+
     private void Start()
     {
         // Configures the scene correctly
@@ -129,6 +131,7 @@ public class AvatarScene : BaseAvatarScene
 
     private void Update()
     {
+
         // If weather has not been configured yet
         if (!weatherConfigured)
         {
@@ -136,8 +139,8 @@ public class AvatarScene : BaseAvatarScene
             if (weatherHandler.HasFinishedSearch())
             {
                 // Configure the weather environments if weather data was correctly returned
-                if (weatherHandler.HasCorrectlyRetrievedWeatherData())
-                    ConfigureWeatherAndLightingSystem();
+                //if (weatherHandler.HasCorrectlyRetrievedWeatherData())
+                //    ConfigureWeatherAndLightingSystem();
 
                 // Perform an update on the avatar (e.g. animations)
                 UpdateAvatar();

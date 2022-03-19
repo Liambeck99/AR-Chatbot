@@ -27,7 +27,7 @@ public class MenuScene : BaseUIScene
     {
         // Switches to AR scene if the user has not yet completed the tutorial
         if (!currentSettings.ReturnFieldValue("completeTutorial"))
-            SceneManager.LoadScene("Avatar"); // CHANGE THIS
+            SceneManager.LoadScene("AR"); 
         // Switches to AR scene if the user has ticked to automatically use AR in the settings page
         else if (currentSettings.ReturnFieldValue("autoUseAR"))
             SceneManager.LoadScene("AR");
@@ -49,6 +49,12 @@ public class MenuScene : BaseUIScene
     public void OnTestClick()
     {
         
+    }
+
+    // Loads mapping scene
+    public void OnMappingClick()
+    {
+        SceneManager.LoadScene("Mapping");
     }
 
 }
