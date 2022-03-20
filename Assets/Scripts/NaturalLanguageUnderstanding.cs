@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using IBM.Cloud.SDK;
+using System.IO;
 
 public class NaturalLanguageUnderstanding 
 {
@@ -17,6 +18,7 @@ public class NaturalLanguageUnderstanding
     private NaturalLanguageUnderstandingService service;
     private string nluText = "I like to play football and karate at the weekend. I sometimes also like to do rugby and paint pictures";
 
+    public AnalysisResults analyzeResponse;
 
     public NaturalLanguageUnderstanding()
     {
@@ -54,7 +56,7 @@ public class NaturalLanguageUnderstanding
             }
         };
 
-        AnalysisResults analyzeResponse = null;
+        analyzeResponse = null;
 
         service.Analyze(
             callback: (DetailedResponse<AnalysisResults> response, IBMError error) =>
@@ -71,6 +73,39 @@ public class NaturalLanguageUnderstanding
         while (analyzeResponse == null)
             yield return null;
 
-
+        //  Save the response from the NLU to a json if it is valid
+        if (analyzeResponse != null)
+        {
+            NLUSaveToJSON();
+        }
     }
+
+    public void NLUSaveToJSON()
+    {     
+        string NLUResponsejson = JsonUtility.ToJson(analyzeResponse);
+
+        Debug.Log("Saving NLU JSON");
+
+        Debug.Log("\n" + NLUResponsejson);
+        WriteToFile("NLUResponse.json", NLUResponsejson);   
+    }
+
+    private void WriteToFile(string fileName, string json)
+    {
+        string path = GetFilePath(fileName);
+        FileStream fileStream = new FileStream(path, FileMode.Create);
+
+        using(StreamWriter writer = new StreamWriter(fileStream))
+        {
+            writer.Write(json);
+        }
+    }
+
+    public string GetFilePath(string fileName)
+    {
+        return Application.persistentDataPath + "/" + fileName;
+    }
+
+
+
 }
