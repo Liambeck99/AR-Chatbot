@@ -708,6 +708,11 @@ public abstract class BaseSessionScene : BaseUIScene
         Debug.Log("User Message: " + message);
 
         Runnable.Run(GetWatsonResponse(message));
+
+        NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+
+ 
+        Runnable.Run(newNlu.NLURun());
     }
 
     protected IEnumerator GetWatsonResponse(string userMessage)
