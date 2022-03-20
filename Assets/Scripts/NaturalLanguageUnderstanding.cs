@@ -18,7 +18,7 @@ public class NaturalLanguageUnderstanding
     private NaturalLanguageUnderstandingService service;
     private string nluText = "I like to play football and karate at the weekend. I sometimes also like to do rugby and paint pictures";
 
-    public AnalysisResults analyzeResponse;
+    public AnalysisResults analyzeResponse = null;
 
     public NaturalLanguageUnderstanding()
     {
@@ -52,7 +52,7 @@ public class NaturalLanguageUnderstanding
         {
             Keywords = new KeywordsOptions()
             {
-                Limit = 7
+                Limit = 20
             }
         };
 
@@ -65,6 +65,10 @@ public class NaturalLanguageUnderstanding
 
                 Debug.Log("User NLU Message: " + response.Response);
                 analyzeResponse = response.Result;
+
+                //save the response in a JSON
+                NLUSaveToJSON(response.Response);
+
             },
             features: features,
             text: nluText
@@ -73,21 +77,12 @@ public class NaturalLanguageUnderstanding
         while (analyzeResponse == null)
             yield return null;
 
-        //  Save the response from the NLU to a json if it is valid
-        if (analyzeResponse != null)
-        {
-            NLUSaveToJSON();
-        }
     }
 
-    public void NLUSaveToJSON()
-    {     
-        string NLUResponsejson = JsonUtility.ToJson(analyzeResponse);
-
+    public void NLUSaveToJSON(string data)
+    {    
         Debug.Log("Saving NLU JSON");
-
-        Debug.Log("\n" + NLUResponsejson);
-        WriteToFile("NLUResponse.json", NLUResponsejson);   
+        WriteToFile("NLUResponse.json", data);   
     }
 
     private void WriteToFile(string fileName, string json)
@@ -103,6 +98,7 @@ public class NaturalLanguageUnderstanding
 
     public string GetFilePath(string fileName)
     {
+        Debug.Log("NLU filepath is: " + (Application.persistentDataPath + "/" + fileName));
         return Application.persistentDataPath + "/" + fileName;
     }
 
