@@ -23,10 +23,10 @@ public class NaturalLanguageUnderstanding
         
     }
 
-    public IEnumerator NLURun()
+    public IEnumerator NLURun(string text)
     {
-        
-        
+        nluText = text;
+
         if (string.IsNullOrEmpty(iamApikey))
         {
             throw new IBMException("Please add IAM ApiKey to the Iam Apikey field in the inspector.");

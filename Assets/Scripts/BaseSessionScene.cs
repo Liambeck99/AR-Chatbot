@@ -712,7 +712,7 @@ public abstract class BaseSessionScene : BaseUIScene
         NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
 
  
-        Runnable.Run(newNlu.NLURun());
+        Runnable.Run(newNlu.NLURun(message));
     }
 
     protected IEnumerator GetWatsonResponse(string userMessage)
