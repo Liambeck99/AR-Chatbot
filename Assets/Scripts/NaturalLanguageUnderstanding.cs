@@ -16,7 +16,7 @@ public class NaturalLanguageUnderstanding
     private string versionDate = "2021-02-22";
 
     private NaturalLanguageUnderstandingService service;
-    private string nluText = "I like to play football and karate at the weekend. I sometimes also like to do rugby and paint pictures";
+    private string nluText;
 
     public AnalysisResults analyzeResponse = null;
 
@@ -101,7 +101,5 @@ public class NaturalLanguageUnderstanding
         Debug.Log("NLU filepath is: " + (Application.persistentDataPath + "/" + fileName));
         return Application.persistentDataPath + "/" + fileName;
     }
-
-
 
 }
