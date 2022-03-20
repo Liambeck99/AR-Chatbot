@@ -22,6 +22,8 @@ using IBM.Watson.Assistant.V2;
 using IBM.Watson.Assistant.V2.Model;
 
 
+
+
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
 public abstract class BaseSessionScene : BaseUIScene
@@ -724,8 +726,14 @@ public abstract class BaseSessionScene : BaseUIScene
         else
         {
             //  get NLU to process user input and extract keywords
-            NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
-            Runnable.Run(newNlu.NLURun(message));
+            //NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+            //Runnable.Run(newNlu.NLURun(message));
+
+            //run recommender system
+            RecommenderSystem newRecSys = new RecommenderSystem();
+            List<RecommenderSystem.NLUReturnValues> recommendedSocietityList = new List<RecommenderSystem.NLUReturnValues>();
+
+           recommendedSocietityList = newRecSys.loadNLUJSON();
 
             RenderChatbotResponseMessage("This is what an example society recommendation would look like \n soceity 1 \n soceity 2");
 

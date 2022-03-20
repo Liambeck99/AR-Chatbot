@@ -14,7 +14,6 @@ public class RecommenderSystem
        
     }
 
-
     public List<NLUReturnValues> loadNLUJSON()
     {
         //load list of NLU jsons from getNLUjson class
@@ -110,7 +109,9 @@ public class RecommenderSystem
 
             string keywordMatch = keyword;
             bool matchFound = false;
-            StreamReader r = new StreamReader("sockey.json");
+
+            string SocietyJSONpath = Application.persistentDataPath + "/sockey.json";
+            StreamReader r = new StreamReader(SocietyJSONpath);
             string jsonString = r.ReadToEnd();
 
             var result = Regex.Split(jsonString, "\r\n|\r|\n");
