@@ -114,6 +114,13 @@ public abstract class BaseSessionScene : BaseUIScene
     protected string watsonResponseMessage = null;
     protected string sessionId;
 
+    //Flag which is true when the user is responding to the NLU and not to Watson
+    protected bool userIsRespondingToNLU = false;
+
+    //Watson response that indicates an NLU response is required from the user
+    protected string watsonNLUPrompt = "So firstly, can you tell me a little bit about your hobbies and interests ";
+
+
     protected IEnumerator CreateService()
     {
         if (string.IsNullOrEmpty(iamApikey))
@@ -707,12 +714,26 @@ public abstract class BaseSessionScene : BaseUIScene
 
         Debug.Log("User Message: " + message);
 
-        Runnable.Run(GetWatsonResponse(message));
+        //  if the user is not responding to NLU then run watson as usual
+        if (userIsRespondingToNLU == false)
+        {
+            Runnable.Run(GetWatsonResponse(message));
+        }
 
-        NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+        //  pass user input through to the NLU
+        else
+        {
+            //  get NLU to process user input and extract keywords
+            NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+            Runnable.Run(newNlu.NLURun(message));
 
- 
-        Runnable.Run(newNlu.NLURun(message));
+            RenderChatbotResponseMessage("This is what an example society recommendation would look like \n soceity 1 \n soceity 2");
+
+            //  reset flag to allow user to communicate with watson again
+            userIsRespondingToNLU = false;
+        }
+
+
     }
 
     protected IEnumerator GetWatsonResponse(string userMessage)
@@ -780,6 +801,12 @@ public abstract class BaseSessionScene : BaseUIScene
     protected void HandleWatsonResponse()
     {
         Debug.Log("Watson response: " + watsonResponseMessage);
+
+        //if the response is the prompt for NLU then we want to temporarily disable watson
+        if (watsonResponseMessage == watsonNLUPrompt)
+        {
+            userIsRespondingToNLU = true;
+        }
 
         // Adds new message to conversation and renders it
         currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
