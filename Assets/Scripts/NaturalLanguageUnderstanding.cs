@@ -94,6 +94,8 @@ public class NaturalLanguageUnderstanding
         {
             writer.Write(json);
         }
+
+        fileStream.Dispose();
     }
 
     public string GetFilePath(string fileName)

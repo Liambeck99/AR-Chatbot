@@ -14,7 +14,7 @@ public class RecommenderSystem
        
     }
 
-    public List<NLUReturnValues> loadNLUJSON()
+    public List<NLUReturnValues3> loadNLUJSON()
     {
         //load list of NLU jsons from getNLUjson class
         string NLUpath = Application.persistentDataPath + "/NLUResponse.json";
@@ -29,33 +29,47 @@ public class RecommenderSystem
         string jsonchunk = "";
 
         //create a list ready to store results
-        List<NLUReturnValues> recommendedSocietityList = new List<NLUReturnValues>() ;
+        List<NLUReturnValues3> recommendedSocietityList = new List<NLUReturnValues3>();
 
         foreach (var line in result)
         {
-            //Console.WriteLine(line);
-            //Console.WriteLine("j: {0}", j);
-            //Console.WriteLine("k: {0}", k);
+            // Discards start of NLU file (JSONs start at line 7)
             if (j > 7)
             {
 
+                // End of JSON chunk (5 lines each)
                 if (k % 5 == 0)
                 {
-                    string nocomma = line.Remove(line.Length - 1, 1);
-                    jsonchunk = jsonchunk + nocomma;
-                    //Console.WriteLine(jsonchunk);
+                    // Checks for file end
+                    if (line == "    }"){
+                        jsonchunk = jsonchunk + line;
+                    }
+                    // Removes comma from end of JSON
+                    else{
+                        string nocomma = line.Remove(line.Length - 1, 1);
+                        jsonchunk = jsonchunk + nocomma;
+                    }
 
+                    // Gets values from json
                     nludatamodel m = JsonConvert.DeserializeObject<nludatamodel>(jsonchunk);
 
-                    returntext = m.text;
+                    returntext = (m.text).ToLower();
                     returnrel = m.relevance;
 
-                    //Console.WriteLine(returntext);
-                    //Console.WriteLine(returnrel);
-
-                    jsonCompare(returntext, returnrel);
-                    //var pls = Tuple.Create(m.text, m.relevance);
-
+                    // Runs comparison function, 
+                    // Returns empty struct if no match found. 
+                    // Returns populated struct if a match is found
+                    NLUReturnValues2 comparisonStruct = jsonCompare(returntext, returnrel);
+                    if (comparisonStruct.keyword == ""){
+                    }
+                    else{
+                        NLUReturnValues3 addedStruct = new NLUReturnValues3();
+                        addedStruct.keyword = comparisonStruct.keyword;
+                        addedStruct.link = comparisonStruct.link;
+                        addedStruct.score = returnrel;
+                        recommendedSocietityList.Add(addedStruct);
+                    }
+                    // Resets variable ready for next JSON comparison
                     jsonchunk = "";
                 }
                 else
@@ -64,26 +78,27 @@ public class RecommenderSystem
                 }
                 k = k + 1;
             }
-
             j = j + 1;
-
         }
-
-        //create object to store recommended society values
-        NLUReturnValues recommendedSociety = new NLUReturnValues();
-        recommendedSociety.keyword = returntext;
-        recommendedSociety.score = returnrel;
-
-        //add recommended society to the recommended list
-        recommendedSocietityList.Add(recommendedSociety);
+        List<NLUReturnValues3> anlist = orderByScore(recommendedSocietityList);
         
-        return (recommendedSocietityList);
+        
+        Debug.Log("RECOMENDED");
+        Debug.Log("=================================");
 
+         foreach (NLUReturnValues3 o in anlist)
+        {
+            Debug.Log(o.keyword);
+            Debug.Log(o.link);
+            Debug.Log(o.score);
+        }
+            
+        return(anlist);
+        //return (recommendedSocietityList);
     }
 
     public bool isScoreValid(double score)
     {
-
         if (score > 0.5)
         {
             return true;
@@ -94,19 +109,13 @@ public class RecommenderSystem
         }
     }
 
-    public bool jsonCompare(string keyword, double score)
+    public NLUReturnValues2 jsonCompare(string keyword, double score)
     {
+        NLUReturnValues2 recommendedSociety = new NLUReturnValues2();
 
-        if (isScoreValid(score) == false)
+        // Checks if score is greater than 0.5
+        if (isScoreValid(score) == true)
         {
-            //Console.WriteLine("Score invalid");
-            return (false);
-        }
-
-        else
-        {
-            //Console.WriteLine("Score valid");
-
             string keywordMatch = keyword;
             bool matchFound = false;
 
@@ -115,7 +124,6 @@ public class RecommenderSystem
             string jsonString = r.ReadToEnd();
 
             var result = Regex.Split(jsonString, "\r\n|\r|\n");
-
             string comparison = "";
             int j = 0;
             foreach (var line in result)
@@ -128,16 +136,16 @@ public class RecommenderSystem
                     userdatamodel m = JsonConvert.DeserializeObject<userdatamodel>(comparison);
                     comparison = "";
 
-                    if (m.keyword == keywordMatch)
+                    string keywordCheck = (m.keyword).ToLower();
+
+                    // If match is found
+                    if (keywordCheck == keywordMatch)
                     {
                         matchFound = true;
-                        Debug.Log("MATCH FOUND");
-                        //Console.WriteLine("Keyword: {0}", m.keyword);
-                        //Console.WriteLine("Name: {0}", m.name);
-                        //Console.WriteLine("Link: {0}", m.link);
                         string nameout = m.name;
                         string linkout = m.link;
-                        Debug.Log(returnRecMessage(nameout, linkout));
+                        recommendedSociety.keyword = nameout;
+                        recommendedSociety.link = linkout;
                     }
                 }
                 else
@@ -146,12 +154,14 @@ public class RecommenderSystem
                     j = j + 1;
                 }
             }
-            if (matchFound == false)
-            {
-                //Console.WriteLine("No Match Found");
+            // Returns empty struct if no match is found
+            if (matchFound == false){
+                recommendedSociety.keyword = "";
+                recommendedSociety.link = "";
             }
-            return (true);
         }
+        
+        return (recommendedSociety);
     }
 
     public string returnRecMessage(string name, string link)
@@ -174,10 +184,43 @@ public class RecommenderSystem
         public int count { get; set; }
     }
 
-    public struct NLUReturnValues
+
+    public struct NLUReturnValues2
     {
         public string keyword;
+        public string link;
+    }
+
+    public struct NLUReturnValues3
+    {
+        public string keyword;
+        public string link;
         public double score;
+    }
+
+    public List<NLUReturnValues3> orderByScore(List<NLUReturnValues3> returnList){
+
+        List<double> sortedList = new List<double>();
+
+        foreach (NLUReturnValues3 o in returnList)
+        {
+            sortedList.Add(o.score);
+        }
+        sortedList.Sort();
+
+        List<NLUReturnValues3> orderedList = new List<NLUReturnValues3>();
+        foreach (double score in sortedList)
+        {
+            foreach (NLUReturnValues3 astruct in returnList)
+            {
+                if (score == astruct.score){
+                    orderedList.Add(astruct);
+                }
+            }
+        }
+        orderedList.Reverse();
+        return (orderedList);
+
     }
 }
  

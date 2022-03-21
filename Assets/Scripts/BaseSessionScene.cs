@@ -726,12 +726,12 @@ public abstract class BaseSessionScene : BaseUIScene
         else
         {
             //  get NLU to process user input and extract keywords
-            //NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
-            //Runnable.Run(newNlu.NLURun(message));
+            NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+            Runnable.Run(newNlu.NLURun(message));
 
             //run recommender system
             RecommenderSystem newRecSys = new RecommenderSystem();
-            List<RecommenderSystem.NLUReturnValues> recommendedSocietityList = new List<RecommenderSystem.NLUReturnValues>();
+            List<RecommenderSystem.NLUReturnValues3> recommendedSocietityList = new List<RecommenderSystem.NLUReturnValues3>();
 
            recommendedSocietityList = newRecSys.loadNLUJSON();
 
@@ -868,4 +868,3 @@ public abstract class BaseSessionScene : BaseUIScene
         return defaultMessage;
     }*/
 }
-
