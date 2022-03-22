@@ -733,9 +733,20 @@ public abstract class BaseSessionScene : BaseUIScene
             RecommenderSystem newRecSys = new RecommenderSystem();
             List<RecommenderSystem.NLUReturnValues3> recommendedSocietityList = new List<RecommenderSystem.NLUReturnValues3>();
 
-           recommendedSocietityList = newRecSys.loadNLUJSON();
+            recommendedSocietityList = newRecSys.loadNLUJSON();
 
-            RenderChatbotResponseMessage("This is what an example society recommendation would look like \n soceity 1 \n soceity 2");
+            //construct response message to show to user of recommended societies
+            string societyResponseMessage = "Here are some of the societies I reccomend:\n";
+
+            foreach (RecommenderSystem.NLUReturnValues3 o in recommendedSocietityList)
+            {
+                //societyResponseMessage += "\n\n" + o.keyword + string.Format("   Score({0:0.00})", o.score);
+                societyResponseMessage += "\n\n" + o.keyword;
+
+            } 
+
+            //show the society recommendations to the user on screen
+            RenderChatbotResponseMessage(societyResponseMessage);
 
             //  reset flag to allow user to communicate with watson again
             userIsRespondingToNLU = false;
