@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Handles a conversation that is/has occured between the user and chatbot
-public class ConversationHandler {
+public class ConversationHandler: BaseUIScene {
 
     // Holds a list of all messages that have occured in the conversation
     // This is stored as a class as it can then be easily converted to JSON
@@ -96,12 +96,16 @@ public class ConversationHandler {
     // Adds a new message to the conversation
     public void AddNewMessage(string newText, bool wasUserSpeaker)
     {
+        LoadSettings();
+        if (currentSettings.GetLanguage() != "English"){
+            newText = stringtranslation(newText);
+        }
         // Creates new Message object with properties as the passed arguments
         Message newMessage = new Message();
         newMessage.text = newText;
         newMessage.userWasSpeaker = wasUserSpeaker;
         newMessage.timeProcessed = DateTime.Now.ToString(dateFormatUsed);
-
+        
         currentConversation.messageList.Add(newMessage);
 
         // Writes to previous conversations by loading all previous messages, adding the new message to the list

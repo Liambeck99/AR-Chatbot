@@ -134,6 +134,7 @@ public class SettingsHandler
 
     public string GetLanguage()
     {
+        Debug.Log(newSettingsFile.language);
         return newSettingsFile.language;
     }
 

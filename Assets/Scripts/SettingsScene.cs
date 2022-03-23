@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+ using UnityEngine.SceneManagement;
 
 public class SettingsScene : BaseUIScene
 {
@@ -27,7 +28,6 @@ public class SettingsScene : BaseUIScene
         if (currentSettings.GetLanguage() != "English"){
             Translate();
         }
-
     }
 
     private void ConfigureToggles()
@@ -201,6 +201,8 @@ public class SettingsScene : BaseUIScene
             delegate { 
                 currentSettings.SetLanguage( dropdown.options[dropdown.value].text); 
                 currentSettings.WriteJson();
+                Scene scene = SceneManager.GetActiveScene(); 
+                SceneManager.LoadScene(scene.name);
             }
         );
     }
@@ -211,5 +213,7 @@ public class SettingsScene : BaseUIScene
         dropdown.options.Add(new Dropdown.OptionData() { text = "Traditional Chinese"});
         dropdown.options.Add(new Dropdown.OptionData() { text = "Japanese"});
         dropdown.options.Add(new Dropdown.OptionData() { text = "Spanish"});
+        dropdown.options.Add(new Dropdown.OptionData() { text = "Hindhi"});
+
     }
 }

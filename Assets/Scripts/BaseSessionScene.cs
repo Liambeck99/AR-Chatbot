@@ -697,7 +697,9 @@ public abstract class BaseSessionScene : BaseUIScene
         // Watson exchange goes here
 
         string defaultMessage = "This is an example of what a response would look like...";
-
+        if (currentSettings.GetLanguage() != "English"){
+            defaultMessage = stringtranslation(defaultMessage);
+        }
         RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
 
         return defaultMessage;

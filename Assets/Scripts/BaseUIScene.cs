@@ -131,7 +131,6 @@ public abstract class BaseUIScene : MonoBehaviour
             model = model;
         }
 
-
         foreach(Text t in textobjs){
 
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -163,6 +162,45 @@ public abstract class BaseUIScene : MonoBehaviour
         }
     }
 
+    public string stringtranslation(string texts){
+        Debug.Log(texts);
+        languages = new Dictionary<string,string>();
+        if (languages.Count == 0){
+            AddLanguages();
+        }
+        var result ="";
+        var url = "https://api.eu-gb.language-translator.watson.cloud.ibm.com/instances/fb81b1cf-25f6-426b-b292-bd4228bccc3e/v3/translate?version=2018-05-01"; 
+        string model = "";
+        if (languages.TryGetValue(currentSettings.GetLanguage(), out model)){
+            model = model;
+        }
+        var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+        httpRequest.Method = "POST";
+
+        httpRequest.ContentType = "application/json";
+        httpRequest.Headers["Authorization"] = "Basic YXBpa2V5OlZ5WUItRkljQlVJRHc1SGJXR1NQMjVzOFFCYXU4TkptWkF2RDNrVHNWaHNB";
+
+        var data = "{\"text\":[\"" + texts +  "\"],\"model_id\":\"en-" + model + "\"}";
+
+        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+        {
+            streamWriter.Write(data);
+        }
+
+        var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            result = streamReader.ReadToEnd();
+        }
+
+        string[] strlist = result.Split('{');
+        foreach (string s in strlist){
+            if (s.Contains("translation") == true && s.Contains("translations") == false){
+                result = s.Split(':')[1].Split('"')[1];
+            }
+        }   
+        return result;         
+    }
     public void Translate(){
         languages = new Dictionary<string,string>();
         if (languages.Count == 0){
@@ -177,5 +215,7 @@ public abstract class BaseUIScene : MonoBehaviour
         languages.Add("Simplified Chinese","zh");
         languages.Add("Traditional Chinese","zh_TW");
         languages.Add("Japanese","ja");
+        languages.Add("Hindhi","hi");
+
     }
 }
