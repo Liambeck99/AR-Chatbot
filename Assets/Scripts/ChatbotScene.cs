@@ -22,6 +22,8 @@ public class ChatbotScene : BaseSessionScene
         ConfigureScene();
 
         ConfigureConversationRenderer();
+        var res = GetWatsonResponse("hello");
+        Debug.Log(res);
     }
 
     private void ConfigureConversationRenderer()

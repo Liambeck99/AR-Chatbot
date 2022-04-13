@@ -8,6 +8,13 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+// using IBM.Cloud.SDK;
+// using IBM.Cloud.SDK.Authentication;
+// using IBM.Cloud.SDK.Authentication.Iam;
+// using IBM.Cloud.SDK.Utilities;
+// using IBM.Watson.Assistant.V2;
+// using IBM.Watson.Assistant.V2.Model;
+
 using Random = UnityEngine.Random;
 
 public class AvatarScene : BaseAvatarScene
@@ -60,6 +67,8 @@ public class AvatarScene : BaseAvatarScene
 
     // Material shader that is used for the background clouds in the scene
     public Material cloudMaterial;
+
+    private bool done = false;
 
     private void Start()
     {
@@ -122,6 +131,7 @@ public class AvatarScene : BaseAvatarScene
 
     private void Update()
     {
+
         // If weather has not been configured yet
         if (!weatherConfigured)
         {
@@ -129,8 +139,8 @@ public class AvatarScene : BaseAvatarScene
             if (weatherHandler.HasFinishedSearch())
             {
                 // Configure the weather environments if weather data was correctly returned
-                if (weatherHandler.HasCorrectlyRetrievedWeatherData())
-                    ConfigureWeatherAndLightingSystem();
+                //if (weatherHandler.HasCorrectlyRetrievedWeatherData())
+                //    ConfigureWeatherAndLightingSystem();
 
                 // Perform an update on the avatar (e.g. animations)
                 UpdateAvatar();
@@ -153,6 +163,8 @@ public class AvatarScene : BaseAvatarScene
             // Perform an update on the avatar (e.g. animations)
             UpdateAvatar();
         }
+
+        // CheckIfWatsonHasReturned();
     }
 
     private void UpdateAvatar()

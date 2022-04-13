@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 
 public class SettingsScene : BaseUIScene
 {
-
     private void Start()
     {
        

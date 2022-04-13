@@ -163,7 +163,6 @@ public abstract class BaseUIScene : MonoBehaviour
     }
 
     public string stringtranslation(string texts){
-        Debug.Log(texts);
         languages = new Dictionary<string,string>();
         if (languages.Count == 0){
             AddLanguages();
@@ -216,6 +215,5 @@ public abstract class BaseUIScene : MonoBehaviour
         languages.Add("Traditional Chinese","zh_TW");
         languages.Add("Japanese","ja");
         languages.Add("Hindhi","hi");
-
     }
 }

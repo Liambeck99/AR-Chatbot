@@ -100,6 +100,7 @@ public class ConversationHandler: BaseUIScene {
         if (currentSettings.GetLanguage() != "English"){
             newText = stringtranslation(newText);
         }
+        
         // Creates new Message object with properties as the passed arguments
         Message newMessage = new Message();
         newMessage.text = newText;

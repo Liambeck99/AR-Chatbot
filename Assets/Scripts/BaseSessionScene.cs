@@ -13,7 +13,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Android;
 using TextSpeech;
-
+using UnityEngine.Networking;
+using System.Net;
 
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
@@ -243,7 +244,7 @@ public abstract class BaseSessionScene : BaseUIScene
                                                    currentSettings.ReturnFieldValue("AutoUseTTS"));
 
         // Default message to display on new session
-        string welcomeMessage = "Hello there, how can I help you today?";
+        string welcomeMessage = GetWatsonResponse("hello");
 
         // Checks if the number of current messages in the session is more than 0 (indicates there is a session currently taking place)
         if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 0)
@@ -691,18 +692,78 @@ public abstract class BaseSessionScene : BaseUIScene
 
     }
 
+    private string getSessionID(){
+        var result = "";
+        var url = "https://api.au-syd.assistant.watson.cloud.ibm.com/instances/39ec114b-2f85-4d60-a8bd-c6984b25637e/v2/assistants/53601917-dc55-4dbe-a948-b9473cf10dca/sessions?version=2021-06-14";
+
+        var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+        httpRequest.Method = "POST";
+
+        httpRequest.Headers["Authorization"] = "Basic YXBpa2V5Om4talhtem1vMDU2UUFZdTBWTWtyaHhuWTNMalRkSkd3N3JUMUtrNGx5Nk5I";
+        // Problem HERE!
+        httpRequest.Headers["Content-Length"] = "name";
+
+
+        var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            result = streamReader.ReadToEnd();
+        }
+        Debug.Log(result);
+        Console.WriteLine(httpResponse.StatusCode);
+
+        return "s";
+    }
     // Gets a response from Watsom based on the message argument
     protected string GetWatsonResponse(string message)
     {
-        // Watson exchange goes here
+        var seshID = getSessionID();
+        Debug.Log(seshID);
+        var sessionid ="9821f324-4c11-4a5b-8227-dfa12da3e98c";
+        var resultstring = "";
+        var url = "https://api.au-syd.assistant.watson.cloud.ibm.com/instances/39ec114b-2f85-4d60-a8bd-c6984b25637e/v2/assistants/53601917-dc55-4dbe-a948-b9473cf10dca/sessions/" + sessionid +"/message?version=2021-06-14";
 
-        string defaultMessage = "This is an example of what a response would look like...";
-        if (currentSettings.GetLanguage() != "English"){
-            defaultMessage = stringtranslation(defaultMessage);
+        var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+        httpRequest.Method = "POST";
+
+        httpRequest.ContentType = "application/json";
+        httpRequest.Headers["Authorization"] = "Basic YXBpa2V5Om4talhtem1vMDU2UUFZdTBWTWtyaHhuWTNMalRkSkd3N3JUMUtrNGx5Nk5I";
+
+        var data = "{\"input\": {\"text\": \"" + message +  "\"}}";
+
+        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+        {
+            streamWriter.Write(data);
         }
+
+        var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            resultstring = streamReader.ReadToEnd();
+        }
+
+        Console.WriteLine(httpResponse.StatusCode);
+
+
+        string[] res = resultstring.Split('{');
+        foreach (string s in res){
+            if (s.Contains("text") == true){
+                string[] rez = s.Split(':');
+                Debug.Log(rez);
+                foreach (string ss in rez){
+                    if (ss.Contains("user_id")){
+                        resultstring = ss;
+                        break;    
+                    }
+                }
+            }
+        }
+
+        resultstring = resultstring.Split('}')[0];
+
         RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
 
-        return defaultMessage;
+        return resultstring;
     }
 }
 
