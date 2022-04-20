@@ -61,6 +61,8 @@ public class AvatarScene : BaseAvatarScene
     // Material shader that is used for the background clouds in the scene
     public Material cloudMaterial;
 
+    private bool done = false;
+
     private void Start()
     {
         // Configures the scene correctly
@@ -86,10 +88,10 @@ public class AvatarScene : BaseAvatarScene
             inIntroAnimation = false;
 
             // Position is automatically set to the end of the animation (in front of the camera)
-            avatarModel.transform.position = FinalPosition;
+            avatarModels[currentAvatarIndex].transform.position = FinalPosition;
 
             // Avatar is set to the IDLE animation
-            meshHandler.FinishWalkAnimation(0.01f, false);
+            avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().FinishWalkAnimation(0.01f, false);
         }
 
         // There is no session therefore play the intro animation
@@ -122,6 +124,7 @@ public class AvatarScene : BaseAvatarScene
 
     private void Update()
     {
+
         // If weather has not been configured yet
         if (!weatherConfigured)
         {
@@ -153,6 +156,8 @@ public class AvatarScene : BaseAvatarScene
             // Perform an update on the avatar (e.g. animations)
             UpdateAvatar();
         }
+
+        CheckIfWatsonHasReturned();
     }
 
     private void UpdateAvatar()
@@ -396,6 +401,8 @@ public class AvatarScene : BaseAvatarScene
         // If the intro animation is set to true, then perform the animation
         if (inIntroAnimation)
         {
+            switchModelImage.sprite = switchModelDectiveSpriteToUse;
+
             // Calculates the percentage that the current frame is through the animation
             percentage = (introAnimationDurationTime - Time.time) / introAnimationDurationTime;
 
@@ -403,14 +410,15 @@ public class AvatarScene : BaseAvatarScene
             // based on the current percentage. This gives a linear transition between the beginning and final position
             // based on the current time frame
             if (percentage > 0)
-                avatarModel.transform.position = (FinalPosition * (1 - percentage)) + (BeginningPosition * (percentage));
+                avatarModels[currentAvatarIndex].transform.position = (FinalPosition * (1 - percentage)) + (BeginningPosition * (percentage));
 
             // If the percentage is less than 0, then the animation has finished. Set the intro animation flag to false,
             // and perform the correct animation for finishing the intro animation (this is waving and then idle animation)
             else
             {
                 inIntroAnimation = false;
-                meshHandler.FinishWalkAnimation(0.5f, true);
+                avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().FinishWalkAnimation(0.5f, true);
+                switchModelImage.sprite = switchModelActiveSpriteToUse;
             }
         }
     }
@@ -419,7 +427,7 @@ public class AvatarScene : BaseAvatarScene
     // so that the avatar is in the 'thinking' state (waiting for a response message from watson)
     protected override void RenderUserMessage(string message)
     {
-        meshHandler.ToggleAnimationPhase();
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().ToggleAnimationPhase();
     }
 
     // Executed when a response has been given from watson
@@ -437,5 +445,8 @@ public class AvatarScene : BaseAvatarScene
 
         switchAvatar.sprite = blackSwitchToARSprite;
         switchChatbot.sprite = blackSwitchToChatbotSprite;
+
+        switchModelActiveSpriteToUse = blackActiveSwitchModelButtonSprite;
+        switchModelDectiveSpriteToUse = blackDeactiveSwitchModelButtonSprite;
     }
 }

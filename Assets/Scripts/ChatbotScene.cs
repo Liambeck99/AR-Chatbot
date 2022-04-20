@@ -43,6 +43,8 @@ public class ChatbotScene : BaseSessionScene
     private void Update()
     {
         UpdateScene();
+
+        CheckIfWatsonHasReturned();
     }
 
     protected override void RenderUserMessage(string message)

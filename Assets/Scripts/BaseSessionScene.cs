@@ -14,11 +14,33 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Android;
 using TextSpeech;
 
+using UnityEngine.Networking;
+using System.Net;
+
+using IBM.Cloud.SDK;
+using IBM.Cloud.SDK.Authentication;
+using IBM.Cloud.SDK.Authentication.Iam;
+using IBM.Cloud.SDK.Utilities;
+using IBM.Watson.Assistant.V2;
+using IBM.Watson.Assistant.V2.Model;
+
 
 // The main parent class used for all scenes that interact with the AI in the project
 // Set to abstract as this class should not be used individually
 public abstract class BaseSessionScene : BaseUIScene
 {
+    [SerializeField]
+    private string iamApikey;
+
+    [SerializeField]
+    private string serviceUrl;
+
+    [SerializeField]
+    private string versionDate;
+
+    [SerializeField]
+    private string assistantId;
+
     // Stores the current data for the session
     protected SessionHandler currentSessionHandler;
 
@@ -89,9 +111,57 @@ public abstract class BaseSessionScene : BaseUIScene
     // Allows the keyboard and microphone buttons to be used
     protected bool allowInputs;
 
+    private AssistantService service;
+
+    private bool createSessionTested = false;
+    protected string watsonResponseMessage = null;
+    protected string sessionId;
+
+    //Flag which is true when the user is responding to the NLU and not to Watson
+    protected bool userIsRespondingToNLU = false;
+
+    //Watson response that indicates an NLU response is required from the user
+    protected string watsonNLUPrompt = "So firstly, can you tell me a little bit about your hobbies and interests ";
+
+    protected IEnumerator CreateService()
+    {
+        if (string.IsNullOrEmpty(iamApikey))
+        {
+            throw new IBMException("Plesae provide IAM ApiKey for the service.");
+        }
+
+        //  Create credential and instantiate service
+        IamAuthenticator authenticator = new IamAuthenticator(apikey: iamApikey);
+
+        //  Wait for tokendata
+        while (!authenticator.CanAuthenticate())
+            yield return null;
+
+        service = new AssistantService(versionDate, authenticator);
+        if (!string.IsNullOrEmpty(serviceUrl))
+        {
+            service.SetServiceUrl(serviceUrl);
+        }
+
+        service.CreateSession(OnCreateSession, assistantId);
+
+        while (!createSessionTested)
+        {
+            yield return null;
+        }
+
+    }
+
     // Configures all data for the scene to work
     protected void ConfigureScene()
     {
+        LogSystem.InstallDefaultReactors();
+        Runnable.Run(CreateService());
+
+        watsonResponseMessage = null;
+
+        createSessionTested = false;
+
         LoadSettings();
 
         // Checks that the user has the correct permissions for the app to work
@@ -140,6 +210,12 @@ public abstract class BaseSessionScene : BaseUIScene
         ConfigureSessionData();
     }
 
+    protected void CheckIfWatsonHasReturned()
+    {
+        if (watsonResponseMessage != null)
+            HandleWatsonResponse();
+    }
+
     // Converts scene to black and white if colour blind mode was enabled
     protected override void UpdateColoursIfColourBlindMode()
     {
@@ -156,7 +232,6 @@ public abstract class BaseSessionScene : BaseUIScene
             greenTTSButtonSprite = blackActiveTTSButtonSprite;
             redTTSButtonSprite = blackDeactiveTTSButtonSprite;
 
-            
             // Sets the background to white
             GameObject background = GameObject.Find("Background");
 
@@ -618,6 +693,12 @@ public abstract class BaseSessionScene : BaseUIScene
             microphoneRecordingInfoContainer.SetActive(false);
         }
 
+        // Sets the microphone button colour back to the default black
+        microphoneButton.GetComponent<Image>().sprite = normalMicrophoneSprite;
+
+        // Resets button size to 1 (end of animation)
+        microphoneButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
         // Adds new message to conversation and gets a Watson response
         HandleNewUserMessage(message);
     }
@@ -638,13 +719,187 @@ public abstract class BaseSessionScene : BaseUIScene
         // Renders the user message on the screen
         RenderUserMessage(message);
 
-        // Gets the Watson response message
-        string watsonResponseMessage = GetWatsonResponse(message);
+        Debug.Log("User Message: " + message);
 
-        // Render a GPS Map if the response message requires this functionality
-        bool useMapForMessage = false;
-        if (useMapForMessage)
-            RenderMap("");
+        // If the current language is not english, then translate the user message to 
+        // English so that the Watson translator can properly translate the message
+        if (currentSettings.GetLanguage() != "English")
+        {
+            string model = "";
+
+            if (languages.TryGetValue(currentSettings.GetLanguage(), out model))
+                model = model;
+
+            message = TranslateString(message, model, "en"); 
+        }
+
+        //  if the user is not responding to NLU then run watson as usual
+        if (userIsRespondingToNLU == false)
+            GetWatsonResponse(message);
+     
+        //  pass user input through to the NLU
+        else
+        {
+            StartCoroutine(RecommenderService(message));
+        }
+    }
+
+    protected IEnumerator RecommenderService(string message)
+    {
+        //  get NLU to process user input and extract keywords
+        NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
+        Runnable.Run(newNlu.NLURun(message));
+
+        yield return new WaitForSeconds(2);
+
+        //run recommender system
+        RecommenderSystem newRecSys = new RecommenderSystem();
+        List<RecommenderSystem.NLUReturnValues3> recommendedSocietityList = new List<RecommenderSystem.NLUReturnValues3>();
+
+        recommendedSocietityList = newRecSys.loadNLUJSON();
+
+        //construct response message to show to user of recommended societies
+        string societyResponseMessage = "Here are some of the societies I reccomend:\n";
+
+        foreach (RecommenderSystem.NLUReturnValues3 o in recommendedSocietityList)
+        {
+            //societyResponseMessage += "\n\n" + o.keyword + string.Format("   Score({0:0.00})", o.score);
+            societyResponseMessage += "\n\n" + o.keyword;
+
+        }
+
+        //  reset flag to allow user to communicate with watson again
+        userIsRespondingToNLU = false;
+
+        watsonResponseMessage = societyResponseMessage;
+    }
+
+    protected void GetWatsonResponse(string userMessage)
+    {
+
+        var resultstring = "";
+
+        var url = "https://api.eu-gb.assistant.watson.cloud.ibm.com/instances/40f7db54-e31f-485a-86bc-d8d32deede56/v2/assistants/9e981394-1da2-4f1e-a342-9841e27dedff/sessions/" + sessionId + "/message?version=2020-09-24";
+
+        var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+        httpRequest.Method = "POST";
+
+        httpRequest.ContentType = "application/json";
+        httpRequest.Headers["Authorization"] = "Basic YXBpa2V5OmNnMFRFWEVUMm82cm5PYUhrblg4Nm5Rdkk3dWRpTlN2TU1wTGFmUEc2QW55";
+
+        var data = "{\"input\": {\"text\": \"" + userMessage + "\"}}";
+
+        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+        {
+            streamWriter.Write(data);
+        }
+
+        var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            resultstring = streamReader.ReadToEnd();
+        }
+
+        if (!resultstring.Contains("suggestions"))
+        {
+            string[] res = resultstring.Split('{');
+            foreach (string s in res)
+            {
+                if (s.Contains("text") == true)
+                {
+                    string[] rez = s.Split(':');
+                    foreach (string ss in rez)
+                    {
+                        if (ss.Contains("user_id"))
+                        {
+                            resultstring = ss;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        else
+        {
+            string[] res = resultstring.Split('{');
+            resultstring = "Did you mean:";
+            foreach (string s in res)
+            {
+                if (s.Contains("label") == true)
+                {
+                    int firstColon = s.IndexOf(":");
+                    int firstComma = s.IndexOf(",");
+                    resultstring += "\n\n" + s.Substring(firstColon+1, firstComma-firstColon-1);
+                }
+            }
+        }
+
+        watsonResponseMessage = resultstring.Split('}')[0].Replace("\"", string.Empty);
+    }
+
+    private void OnMessage(DetailedResponse<MessageResponse> response, IBMError error)
+    {
+
+        Debug.Log("Response Object: " + response.Response);
+        Debug.Log("Is instance: " + (response != null).ToString());
+
+        if (error == null)
+        {
+            Log.Debug("ExampleCallback", "Response received: {0}", response.Response);
+        }
+        else
+        {
+            Log.Debug("ExampleCallback", "Error received: {0}, {1}, {3}", error.StatusCode, error.ErrorMessage, error.Response);
+        }
+
+        if (response.Result.Output.Generic[0].ResponseType == "text")
+            watsonResponseMessage = response.Result.Output.Generic[0].Text;
+        else
+        {
+            watsonResponseMessage = response.Result.Output.Generic[0].Title;
+            int numSuggestions = response.Result.Output.Generic[0].Suggestions.Count;
+            for (int i = 0; i < numSuggestions; i++)
+            {
+                watsonResponseMessage += "\n\n";
+                watsonResponseMessage += response.Result.Output.Generic[0].Suggestions[i].Label;
+            }
+        }
+
+    }
+
+    private void OnCreateSession(DetailedResponse<SessionResponse> response, IBMError error)
+    {
+        Log.Debug("Session ID: {0}", response.Result.SessionId);
+        sessionId = response.Result.SessionId;
+        createSessionTested = true;
+    }
+
+    protected void ResetWatsonResponse()
+    {
+        watsonResponseMessage = null;
+        //createSessionTested = false;
+    }
+
+    protected void HandleWatsonResponse()
+    {
+        Debug.Log("Watson response: " + watsonResponseMessage);
+
+        //if the response is the prompt for NLU then we want to temporarily disable watson
+        if (watsonResponseMessage == watsonNLUPrompt)
+            userIsRespondingToNLU = true;
+
+        // If the current language is not english, then translate the watson response message
+        // back to the current language
+        if (currentSettings.GetLanguage() != "English")
+        {
+            string model = "";
+
+            if (languages.TryGetValue(currentSettings.GetLanguage(), out model))
+                model = model;
+
+            watsonResponseMessage = TranslateString(watsonResponseMessage, "en", model);
+        }
 
         // Adds new message to conversation and renders it
         currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
@@ -654,6 +909,8 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Renders the user message on the screen
         RenderChatbotResponseMessage(watsonResponseMessage);
+
+        ResetWatsonResponse();
     }
 
     // Subclasses implement how the user message should be rendered on the screen
@@ -684,15 +941,8 @@ public abstract class BaseSessionScene : BaseUIScene
         return "";
     }
 
-    // Renders a map with GPS Data
-    protected void RenderMap(string GPSData)
-    {
-        // Mapping goes here
-
-    }
-
     // Gets a response from Watsom based on the message argument
-    protected string GetWatsonResponse(string message)
+    /*protected string GetWatsonResponse(string message)
     {
         // Watson exchange goes here
 
@@ -701,6 +951,6 @@ public abstract class BaseSessionScene : BaseUIScene
         RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
 
         return defaultMessage;
-    }
+    }*/
 }
 

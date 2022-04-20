@@ -10,9 +10,6 @@ using Random = UnityEngine.Random;
 
 public abstract class BaseAvatarScene : BaseSessionScene
 {
-    // Handles avatar animations and audio
-    protected AvatarMeshHandler meshHandler;
-
     // Stores the time that a last 'random' animation occured, used for 
     // ensuring that random animations happen sparingly
     protected DateTime timeOfLastRandomAnimation;
@@ -64,20 +61,54 @@ public abstract class BaseAvatarScene : BaseSessionScene
     // Defines the chances that a random animation should occur if the avatar is in the idle state
     protected int chanceOfRandomAnimation;
 
+    protected GameObject[] avatarModels;
+
+    protected int currentAvatarIndex;
+
+    public Sprite greenSwitchModelButtonSprite;
+    public Sprite redSwitchModelButtonSprite;
+
+    public Sprite blackActiveSwitchModelButtonSprite;
+    public Sprite blackDeactiveSwitchModelButtonSprite;
+
+    protected Sprite switchModelActiveSpriteToUse;
+    protected Sprite switchModelDectiveSpriteToUse;
+
+    protected Image switchModelImage;
+
     protected void ConfigureAvatar()
     {
-        // Finds avatar model in the scene
-        avatarModel = GameObject.Find("AvatarModel");
 
-        // Gets avatar animation handler
-        meshHandler = avatarModel.GetComponent<AvatarMeshHandler>();
+        switchModelImage = GameObject.Find("SwitchModel").GetComponent<Image>();
+
+        switchModelActiveSpriteToUse = greenSwitchModelButtonSprite;
+        switchModelDectiveSpriteToUse = redSwitchModelButtonSprite;
+
+        avatarModels = GameObject.FindGameObjectsWithTag("AvatarModel");
+
+        string currentAvatarName = currentSessionHandler.ReturnStringFieldValue("currentAvatarName");
+
+        currentAvatarIndex = -1;
+
+        for (int i = 0; i < avatarModels.Length; i++) {
+            if (avatarModels[i].name != currentAvatarName)
+                avatarModels[i].SetActive(false);
+            else
+                currentAvatarIndex = i;
+        }
+
+        if (currentAvatarIndex == -1)
+        {
+            currentAvatarIndex = 1;
+            avatarModels[1].SetActive(true);
+        }
 
         // If Text-To-Speech is enabled, then this means that audio should be played, so
         // the avatar audio is set to volume = 1, otherwise it is muted (volume = 0)
         if (useTTS)
-            meshHandler.UnmuteAudio();
+            avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().UnmuteAudio();
         else
-            meshHandler.MuteAudio();
+            avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().MuteAudio();
 
         // Defines the final position that the avatar should end up after the intro animation has 
         // completed. In this case, it is in front of the camera
@@ -126,13 +157,44 @@ public abstract class BaseAvatarScene : BaseSessionScene
         chanceOfRandomAnimation = 10;
     }
 
+    public void OnSwitchModelClick()
+    {
+
+        string currentStateName = avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().GetCurrentStateName();
+
+        if (currentStateName != "Breathing Idle")
+            return;
+
+        float currentStateDuration = avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().GetCurrentStateDuration();
+
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().SetDefaultValues();
+
+        avatarModels[currentAvatarIndex].SetActive(false);
+
+        currentAvatarIndex = (currentAvatarIndex + 1) % avatarModels.Length;
+
+        avatarModels[currentAvatarIndex].SetActive(true);
+
+        avatarModels[currentAvatarIndex].transform.position = FinalPosition;
+
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().PlayAnimation(currentStateName, currentStateDuration);
+
+        Debug.Log(avatarModels[currentAvatarIndex].name);
+
+        currentSessionHandler.UpdateStringField("currentAvatarName", avatarModels[currentAvatarIndex].name);
+    }
+
 
     // Displays the response speechbubble and performs the explination animation
     protected void ShowChatbotSpeechBubbleAndPerformAnimation(string message)
     {
+        switchModelImage.sprite = switchModelDectiveSpriteToUse;
+
         // Determines how long the avatar should explain the response message and how thus how long the 
         // speech bubble should appear on the screen
         int timeToWait = message.Length / charsPerSecond;
+
+        timeToWait = Math.Max(timeToWait, 3);
 
         // The speechbubble and response text are set to appear in the environment
         responseContainer.SetActive(true);
@@ -164,7 +226,7 @@ public abstract class BaseAvatarScene : BaseSessionScene
         allowInputs = false;
 
         // Avatar animation is transitioned from the 'thinking' animation to the 'explination' animation
-        meshHandler.ToggleAnimationPhase();
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().ToggleAnimationPhase();
 
         // Function waits the appropraite amount of seconds so that the user can correctly read the 
         // returned message from Watson
@@ -172,7 +234,7 @@ public abstract class BaseAvatarScene : BaseSessionScene
 
         // Once the appropriate amount of seconds has expired for the speechbubble to be shown,
         // then the avatar should transition back to the default idle state
-        meshHandler.ToggleAnimationPhase();
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().ToggleAnimationPhase();
 
         // The speech bubble text is set to empty since there is now no message to show
         responseText.text = "";
@@ -189,6 +251,8 @@ public abstract class BaseAvatarScene : BaseSessionScene
         // The user is now allowed to enter another question (now that the explination of the previous
         // input has finished)
         allowInputs = true;
+
+        switchModelImage.sprite = switchModelActiveSpriteToUse;
     }
 
     // Executed after every update frame and determines if the avatar should perform a 'random' animation
@@ -208,7 +272,7 @@ public abstract class BaseAvatarScene : BaseSessionScene
         if (Random.Range(0, 10000) < chanceOfRandomAnimation)
         {
             // A random animation is played if the avatar is currently in the idle animation
-            meshHandler.PerformRandomAnimationIfIdle();
+            avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().PerformRandomAnimationIfIdle();
 
             // Time that the last random animation occured is set to the current time
             timeOfLastRandomAnimation = DateTime.Now;
@@ -241,7 +305,7 @@ public abstract class BaseAvatarScene : BaseSessionScene
                                                                      ((float)lineCount / 7.0f) * (1 - percentage),
                                                                      1.0f * (1 - percentage));
 
-                avatarModel.transform.position = (SidePosition * (1 - percentage)) + (FinalPosition * (percentage));
+                avatarModels[currentAvatarIndex].transform.position = (SidePosition * (1 - percentage)) + (FinalPosition * (percentage));
             }
 
             // Otherwise, the animation has finished 
@@ -266,7 +330,7 @@ public abstract class BaseAvatarScene : BaseSessionScene
             if (percentage > 0)
 
                 // Transition the avatar position back to its default position in front of the camera
-                avatarModel.transform.position = (SidePosition * percentage) + (FinalPosition * (1 - percentage));
+                avatarModels[currentAvatarIndex].transform.position = (SidePosition * percentage) + (FinalPosition * (1 - percentage));
 
             // Otherwise the animation has finished, and set the flag to false
             else
@@ -277,14 +341,19 @@ public abstract class BaseAvatarScene : BaseSessionScene
     // Executed if the user clicks the tts button (aka the audio button in the UI)
     public void OnTTSButtonClickAvatar()
     {
-        // If audio is currently set to play, then set any audio that is currently playing from the avatar
-        // to mute (since the user has clicked to mute any audio)
-        if (useTTS)
-            meshHandler.MuteAudio();
 
-        // Otherwise unmute any audio
-        else
-            meshHandler.UnmuteAudio();
+        // Loops through all of the avaliable avatar models
+        for (int i = 0; i < avatarModels.Length; i++)
+        {
+            // If audio is currently set to play, then set any audio that is currently playing from the avatar
+            // to mute (since the user has clicked to mute any audio)
+            if (useTTS)
+                avatarModels[i].GetComponent<AvatarMeshHandler>().MuteAudio();
+
+            // Otherwise unmute any audio
+            else
+                avatarModels[i].GetComponent<AvatarMeshHandler>().UnmuteAudio();
+        }
 
         // Method defined in the parent class that handles TTS audio if the button is clicked
         OnTTSButtonClick();

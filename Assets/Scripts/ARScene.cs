@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
-public class ARScene : BaseSessionScene
+public class ARScene : BaseAvatarScene
 {
     // Stores the current phase of the tutorial the user is at
     private int tutorialPhase;
@@ -24,6 +25,10 @@ public class ARScene : BaseSessionScene
     private void Start()
     {
         ConfigureScene();
+
+        ConfigureAvatar();
+
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().FinishWalkAnimation(0.01f, false);
 
         // Tutorial starts at phase 0
         tutorialPhase = 0;
@@ -49,6 +54,19 @@ public class ARScene : BaseSessionScene
     private void Update()
     {
         UpdateScene();
+
+        UpdateAvatar();
+
+        CheckIfWatsonHasReturned();
+    }
+
+    private void UpdateAvatar()
+    {
+        // If the avatar is idle, then it has the chance to perform a random animation
+        PerformRandomAnimation();
+
+        // Performs the explination animation and speechbubble animation if set
+        PerformResponseAnimationsIfSet();
     }
 
     // Sets the tutorial to the next phase
@@ -129,21 +147,25 @@ public class ARScene : BaseSessionScene
 
     protected override void RenderUserMessage(string message)
     {
-
+        avatarModels[currentAvatarIndex].GetComponent<AvatarMeshHandler>().ToggleAnimationPhase();
     }
 
     protected override void RenderChatbotResponseMessage(string message)
     {
-
+        ShowChatbotSpeechBubbleAndPerformAnimation(message);
     }
 
     protected override void SetColourBlindSprites()
     {
+        // Avatar and chatbot icons are set to their appropriate black-and-white alternatives
+        Image switchAvatar = GameObject.Find("SwitchAvatar").GetComponent<Image>();
         Image switchChatbot = GameObject.Find("SwitchChatbot").GetComponent<Image>();
-        Image switchAvatar = GameObject.Find("SwitchToAvatar").GetComponent<Image>();
 
         switchAvatar.sprite = blackSwitchToAvatarSprite;
         switchChatbot.sprite = blackSwitchToChatbotSprite;
+
+        switchModelActiveSpriteToUse = blackActiveSwitchModelButtonSprite;
+        switchModelDectiveSpriteToUse = blackDeactiveSwitchModelButtonSprite;
     }
 }
 

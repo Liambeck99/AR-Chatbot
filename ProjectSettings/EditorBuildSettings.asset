@@ -12,9 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: d2c4dc5aef1a0ee448fbb51557417cec
   - enabled: 1
-    path: Assets/Scenes/AR.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
     path: Assets/Scenes/Info.unity
     guid: 4c093f7a31d089b4eacbb2b77107c8f8
   - enabled: 1
@@ -29,14 +26,20 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PreviousConversations.unity
     guid: 7d123f34a3360e64bb86cdbdfc1553fc
+  - enabled: 1
+    path: Assets/Scenes/AR.unity
+    guid: 23649ca48395bac40b84eb29bf3e2d7b
+  - enabled: 1
+    path: Assets/Scenes/Mapping.unity
+    guid: f37da6cfba829df45ab35e83092616a4
   m_configObjects:
-    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
+    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 80c0394d6a7829c4db990c75bff03cdc,
       type: 2}
     com.unity.xr.arcore.PlayerSettings: {fileID: 11400000, guid: c2f7b8d7c0bff4d10874cbcf3f24af78,
       type: 2}
     com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: b27ec7d82a91a48e69fd689ad6808e5e,
       type: 2}
-    com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: 1eb95d77acb39444e8cf44313496a874,
+    com.unity.xr.magicleap.magic_leap_settings: {fileID: 11400000, guid: 57fa10810bcbc2742b1fbb7f053a18c2,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 58f40b12bbc864f3c96c6505a9a1e1e3,
       type: 2}

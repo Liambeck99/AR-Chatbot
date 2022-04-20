@@ -25,6 +25,8 @@ public abstract class BaseUIScene : MonoBehaviour
     // Holds current settings
     protected SettingsHandler currentSettings;
 
+    private string url = "https://api.eu-gb.language-translator.watson.cloud.ibm.com/instances/fb81b1cf-25f6-426b-b292-bd4228bccc3e/v3/translate?version=2018-05-01";
+
     // Generates the correct path for a stored JSON file in the data folder. This must be called
     // after the scene has started (Application.persistentDataPath only works after script instantiation) 
     public string CreateRelativeFilePath(string JsonFile)
@@ -37,6 +39,8 @@ public abstract class BaseUIScene : MonoBehaviour
     protected void LoadSettings()
     {
         currentSettings = new SettingsHandler(CreateRelativeFilePath("ApplicationSettings"));
+
+        ConfigureTranslation();
     }
 
     // Initialises fade object
@@ -121,58 +125,63 @@ public abstract class BaseUIScene : MonoBehaviour
         Application.Quit();
     }
 
-    private void Translation(){
+    protected void TranslateScene(){
         Text[] textobjs = FindObjectsOfType<Text>();
         string model = "";
-        var result ="";
-        var url = "https://api.eu-gb.language-translator.watson.cloud.ibm.com/instances/fb81b1cf-25f6-426b-b292-bd4228bccc3e/v3/translate?version=2018-05-01"; 
 
-        if (languages.TryGetValue(currentSettings.GetLanguage(), out model)){
+        if (languages.TryGetValue(currentSettings.GetLanguage(), out model))
             model = model;
-        }
 
-
-        foreach(Text t in textobjs){
-
-            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
-            httpRequest.Method = "POST";
-
-            httpRequest.ContentType = "application/json";
-            httpRequest.Headers["Authorization"] = "Basic YXBpa2V5OlZ5WUItRkljQlVJRHc1SGJXR1NQMjVzOFFCYXU4TkptWkF2RDNrVHNWaHNB";
-
-            var data = "{\"text\":[\"" + t.text.Replace("\n","") +  "\"],\"model_id\":\"en-" + model + "\"}";
-
-            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
-            {
-                streamWriter.Write(data);
-            }
-
-            var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                result = streamReader.ReadToEnd();
-            }
-
-            string[] strlist = result.Split('{');
-            foreach (string split in strlist){
-                if (split.Contains("translation") == true && split.Contains("translations") == false){
-                    var text = split.Split(':')[1].Split('"')[1];
-                    t.text = text;
-                }
-            }            
-        }
+        foreach(Text t in textobjs)
+            t.text = TranslateString(t.text, "en", model);
     }
 
-    public void Translate(){
-        languages = new Dictionary<string,string>();
-        if (languages.Count == 0){
+    protected void ConfigureTranslation()
+    {
+        languages = new Dictionary<string, string>();
+        if (languages.Count == 0)
             AddLanguages();
-        }
-        Translation();
     }
 
-    private void AddLanguages(){
+    protected string TranslateString(string t, string sourceLanguage, string targetLanguage)
+    {
+        var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+        httpRequest.Method = "POST";
+
+        httpRequest.ContentType = "application/json";
+        httpRequest.Headers["Authorization"] = "Basic YXBpa2V5OlZ5WUItRkljQlVJRHc1SGJXR1NQMjVzOFFCYXU4TkptWkF2RDNrVHNWaHNB";
+
+        var data = "{\"text\":[\"" + t.Replace("\n", "") + "\"],\"model_id\":\"" + sourceLanguage + "-" + targetLanguage + "\"}";
+
+        using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+        {
+            streamWriter.Write(data);
+        }
+
+        var result = "";
+
+        var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+        using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+        {
+            result = streamReader.ReadToEnd();
+        }
+
+        string[] strlist = result.Split('{');
+        foreach (string split in strlist)
+        {
+            if (split.Contains("translation") == true && split.Contains("translations") == false)
+            {
+                var text = split.Split(':')[1].Split('"')[1];
+                return text;
+            }
+        }
+
+        return "";
+    }
+
+    protected void AddLanguages(){
         languages = new Dictionary<string,string>();
+        languages.Add("English", "en");
         languages.Add("Spanish","es");
         languages.Add("Simplified Chinese","zh");
         languages.Add("Traditional Chinese","zh_TW");

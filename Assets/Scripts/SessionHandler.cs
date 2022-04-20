@@ -15,6 +15,7 @@ public class SessionHandler
     public class SessionData
     {
         public bool isTTSButtonActive;
+        public string currentAvatarName;
     }
 
     // Stores data for the current session
@@ -101,6 +102,19 @@ public class SessionHandler
         WriteJson();
     }
 
+    public void UpdateStringField(string fieldName, string newValue)
+    {
+
+        switch (fieldName)
+        {
+            case "currentAvatarName":
+                currentSessionData.currentAvatarName = newValue;
+                break;
+        }
+
+        WriteJson();
+    }
+
     // Returns field value in JSON object dependong on the field name argument
     public bool ReturnFieldValue(string fieldName)
     {
@@ -110,6 +124,22 @@ public class SessionHandler
         {
             case "isTTSButtonActive":
                 valueToReturn = currentSessionData.isTTSButtonActive;
+                break;
+
+        }
+
+        return valueToReturn;
+    }
+
+    // Returns field value in JSON object dependong on the field name argument
+    public string ReturnStringFieldValue(string fieldName)
+    {
+        string valueToReturn = "";
+
+        switch (fieldName)
+        {
+            case "currentAvatarName":
+                valueToReturn = currentSessionData.currentAvatarName;
                 break;
 
         }

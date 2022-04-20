@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000015258789, y: -1099}
+  m_AnchoredPosition: {x: 0.000015258789, y: -1100}
   m_SizeDelta: {x: 1100, y: 1500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5890711
@@ -402,7 +402,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bff415fb62dccf04da4c9d0b30adbe03, type: 3}
-    m_FontSize: 45
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -413,9 +413,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Occassionally, you might ask a question that requires you to view a map
-    of a route across Leeds. In these circumstances, we will need access to your
-    GPS location data.
+  m_Text: 'Want to be virtually guided to a room/theatre on campus? Well you should
+    use our state of the art navigation features. Simply choose the room you want
+    to be taken to from the interior mapping page and go to the entrance of that
+    building. Point you camera forward and you will be virtually guided to your selected
+    destination, all you need to do is follow the arrows on your screen. It''s as
+    simple as that! '
 --- !u!222 &701542891
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -824,7 +827,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -37, y: 65}
+  m_AnchoredPosition: {x: -37, y: 196}
   m_SizeDelta: {x: -100, y: -1300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1114054947
@@ -1058,7 +1061,7 @@ GameObject:
   - component: {fileID: 1280168085}
   - component: {fileID: 1280168084}
   m_Layer: 5
-  m_Name: Navigation
+  m_Name: Inteiror Mapping
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1081,7 +1084,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -37, y: -768}
+  m_AnchoredPosition: {x: -37, y: -592}
   m_SizeDelta: {x: -100, y: -1300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1280168084
@@ -1105,7 +1108,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bff415fb62dccf04da4c9d0b30adbe03, type: 3}
-    m_FontSize: 70
+    m_FontSize: 69
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -1116,7 +1119,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Navigation
+  m_Text: Using virtual navigation
 --- !u!222 &1280168085
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1318,7 +1321,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bff415fb62dccf04da4c9d0b30adbe03, type: 3}
-    m_FontSize: 45
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -1403,7 +1406,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: bff415fb62dccf04da4c9d0b30adbe03, type: 3}
-    m_FontSize: 45
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -1421,8 +1424,7 @@ MonoBehaviour:
     Simply click the ''Ask a
     question'' button on the menu screen, and you will be taken to a screen allowing
     you to communicate with our artifical intelligence avatar. This can be achieved
-    through typing text directly to the avatar or allowing speech analysis to extract
-    your question'
+    through typing text directly or speaking into your microphone'
 --- !u!222 &1930764380
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1552,7 +1554,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.000015258789, y: -199.99994}
+  m_AnchoredPosition: {x: 0.000015258789, y: -176}
   m_SizeDelta: {x: 1100, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2131707562

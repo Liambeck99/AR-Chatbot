@@ -24,10 +24,8 @@ public class SettingsScene : BaseUIScene
 
         ConfigureToggles();
 
-        if (currentSettings.GetLanguage() != "English"){
-            Translate();
-        }
-
+        if (currentSettings.GetLanguage() != "English")
+            TranslateScene();
     }
 
     private void ConfigureToggles()
@@ -201,6 +199,10 @@ public class SettingsScene : BaseUIScene
             delegate { 
                 currentSettings.SetLanguage( dropdown.options[dropdown.value].text); 
                 currentSettings.WriteJson();
+                if (currentSettings.GetLanguage() != "English")
+                    TranslateScene();
+                else
+                    OnSettingsClick();
             }
         );
     }

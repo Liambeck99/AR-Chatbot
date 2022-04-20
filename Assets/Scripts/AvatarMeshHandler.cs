@@ -1,5 +1,7 @@
 ﻿// Script that is attached to the avatar mesh; handles avatar animations and audio
 
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +13,6 @@ public class AvatarMeshHandler : MonoBehaviour
     // References the animator that stores all animation states as well as the transitions 
     // between these animation
     Animator animator;
-
-    // Refences the avatar that performs these animations 
-    private GameObject avatarModel;
 
     // The current animation phase that the avatar is in (e.g. idle, dancing, etc...)
     private int animationPhase;
@@ -36,22 +35,26 @@ public class AvatarMeshHandler : MonoBehaviour
     GameObject KeyboardInputField;
     GameObject MicrophoneRecording;
 
+    // Holds current settings
+    protected SettingsHandler currentSettings;
+
     // Start is called before the first frame update
     void Start()
     {
-        // Finds avatar model in the scene
-        avatarModel = GameObject.Find("AvatarModel");
-
         // Gets avatar animation handler
-        animator = avatarModel.GetComponent<Animator>();
+        animator = gameObject.GetComponent<Animator>();
 
         // Gets avatar audio source (used for controlling sounds that the avatar makes)
-        avatarAudioSource = avatarModel.GetComponent<AudioSource>();
+        avatarAudioSource = gameObject.GetComponent<AudioSource>();
 
         // Gets the keyboard and microphone input fields, these are used to check if the 
         // user is currently inputting information
         KeyboardInputField = GameObject.Find("KeyboardInputField");
         MicrophoneRecording = GameObject.Find("MicrophoneRecordingInfoContainer");
+
+        string filePath = Path.Combine(Application.persistentDataPath, "data");
+        filePath = Path.Combine(filePath, "ApplicationSettings.json");
+        currentSettings = new SettingsHandler(filePath);
 
         // Current animation phase is set to 0, this means that the avatar should default
         // to an idle state
@@ -63,7 +66,7 @@ public class AvatarMeshHandler : MonoBehaviour
 
     // Sets the default animation values, this ensures that the avatar is in the default 
     // walking intro animation
-    private void SetDefaultValues()
+    public void SetDefaultValues()
     {
         animator.SetBool("isWalking", true);
 
@@ -206,7 +209,7 @@ public class AvatarMeshHandler : MonoBehaviour
     public void PerformRandomAnimationIfIdle()
     {
         // List that stores the animation states that can occur if the avatar is idle
-        string[] animationNames = { "Arm Stretching", "Looking", "Yawn", "Waving" };
+        string[] animationNames = { "Arm Stretching", "Looking", "Yawn", "Waving"};
 
         // Perform random animation if the avatar is idle
         if (animationPhase == 0 && IsAnimatorInCurrentState("Breathing Idle"))
@@ -240,6 +243,65 @@ public class AvatarMeshHandler : MonoBehaviour
         avatarAudioSource.volume = 1.0f;
     }
 
+    public float GetCurrentStateDuration()
+    {
+        return animator.GetCurrentAnimatorStateInfo(0).length;
+    }
+
+    public string GetCurrentStateName()
+    {
+        if (animator.GetBool("isExplaining"))
+            return "Explination";
+
+        if (animator.GetBool("isThinking"))
+            return "Thinking";
+
+        if (animator.GetBool("isWalking"))
+            return "Walk";
+
+        return "Breathing Idle";
+    }
+
+    public void PlayAnimation(string stateName, float normalisedTime)
+    {
+        avatarAudioSource.Stop();
+
+        animator.SetBool("isWalking", false);
+
+        switch (stateName)
+        {
+            case "Thinking":
+                animator.SetBool("isIdle", false);
+                animator.SetBool("isThinking", true);
+                break;
+
+            case "Breathing Idle":
+                animator.SetInteger("randomAnimation", 0);
+                animator.SetInteger("touchAnimation", 0);
+                animator.SetBool("isExplaining", false);
+                animator.SetBool("isIdle", true);
+                break;
+
+            case "Explination":
+                animator.SetBool("isThinking", false);
+                animator.SetBool("isExplaining", true);
+                break;
+
+            case "Walk":
+                animator.SetBool("isWalking", true);
+                animator.SetBool("isIdle", false);
+                break;
+
+            default:
+                SetDefaultValues();
+                break;
+        }
+
+        Debug.Log(normalisedTime);
+
+        animator.Play(stateName, -1, normalisedTime);
+    }
+
     // Executed if the user clicks on the avatar
     void OnMouseDown()
     {
@@ -251,6 +313,13 @@ public class AvatarMeshHandler : MonoBehaviour
         // If the user is currently inputting information, from either the keyboard or microphone,
         // then do not allow the avatar to perform any other animation
         if (KeyboardInputField.activeInHierarchy || MicrophoneRecording.activeInHierarchy)
+            return;
+
+        // Get the latest settings data; will be updated if the tutorial is compelted
+        currentSettings.ReadJson();
+
+        // User cannot be in the tutorial when making the Avatar dance
+        if (!currentSettings.ReturnFieldValue("completeTutorial"))
             return;
 
         // If the avatar is currently in the idle state, then perform the appropriate animation

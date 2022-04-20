@@ -12,6 +12,7 @@ TagManager:
   - SpeechBubbleUser
   - SpeechBubbleChatbot
   - SoundBar
+  - AvatarModel
   layers:
   - Default
   - TransparentFX
