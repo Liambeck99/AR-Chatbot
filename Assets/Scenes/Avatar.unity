@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -969,7 +969,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 97, y: -87}
+  m_AnchoredPosition: {x: 115, y: -97}
   m_SizeDelta: {x: 140, y: 110}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &439131557
@@ -3435,7 +3435,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98436c2ede2113c4ca89fedee9149640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isShowPopupAndroid: 0
+  isShowPopupAndroid: 1
 --- !u!4 &1364362672
 Transform:
   m_ObjectHideFlags: 0
@@ -4815,7 +4815,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 6.05e-43, y: 1.39e-43, z: 0, w: -5.2981606}
+  m_BoundingSphereOverride: {x: 2.4257473e-29, y: 2.2e-44, z: 2.4405384e-30, w: 9.1858e-41}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
