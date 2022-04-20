@@ -1030,7 +1030,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: botcontroller
+  m_Name: botcontroller 1
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: isWalking
@@ -1962,7 +1962,7 @@ AnimatorStateMachine:
     m_Position: {x: 20, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6654759120125841985}
-    m_Position: {x: 920, y: 130, z: 0}
+    m_Position: {x: 1050, y: 330, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4757771460881120170}
     m_Position: {x: 650, y: 130, z: 0}
@@ -1972,7 +1972,7 @@ AnimatorStateMachine:
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: 70, y: -280, z: 0}
-  m_EntryPosition: {x: 1210, y: 130, z: 0}
+  m_EntryPosition: {x: 1160, y: -120, z: 0}
   m_ExitPosition: {x: 730, y: -190, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -6654759120125841985}

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3889797, g: 0.17646788, b: 0.17201641, a: 1}
+  m_IndirectSpecularColor: {r: 0.3889802, g: 0.17646165, b: 0.17210111, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2067,6 +2067,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openWeatherAPIKey: c452fe2ceccf57c42dde706f26641b5c
+  latitudeToUse: 0
+  longlitudeToUse: 0
 --- !u!4 &846897890
 Transform:
   m_ObjectHideFlags: 0
@@ -2482,7 +2484,7 @@ Animator:
   m_GameObject: {fileID: 1234113455}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 685652023c373484482ca2240cb00a59, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9f367378df0b7684fb91f76294472287, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3363,6 +3365,8 @@ MonoBehaviour:
     type: 3}
   blackDeactiveTTSButtonSprite: {fileID: 21300000, guid: 4f7f1e7607ce4a7448a35ce25ff72c8b,
     type: 3}
+  inIntroAnimation: 0
+  introAnimationDurationTime: 0
   blackSwitchToARSprite: {fileID: 21300000, guid: 5a625627165dfd24f8b414788e135aec,
     type: 3}
   blackSwitchToChatbotSprite: {fileID: 21300000, guid: 590436c63891d9746b94765fad5d37e4,
@@ -3374,7 +3378,6 @@ MonoBehaviour:
   nightSkyBox: {fileID: 2100000, guid: 1cc6e6796f833a94f94e6d794ca654c3, type: 2}
   snowSkyBox: {fileID: 2100000, guid: 7b0f2096b49ccfb4f8b47c8084d650fa, type: 2}
   rainSkyBox: {fileID: 2100000, guid: b5a27fa4b11bfb24cbc6daff3802c229, type: 2}
-  openWeatherAPIKey: 'c452fe2ceccf57c42dde706f26641b5c '
   cloudMaterial: {fileID: 2100000, guid: 0e149e22a60d2eb47b181688cff3297d, type: 2}
 --- !u!4 &1474850850
 Transform:

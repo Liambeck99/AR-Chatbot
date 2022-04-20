@@ -64,6 +64,23 @@ public abstract class BaseAvatarScene : BaseSessionScene
     // Defines the chances that a random animation should occur if the avatar is in the idle state
     protected int chanceOfRandomAnimation;
 
+    protected GameObject[] models;
+    private int modelCount = 3;
+
+    // Flag for if the avatar should perform the intro walking animation
+    public bool inIntroAnimation;
+
+    // The 3D position that the avatar starts in when performing the intro walking animation
+    protected Vector3 BeginningPosition;
+
+    // Stores how long the avatar walking animation should take
+    public float introAnimationDurationTime;
+
+    private Vector3 modelDisplayLocation = new Vector3(0, 0, 0);
+    private Vector3 offScreenLocation = new Vector3(0, 0, -10);
+
+    private bool ARflag = true;
+
     protected void ConfigureAvatar()
     {
         // Finds avatar model in the scene
@@ -126,6 +143,159 @@ public abstract class BaseAvatarScene : BaseSessionScene
         chanceOfRandomAnimation = 10;
     }
 
+    protected void ConfigureARScene(int value)
+    {
+        // Finds models in the scene
+        models = new GameObject[modelCount];
+        models[0] = GameObject.Find("ybot");
+        models[1] = GameObject.Find("xbot");
+        models[2] = GameObject.Find("megan");
+
+        //UpdateCurrentModel(0);
+        UpdateCurrentModel(value);
+
+        // Sets the time that a random animation occured 4 seconds in the past, this gives
+        // a little time before it is possible for a random animation to occur
+        timeOfLastRandomAnimation = DateTime.Now.AddSeconds(-4);
+
+        // Defines how long the intro animation should last
+        introAnimationDurationTime = 2.5f;
+
+        // There is a session in progress, therefore do not play intro animation as it has already been
+        // played once before
+        if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 1)
+        {
+            inIntroAnimation = false;
+
+            // Position is automatically set to the end of the animation (in front of the camera)
+            avatarModel.transform.position = FinalPosition;
+
+            // Avatar is set to the IDLE animation
+            meshHandler.FinishWalkAnimation(0.01f, false);
+        }
+
+        // There is no session therefore play the intro animation
+        else
+            inIntroAnimation = true;
+
+        // If Text-To-Speech is enabled, then this means that audio should be played, so
+        // the avatar audio is set to volume = 1, otherwise it is muted (volume = 0)
+        if (useTTS)
+            meshHandler.UnmuteAudio();
+        else
+            meshHandler.MuteAudio();
+
+        // Defines the final position that the avatar should end up after the intro animation has 
+        // completed. In this case, it is in front of the camera
+        FinalPosition = new Vector3(0, 0, 0);
+
+        // The position that the avatar should transition to when explaining a returned message
+        SidePosition = new Vector3(0, 0, 0);
+
+        // Sets the least amount of seconds to wait for when the avatar performs a random animation (if idle)
+        secondsToWaitBetweenRandomAnimations = 10;
+
+        if (ARflag) getResponseContainer();
+
+        // Defines how long the message should be displayed on screen for. E.g: charsPerSecond = 7 means that if a message is
+        // 21 characters long, then it will be shown for 3 seconds
+        charsPerSecond = 7;
+
+        // Determines the chances of a random animation occuring out of 10000 (per frame)- if the avatar is idle
+        chanceOfRandomAnimation = 10;
+    }
+
+    public void getResponseContainer()
+    {
+        // Retrieves speech bubble and text objects
+        chatbotSpeechBubble = GameObject.Find("ChatbotSpeechBubble");
+        responseText = GameObject.Find("ResponseText").GetComponent<TextMeshPro>();
+
+        // Parent object of the speechbubble and text, this is used for handling whether all of
+        // the objects should be active or not
+        responseContainer = GameObject.Find("ResponseContainer");
+
+        // Parent object of the speech bubble, used for correct Y scaling when changing the size of
+        // the speech bubble. This must be here if the speechbubble is to correctly scale in only downwards
+        // in the y direction
+        speechBubbleScaler = GameObject.Find("SpeechBubbleScaler");
+
+        // Speech bubble is automatically deactivated
+        responseContainer.SetActive(false);
+
+        // This defines whether the speech bubble animation (speech bubble grows from size 0 to the correct size, and
+        // the avatar is transitioned to the left) is currently playing. This animation can also be reversed, this is 
+        // defined by 'reverseSpeechBubbleAnimation' (if true then the animation is performed in reverse)
+        executeSpeechBubbleAnimation = false;
+        reverseSpeechBubbleAnimation = false;
+
+        // Defines how long the speech bubble animation should take
+        speechBubbleAnimationDurationTime = 0.75f;
+
+        // Default sets the animation time to the current time. This is used for measuring how long the 
+        // animation has occured for
+        speechBubbleAnimationStartTime = Time.time;
+
+        ARflag = false;
+    }
+
+    protected void TMPConfigureARScene(int value)
+    {
+        // Finds models in the scene
+        models = new GameObject[modelCount];
+        models[0] = GameObject.Find("ybot");
+        models[1] = GameObject.Find("xbot");
+        models[2] = GameObject.Find("megan");
+
+        //UpdateCurrentModel(0);
+        UpdateCurrentModel(value);
+
+        // Sets the time that a random animation occured 4 seconds in the past, this gives
+        // a little time before it is possible for a random animation to occur
+        timeOfLastRandomAnimation = DateTime.Now.AddSeconds(-4);
+
+        // Defines how long the intro animation should last
+        introAnimationDurationTime = 2.5f;
+
+        // There is a session in progress, therefore do not play intro animation as it has already been
+        // played once before
+        if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 1)
+        {
+            inIntroAnimation = false;
+
+            // Position is automatically set to the end of the animation (in front of the camera)
+            avatarModel.transform.position = FinalPosition;
+
+            // Avatar is set to the IDLE animation
+            meshHandler.FinishWalkAnimation(0.01f, false);
+        }
+
+        // There is no session therefore play the intro animation
+        else
+            inIntroAnimation = true;
+    }
+
+    public void UpdateCurrentModel(int value)
+    {
+        avatarModel = models[value];
+        meshHandler = avatarModel.GetComponent<AvatarMeshHandler>();
+        DisplayModel(value);
+    }
+
+    private void DisplayModel(int value)
+    {
+        for (int i = 0; i < modelCount; i++)
+        {
+            if (i == value)
+            {
+                models[i].transform.position = modelDisplayLocation;
+                continue;
+            }
+
+            // hide other models
+            models[i].transform.position = offScreenLocation;
+        }
+    }
 
     // Displays the response speechbubble and performs the explination animation
     protected void ShowChatbotSpeechBubbleAndPerformAnimation(string message)

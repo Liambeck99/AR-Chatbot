@@ -38,6 +38,8 @@ public class ConversationHandler {
         prevConversationFilePath = newPrevConversationFilePath;
         sessionConversationFilePath = newSessionConversationFilePath;
 
+        Debug.Log(prevConversationFilePath);
+
         ResetCurrentConversation();
         CheckConversationFilesExist();
     }

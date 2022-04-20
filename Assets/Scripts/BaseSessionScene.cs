@@ -603,6 +603,7 @@ public abstract class BaseSessionScene : BaseUIScene
         // Adds new message to conversation and gets a Watson response
         HandleNewUserMessage(message);
 
+
         // Resets the input value back to an empty string (no input)
         keyboardInputField.GetComponent<InputField>().text = "";
     }
@@ -627,16 +628,18 @@ public abstract class BaseSessionScene : BaseUIScene
     {
         // Checks that the message is valid
         string messageError = CheckMessageIsValid(message);
+
         if (messageError.Length != 0) {
             ErrorHandler(messageError);
             return;
         }
-       
+
         // Adds the new message to the conversation
         currentSessionHandler.currentConversation.AddNewMessage(message, true);
 
         // Renders the user message on the screen
         RenderUserMessage(message);
+
 
         // Gets the Watson response message
         string watsonResponseMessage = GetWatsonResponse(message);
@@ -646,6 +649,8 @@ public abstract class BaseSessionScene : BaseUIScene
         if (useMapForMessage)
             RenderMap("");
 
+
+
         // Adds new message to conversation and renders it
         currentSessionHandler.currentConversation.AddNewMessage(watsonResponseMessage, false);
 
@@ -654,6 +659,8 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Renders the user message on the screen
         RenderChatbotResponseMessage(watsonResponseMessage);
+
+
     }
 
     // Subclasses implement how the user message should be rendered on the screen
@@ -691,14 +698,34 @@ public abstract class BaseSessionScene : BaseUIScene
 
     }
 
+    private int response_flag = 0;
+
     // Gets a response from Watsom based on the message argument
     protected string GetWatsonResponse(string message)
     {
-        // Watson exchange goes here
+        string defaultMessage = "";
 
-        string defaultMessage = "This is an example of what a response would look like...";
+        if(SceneManager.GetActiveScene().name == "Avatar")
+        {
+            defaultMessage = "There is multiple sports societies here are the top three : Football, Rugby Union, Hockey";
+            return defaultMessage;
+        }
+
+        // Good morning
+        if (response_flag == 0) { defaultMessage = "Hello there, I'm the University of Leeds chatbot. You may ask me a question and hopefully I can help!"; }
+        // Should I bring a jacket into uni today
+        if (response_flag == 1) { defaultMessage = "The weather in Leeds is 6 degrees and partly cloudy";  }
+        // What union would you recommend a computer science student join
+        if (response_flag == 2) { defaultMessage = "I would recommend the computing society"; }
+        // Can you help me find Lecture theatre in roger stevens?
+        if (response_flag == 3) { defaultMessage = "I can yes, but I will wait until the end of the presentation to show that off";  }
+        if (response_flag > 3) { defaultMessage = "Sorry I dont understand what you meant could you please repeat?";  }
+   
+
 
         RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
+
+        response_flag += 1;
 
         return defaultMessage;
     }

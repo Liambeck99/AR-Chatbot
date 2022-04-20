@@ -39,8 +39,8 @@ public class AvatarMeshHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Finds avatar model in the scene
-        avatarModel = GameObject.Find("AvatarModel");
+
+        avatarModel = gameObject;
 
         // Gets avatar animation handler
         animator = avatarModel.GetComponent<Animator>();
@@ -195,7 +195,9 @@ public class AvatarMeshHandler : MonoBehaviour
             animator.CrossFade(animationNames[animationNum-1], crossFadeTime);
 
             // The audio clip for this animation is selected and played
-            avatarAudioSource.clip = audioClips[animationNum - 1];
+
+            //avatarAudioSource.clip = audioClips[animationNum - 1];
+
             avatarAudioSource.Play();
         }
     }
