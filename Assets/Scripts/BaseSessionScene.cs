@@ -123,6 +123,8 @@ public abstract class BaseSessionScene : BaseUIScene
     //Watson response that indicates an NLU response is required from the user
     protected string watsonNLUPrompt = "So firstly, can you tell me a little bit about your hobbies and interests ";
 
+    protected string welcomeMessage = "Hello there, how can I help you today?";
+
     protected IEnumerator CreateService()
     {
         if (string.IsNullOrEmpty(iamApikey))
@@ -202,6 +204,19 @@ public abstract class BaseSessionScene : BaseUIScene
 
         // Allows microphone and keyboard inputs
         allowInputs = true;
+
+        // If the current language is not english, then translate the welcome and 
+        // NLU message to the current language
+        if (currentSettings.GetLanguage() != "English")
+        {
+            string model = "";
+
+            if (languages.TryGetValue(currentSettings.GetLanguage(), out model))
+                model = model;
+
+            welcomeMessage = TranslateString(welcomeMessage, "en", model);
+            watsonNLUPrompt = TranslateString(watsonNLUPrompt, "en", model);
+        }
 
         // Sets colour blind mode if this is active in the settings
         UpdateColoursIfColourBlindMode();
@@ -316,9 +331,6 @@ public abstract class BaseSessionScene : BaseUIScene
                                                    CreateRelativeFilePath("PreviousConversations"),
                                                    CreateRelativeFilePath("CurrentSessionConversation"),
                                                    currentSettings.ReturnFieldValue("AutoUseTTS"));
-
-        // Default message to display on new session
-        string welcomeMessage = "Hello there, how can I help you today?";
 
         // Checks if the number of current messages in the session is more than 0 (indicates there is a session currently taking place)
         if (currentSessionHandler.currentConversation.GetCurrentConversationSize() > 0)
