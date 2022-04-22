@@ -413,12 +413,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Want to be virtually guided to a room/theatre on campus? Well you should
+  m_Text: 'Want to be virtually guided to a room/theatre on campus? Well, you should
     use our state of the art navigation features. Simply choose the room you want
     to be taken to from the interior mapping page and go to the entrance of that
-    building. Point you camera forward and you will be virtually guided to your selected
-    destination, all you need to do is follow the arrows on your screen. It''s as
-    simple as that! '
+    building. Point your camera forward and you will be virtually guided to your
+    selected destination, all you need to do is follow the arrows on your screen.
+    It''s as simple as that! '
 --- !u!222 &701542891
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -459,7 +459,7 @@ RectTransform:
   m_Children:
   - {fileID: 1047807783}
   m_Father: {fileID: 1271671093}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -962,8 +962,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1273862650}
-  - {fileID: 858393215}
   - {fileID: 2131707561}
+  - {fileID: 858393215}
   - {fileID: 5890710}
   - {fileID: 911937279}
   - {fileID: 2101718440}
@@ -1333,13 +1333,13 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: "Our application uses augmented reality to virtually project our avatar
-    into physical world on your screen. For this to occur, we need information about
-    your surrounding environment, hence your camera must be activated. \nOnce on
-    the 'Ask a question' screen, point your camera so that the floor is visible and
-    slowly your phone left and right. When enough data has been processed, the avatar
-    will appear, allowing you to interact with it directly.\nIf you do not wish to
-    use augmented reality, there are two other modes (avatar and chatbot) that allow
-    you to ask questions without involving your camera"
+    into the physical world on your screen. For this to occur, we need information
+    about your surrounding environment, hence your camera must be activated. \nOnce
+    on the 'Ask a question' screen, point your camera so that the floor is visible
+    and slowly move your phone left and right. When enough data has been processed,
+    the avatar will appear, allowing you to interact with it directly.\nIf you do
+    not wish to use augmented reality, there are two other modes (avatar and chatbot)
+    that allow you to ask questions without involving your camera"
 --- !u!222 &1826067851
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1550,7 +1550,7 @@ RectTransform:
   m_LocalScale: {x: 1.0000134, y: 1.0000134, z: 1.0000134}
   m_Children: []
   m_Father: {fileID: 1271671093}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}

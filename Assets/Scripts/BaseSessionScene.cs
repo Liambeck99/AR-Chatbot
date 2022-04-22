@@ -751,9 +751,7 @@ public abstract class BaseSessionScene : BaseUIScene
      
         //  pass user input through to the NLU
         else
-        {
             StartCoroutine(RecommenderService(message));
-        }
     }
 
     protected IEnumerator RecommenderService(string message)
@@ -762,7 +760,7 @@ public abstract class BaseSessionScene : BaseUIScene
         NaturalLanguageUnderstanding newNlu = new NaturalLanguageUnderstanding();
         Runnable.Run(newNlu.NLURun(message));
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
 
         //run recommender system
         RecommenderSystem newRecSys = new RecommenderSystem();
@@ -771,14 +769,14 @@ public abstract class BaseSessionScene : BaseUIScene
         recommendedSocietityList = newRecSys.loadNLUJSON();
 
         //construct response message to show to user of recommended societies
-        string societyResponseMessage = "Here are some of the societies I reccomend:\n";
+        string societyResponseMessage = "Here are some of the societies I recommend:";
 
-        foreach (RecommenderSystem.NLUReturnValues3 o in recommendedSocietityList)
-        {
-            //societyResponseMessage += "\n\n" + o.keyword + string.Format("   Score({0:0.00})", o.score);
-            societyResponseMessage += "\n\n" + o.keyword;
-
-        }
+        if (recommendedSocietityList.Count == 0)
+            societyResponseMessage = "Sorry but I could not find any societies that matched your description";
+        else
+            foreach (RecommenderSystem.NLUReturnValues3 o in recommendedSocietityList)
+                societyResponseMessage += "\n\n• " + o.keyword + " Society";
+        
 
         //  reset flag to allow user to communicate with watson again
         userIsRespondingToNLU = false;
@@ -873,8 +871,8 @@ public abstract class BaseSessionScene : BaseUIScene
             int numSuggestions = response.Result.Output.Generic[0].Suggestions.Count;
             for (int i = 0; i < numSuggestions; i++)
             {
-                watsonResponseMessage += "\n\n";
-                watsonResponseMessage += response.Result.Output.Generic[0].Suggestions[i].Label;
+                watsonResponseMessage += "\n\n•";
+                watsonResponseMessage += response.Result.Output.Generic[0].Suggestions[i].Label + " Society";
             }
         }
 
@@ -952,17 +950,5 @@ public abstract class BaseSessionScene : BaseUIScene
         // Returns an empty string to symbolise the message is valid
         return "";
     }
-
-    // Gets a response from Watsom based on the message argument
-    /*protected string GetWatsonResponse(string message)
-    {
-        // Watson exchange goes here
-
-        string defaultMessage = "This is an example of what a response would look like...";
-
-        RecommenderSystem recommenderSystemHandler = new RecommenderSystem();
-
-        return defaultMessage;
-    }*/
 }
 
